@@ -3,22 +3,17 @@
   tags: always
   become: true
   pre_tasks:
-    - name: pre-run | update package cache (arch)
+    - name: pre-run | update package cache (fedora)
       tags: always
-      pacman: update_cache=yes
+      dnf: update_cache=yes
       changed_when: False
-      when: ansible_distribution == "Archlinux"
-
-    - name: pre-run | update package cache (debian, etc)
-      tags: always
-      apt: update_cache=yes
-      changed_when: False
-      when: ansible_distribution in ["Debian", "Ubuntu"]
+      when: ansible_distribution == "Fedora"
 
 # run roles
 - hosts: all
   tags: base
   become: true
+  any_errors_fatal: true
   roles:
     - base
 
@@ -28,29 +23,21 @@
   roles:
     - workstation
 
-- hosts: server
-  tags: server
+- hosts: thinkpad
+  tags: thinkpad
   become: true
   roles:
-    - server
+    - thinkpad
 
 # end of run cleanup and reporting
 - hosts: all
   become: true
   tasks:
-  - name: cleanup package cache (debian and ubuntu)
+  - name: autoremove orphan packages (fedora)
     tags: always
-    apt:
-      autoclean: yes
-    changed_when: false
-    when: ansible_distribution in ["Debian", "Pop!_OS", "Ubuntu"]
-
-  - name: autoremove orphan packages (debian and ubuntu)
-    tags: always
-    apt:
+    dnf:
       autoremove: yes
-      purge: yes
-    when: ansible_distribution in ["Debian", "Pop!_OS", "Ubuntu"]
+    when: ansible_distribution == "Fedora"
 
   - name: send completion alert
     include_tasks: playbooks/send_completion_alert.yml

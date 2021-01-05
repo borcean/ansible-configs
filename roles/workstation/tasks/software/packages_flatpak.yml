@@ -1,0 +1,10 @@
+- name: software | flatpak | install flatpack packages
+  flatpak:
+    name: "{{ item }}"
+    state: present
+    remote: flathub
+  loop:
+    - com.discordapp.Discord
+    - com.mojang.Minecraft
+    - com.spotify.Client
+    - com.valvesoftware.Steam

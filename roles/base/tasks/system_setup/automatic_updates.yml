@@ -1,0 +1,12 @@
+- name: system setup | automatic updates | install or update automatic updates package
+  tags: automaticupdates,system,settings
+  package:
+    name: "{{ automatic_updates_package }}"
+    state: latest
+
+- name: Enable a timer for automatic updates
+  tags: automaticupdates,system,settings
+  systemd:
+    name: "{{ automatic_updates_timer }}"
+    state: started
+    enabled: yes

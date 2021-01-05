@@ -1,0 +1,18 @@
+" Show line numbers
+set number
+
+" Enable filetype plugins
+filetype plugin indent on
+
+" Enable syntax highlighting
+syntax on
+
+" Use spaces instead of tabs
+set expandtab
+
+" Be smart when using tabs
+set smarttab
+
+" 1 tab == 4 spaces
+set shiftwidth=4
+set tabstop=4

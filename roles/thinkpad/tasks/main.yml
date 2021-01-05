@@ -1,0 +1,9 @@
+- block:
+  ## install and configure tlp
+  - import_tasks: tlp.yml
+
+  ## set bluetooth controler mode edr only
+  - import_tasks: bluetooth.yml
+
+  rescue:
+    - set_fact: task_failed=true

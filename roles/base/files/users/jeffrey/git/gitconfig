@@ -1,0 +1,10 @@
+[user]
+	email = jeffrey@borcean.xyz
+	name = Jeffrey Borcean
+[alias]
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
+	unstage = reset HEAD --
+	hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short

@@ -1,0 +1,28 @@
+- name: users | ana | check if user exists
+  getent:
+    database: passwd
+    key: ana
+    fail_key: False
+- debug: var=getent_password
+
+
+
+- name: users | ana | copy profile image
+  tags: dotfiles,dotfiles-ana
+  copy:
+    src: users/ana/profile_image.png
+    dest: /var/lib/AccountsService/icons/ana
+    owner: root
+    group: root
+    mode: 0644
+
+- name: users | ana | enable chrome autostart
+  tags: users,ana,google-chrome
+  file:
+    src: /usr/share/applications/google-chrome.desktop
+    dest: /home/ana/.config/autostart/google-chrome.desktop
+    owner: ana
+    group: ana
+    state: link
+  # when: signal is defined and signal == true
+

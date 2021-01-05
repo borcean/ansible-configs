@@ -1,0 +1,7 @@
+### Aliases ###
+alias g git
+alias irc='ssh ash.osuosl.org -t screen -dr irc'
+
+### Enviornment Variables ###
+setenv EDITOR vim
+

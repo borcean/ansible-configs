@@ -1,0 +1,8 @@
+- name: users | jeffrey | copy profile image
+  tags: dotfiles,dotfiles-jeffrey
+  copy:
+    src: users/jeffrey/profile_image.png
+    dest: /var/lib/AccountsService/icons/jeffrey
+    owner: root
+    group: root
+    mode: 0644

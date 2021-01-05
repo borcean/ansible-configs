@@ -1,0 +1,9 @@
+[Unit]
+Description=Ansible Pull Timer
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=1h
+
+[Install]
+WantedBy=timers.target

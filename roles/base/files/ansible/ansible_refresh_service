@@ -1,0 +1,6 @@
+[Unit]
+Description= Ansible Refresh Service
+
+[Service]
+Type=oneshot
+ExecStart=rm -rf /root/.ansible/

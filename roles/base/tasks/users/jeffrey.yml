@@ -1,0 +1,103 @@
+- name: users | jeffrey | create .ssh directory
+  tags: dotfiles,jeffrey,ssh,users
+  file:
+    path: "{{ item.dir }}"
+    state: directory
+    owner: jeffrey
+    group: jeffrey
+    mode: 0700
+  with_items:
+    - { dir: '/home/jeffrey/.ssh' }
+
+- name: users | jeffrey | add public key to authorized_keys
+  tags: dotfiles,jeffrey,ssh,ssh-keys,users
+  authorized_key:
+    user: jeffrey
+    key: "{{ item }}"
+  with_file:
+    - users/jeffrey/ssh/id_rsa.pub
+
+- name: users | jeffrey | add public key
+  tags: dotfiles,jeffrey,ssh,ssh-keys,users
+  copy:
+    src: users/jeffrey/ssh/id_rsa.pub
+    dest: /home/jeffrey/.ssh/id_rsa.pub
+    owner: jeffrey
+    group: jeffrey
+    mode: 0644
+
+- name: users | jeffrey | add private key
+  tags: dotfiles,jeffrey,ssh,ssh-keys,users,ansible-vault
+  copy:
+    src: users/jeffrey/ssh/id_rsa
+    dest: /home/jeffrey/.ssh/id_rsa
+    owner: jeffrey
+    group: jeffrey
+    mode: 0600
+
+- name: users | jeffrey | create config directories
+  tags: dotfiles,fish,jeffrey,users
+  file:
+    path: /home/jeffrey/{{ item.dir }}
+    state: directory
+    owner: jeffrey
+    group: jeffrey
+    mode: 0700
+  with_items:
+    - { dir: '.config' }
+    - { dir: '.config/fish' }
+
+- name: users | jeffrey | copy dotfiles
+  tags: dotfiles,users,jeffrey,fish,vim
+  copy:
+    src: users/jeffrey/{{ item.src }}
+    dest: /home/jeffrey/{{ item.dest }}
+    owner: jeffrey
+    group: jeffrey
+    mode: 0600
+  with_items:
+    - { src: 'fish/configfish', dest: '.config/fish/config.fish' }
+    - { src: 'git/gitconfig', dest: '.gitconfig' }
+    - { src: 'vim/vimrc', dest: '.vimrc' }
+
+# Fish shell configuration
+- name: users | jeffrey | set fish shell
+  tags: users,jeffrey,fish
+  user:
+    name: jeffrey
+    shell: /usr/bin/fish
+
+- name: users | jeffrey | check if oh-my-fish is installed
+  stat:
+    path: '/home/jeffrey/.config/fish/conf.d/omf.fish'
+  register: omf
+
+- name: users | jeffrey | check if fishprompt is set
+  stat:
+    path: '/home/jeffrey/.config/fish/functions/fish_prompt.fish'
+  register: fishprompt
+
+- name: Clone oh-my-fish repo
+  git:
+    repo: 'https://github.com/oh-my-fish/oh-my-fish'
+    dest: '/tmp/omf'
+    clone: yes
+  when: not omf.stat.exists
+
+- name: users | jeffrey | install oh-my-fish
+  become: true
+  become_user: jeffrey
+  command: /tmp/omf/bin/install -y --offline --noninteractive
+  when: not omf.stat.exists
+
+- name: users | jeffrey | install bobthefish
+  become: true
+  become_user: jeffrey
+  command: fish -c 'omf install bobthefish'
+  when: not fishprompt.stat.exists
+
+- name: users | jeffrey | update oh-my-fish
+  become: true
+  become_user: jeffrey
+  command: fish -c 'omf update'
+  when: omf.stat.exists

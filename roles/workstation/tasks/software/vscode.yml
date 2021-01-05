@@ -1,0 +1,14 @@
+- name: software | vscode | add repository
+  tags: vscode,repositories,software,workstation
+  yum_repository:
+    name: vscode
+    description: Visual Studio Code
+    baseurl: https://packages.microsoft.com/yumrepos/vscode
+    gpgkey: https://packages.microsoft.com/keys/microsoft.asc
+    gpgcheck: yes
+  when: ansible_distribution == 'Fedora'
+
+- name: software | vscode | install package
+  package:
+    state: latest
+    name: code

@@ -1,0 +1,6 @@
+- name: software | packages | install workstation packages
+  tags: packages,workstation
+  package:
+    state: latest
+    name:
+      - vlc
