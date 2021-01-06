@@ -2,13 +2,47 @@
 
 # Options
 REPO="https://github.com/borcean/ansible-configs.git"
+BRANCH=main
 VAULT_FILE=/root/.ansible_vault_key
+INVENTORY="https://raw.githubusercontent.com/borcean/ansible-configs/main/hosts"
+
+
+confirm() {
+    PROMPT="$1"
+    while true; do 
+        read -r -p "$PROMPT" CHOICE
+            if [[ $CHOICE =~ ^[Yy]$ ]]; then
+                return 0
+            elif [[ "$CHOICE" =~ ^[Nn]$ ]]; then
+                return 1
+            fi
+    done
+}
+
+check_hostname () {
+
+    HOSTNAME="$(hostnamectl --static)"
+
+    if [ "$(curl -sL "$INVENTORY" | grep -m 1 "$HOSTNAME")" == "$HOSTNAME" ]; then
+        echo -e "Host "$HOSTNAME" found in inventory."
+    else 
+        echo -e "Host "$HOSTNAME" not found in inventory."
+        if confirm "Change hostname now?  y/n: "; then
+            read -p "New hostname: " NEW_HOSTNAME
+            hostnamectl set-hostname "$NEW_HOSTNAME"
+            check_hostname 
+        fi
+    fi
+}
 
 # Check if run as root
 if [ "$(id -u)" != "0" ]; then
    echo "Must be run as root, exiting..." 1>&2
    exit 1
 fi
+
+# Check if hostname is in inventory
+check_hostname
 
 # Get Ansible Vault password
 set_vault_password () {
@@ -46,13 +80,17 @@ if [[ "$OS" == fedora ]]; then
    dnf update -y
    dnf install ansible -y
 elif [[ "$OS" == opensuse ]]; then
-    echo "OpenSUSE is not fully supported, continuing in 10 seconds..."
-    sleep 30
-    zypper install ansible -y
+    if confirm "OpenSUSE is not fully supported, continue anyways?  y/n: "; then
+        zypper dup -y
+        zypper install ansible -y
+    else
+        exit
+    fi
 else
-   echo "Unsupported distro detected, continuing in 10 seconds..."
-   sleep 30
+    if ! confirm "Unsupported distro detected, continue anyways?  y/n: "; then
+        exit
+    fi
 fi
 
 # Ansible pull command
-ansible-pull --vault-password-file="$VAULT_FILE" -U $REPO
+ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
