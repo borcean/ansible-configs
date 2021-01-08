@@ -22,7 +22,7 @@ check_hostname () {
 
     HOSTNAME="$(hostnamectl --static)"
 
-    if [ "$(curl -sL "$INVENTORY" | grep -m 1 "$HOSTNAME")" == "$HOSTNAME" ]; then
+    if [ "$(wget -qO- "$INVENTORY" | grep -m 1 "$HOSTNAME")" == "$HOSTNAME" ]; then
         echo -e "Host "$HOSTNAME" found in inventory."
     else 
         echo -e "Host "$HOSTNAME" not found in inventory."
