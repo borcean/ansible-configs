@@ -13,7 +13,6 @@
 - hosts: all
   tags: base
   become: true
-  any_errors_fatal: true
   roles:
     - base
 

@@ -1,4 +1,3 @@
-
 - name: ansible setup | ensure ansible is the latest version
   tags: ansible,ansible-setup
   package:
@@ -8,19 +7,19 @@
 - name: ansible setup | install required packages
   tags: ansible,ansible-setup,packages
   package:
-    name:
-      - "{{ python_psutil_package }}"
+    name: "{{ python_psutil_package }}"
+    state: latest
 
 - name: ansible setup | copy ansible_vault_key
   tags: ansible,ansible-setup,ansible-vault
   copy:
     src: ansible/ansible_vault_key
-    dest: /root/.ansible_vault_key
+    dest: "{{ vault_file }}"
     owner: root
     group: root
     mode: 0600
 
-- name: ansible setup | ansible-pull systemd unit files
+- name: ansible setup | ansible-refresh systemd service
   tags: ansible,ansible-setup,ansible-pull,systemd
   copy:
     src: ansible/{{ item.src }}
@@ -29,18 +28,33 @@
     group: root
     mode: 0640
   with_items:
-    - { src: 'ansible_pull_service', dest: 'ansible-pull.service' }
-    - { src: 'ansible_pull_timer', dest: 'ansible-pull.timer' }
     - { src: 'ansible_refresh_service', dest: 'ansible-refresh.service' }
-    - { src: 'ansible_refresh_timer', dest: 'ansible-refresh.timer' }
+
+- name: ansible setup | ansible-pull systemd service
+  tags: ansible,ansible-setup,ansible-pull,systemd
+  template:
+    src: ansible/pull_service.j2
+    dest: /etc/systemd/system/ansible-pull.service
+    owner: root
+    group: root
+    mode: 0640
+
+
+- name: ansible setup | ansible systemd timers
+  tags: ansible,ansible-setup,ansible-pull,systemd
+  template:
+    src: ansible/timer.j2
+    dest: "/etc/systemd/system/ansible-{{ item.key }}.timer"
+    owner: root
+    group: root
+    mode: 0640
+  with_dict: "{{ timers }}"
 
 - name: ansible setup |  enable ansible systemd timers
   tags: ansible,ansible-setup,ansible-pull,systemd
   systemd:
-    name: ansible-{{ item }}.timer
+    name: "ansible-{{ item.key }}.timer"
     enabled: true
     masked: false
     daemon_reload: true
-  loop:
-    - refresh
-    - pull
+  with_dict: "{{ timers }}"

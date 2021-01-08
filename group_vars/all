@@ -15,3 +15,16 @@ telegram_token: !vault |
           3338376635386239310a376664313462616330636132636364373262346437316330323032646664
           64623535326437386238303338616233363836393365626633633334663633393065623731316433
           6562336539373362313336613864326635633634353837333632
+
+# base
+# ansible setup
+repo: https://github.com/borcean/ansible-configs.git
+branch: main
+vault_file: /root/.ansible_vault_key
+timers:
+   refresh:
+      timer_boot: 1m
+      timer_active: 1d
+   pull:
+      timer_boot: 10m
+      timer_active: 1h
