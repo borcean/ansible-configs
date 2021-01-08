@@ -6,7 +6,6 @@ BRANCH=dev
 VAULT_FILE=/root/.ansible_vault_key
 INVENTORY="https://raw.githubusercontent.com/borcean/ansible-configs/main/hosts"
 
-
 confirm() {
     PROMPT="$1"
     while true; do 
@@ -94,3 +93,8 @@ fi
 
 # Ansible pull command
 ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
+
+# Offer restart after ansible pull finished
+if confirm "Reboot system now?  y/n: "; then
+    reboot
+fi
