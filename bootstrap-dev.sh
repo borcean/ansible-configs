@@ -88,11 +88,16 @@ elif [[ "$OS" == opensuse ]]; then
 elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then 
     apt update
     apt dist-upgrade -y
-    apt install ansible -y
+    apt install ansible git -y
 else
     if ! confirm "Unsupported distro detected, continue anyways?  y/n: "; then
         exit
     fi
+fi
+
+# Install SPICE agent if running Debian test VM
+if [[ "$OS" == debian ]] && [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
+    apt install spice-vdagent -y
 fi
 
 # Ansible pull command
