@@ -105,5 +105,5 @@ ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
 
 # Offer restart after ansible pull finished
 if confirm "Reboot system now?  y/n: "; then
-    reboot
+    systemctl reboot
 fi
