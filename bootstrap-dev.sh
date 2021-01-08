@@ -85,6 +85,10 @@ elif [[ "$OS" == opensuse ]]; then
     else
         exit
     fi
+elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then 
+    apt update
+    apt dist-upgrade -y
+    apt install ansible -y
 else
     if ! confirm "Unsupported distro detected, continue anyways?  y/n: "; then
         exit

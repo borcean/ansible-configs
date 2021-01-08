@@ -2,7 +2,7 @@
 My personal Ansible configuration
 
 ```
-sudo bash -c "$(curl -L ansible.borcean.xyz)"
+bash -c "$(curl -L ansible.borcean.xyz)"
 ```
 
 TODO:

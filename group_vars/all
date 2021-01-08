@@ -28,3 +28,7 @@ timers:
    pull:
       timer_boot: 10m
       timer_active: 1h
+
+automatic_updates: true
+
+sshd: true

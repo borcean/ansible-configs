@@ -6,7 +6,6 @@ BRANCH=main
 VAULT_FILE=/root/.ansible_vault_key
 INVENTORY="https://raw.githubusercontent.com/borcean/ansible-configs/main/hosts"
 
-
 confirm() {
     PROMPT="$1"
     while true; do 
@@ -86,6 +85,10 @@ elif [[ "$OS" == opensuse ]]; then
     else
         exit
     fi
+elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then 
+    apt update
+    apt dist-upgrade -y
+    apt install ansible -y
 else
     if ! confirm "Unsupported distro detected, continue anyways?  y/n: "; then
         exit

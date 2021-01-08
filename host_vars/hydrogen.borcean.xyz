@@ -12,3 +12,7 @@ timers:
    pull:
       timer_boot: 10s
       timer_active: 10m
+
+automatic_updates: false
+
+sshd: false
