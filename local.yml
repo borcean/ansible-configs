@@ -9,6 +9,12 @@
       changed_when: False
       when: ansible_distribution == "Fedora"
 
+    - name: pre-run | update package cache (debian, etc)
+      tags: always
+      apt: update_cache=yes
+      changed_when: False
+      when: ansible_distribution in ["Debian", "Ubuntu"]
+
 # run roles
 - hosts: all
   tags: base
@@ -37,6 +43,20 @@
     dnf:
       autoremove: yes
     when: ansible_distribution == "Fedora"
+
+  - name: cleanup package cache (debian, etc)
+    tags: always
+    apt:
+      autoclean: yes
+    changed_when: false
+    when: ansible_distribution in ["Debian", "Ubuntu"]
+
+  - name: autoremove orphan packages (debian, etc)
+    tags: always
+    apt:
+      autoremove: yes
+      purge: yes
+    when: ansible_distribution in ["Debian", "Ubuntu"]
 
   - name: send completion alert
     include_tasks: playbooks/send_completion_alert.yml
