@@ -4,7 +4,7 @@
 REPO="https://github.com/borcean/ansible-configs.git"
 BRANCH=dev
 VAULT_FILE=/root/.ansible_vault_key
-INVENTORY="https://raw.githubusercontent.com/borcean/ansible-configs/main/hosts"
+INVENTORY="https://raw.githubusercontent.com/borcean/ansible-configs/"$BRANCH"/hosts"
 
 confirm() {
     PROMPT="$1"
