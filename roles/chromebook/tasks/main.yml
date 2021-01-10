@@ -1,0 +1,7 @@
+- block:
+ 
+   - import_tasks: software/flathub.yml
+   - import_tasks: chromebook_setup.yml
+  
+  rescue:
+    - set_fact: task_failed=true

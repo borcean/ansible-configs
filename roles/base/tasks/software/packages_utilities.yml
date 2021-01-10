@@ -3,6 +3,7 @@
   package:
     state: latest
     name:
+      - at
       - curl
       - fish
       - git

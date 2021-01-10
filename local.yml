@@ -34,6 +34,12 @@
   roles:
     - thinkpad
 
+- hosts: chromebook
+  tags: chromebook
+  become: true
+  roles:
+    - chromebook
+
 # end of run cleanup and reporting
 - hosts: all
   become: true

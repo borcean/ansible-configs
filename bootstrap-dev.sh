@@ -86,6 +86,12 @@ elif [[ "$OS" == opensuse ]]; then
         exit
     fi
 elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then 
+    # Check if Debian Buster, if so use Ansible PPA
+    if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 10 ]]; then
+        echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu bionic main" >  /etc/apt/sources.list.d/ansible.list
+        apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+        echo -e "\nOK\n"
+    fi
     apt update
     apt dist-upgrade -y
     apt install ansible git -y

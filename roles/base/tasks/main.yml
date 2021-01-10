@@ -17,6 +17,7 @@
     when: 
       - ansible_distribution == "Fedora"
       - automatic_updates
+      
   - import_tasks: system_setup/openssh.yml
     when: sshd
 
