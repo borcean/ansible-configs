@@ -8,7 +8,9 @@
 
 ## desktop environment
   - include_tasks: desktop_environments/gnome/packages.yml
+    when: gnome
   - include_tasks: desktop_environments/gnome/peripherals.yml
+    when: gnome
 
 
   ## system setup

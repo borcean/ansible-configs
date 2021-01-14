@@ -1,5 +1,6 @@
 - name: gnome | peripherals | enable natural scrolling (mouse)
   tags: gnome,mouse,peripherals
+  become: true
   become_user: jeffrey
   dconf:
     key: "/org/gnome/desktop/peripherals/mouse/natural-scroll"
@@ -7,6 +8,7 @@
 
 - name: gnome | peripherals | enable natural scrolling (touchpad)
   tags: gnome,mouse,peripherals
+  become: true
   become_user: jeffrey
   dconf:
     key: "/org/gnome/desktop/peripherals/touchpad/natural-scroll"
@@ -67,5 +69,3 @@
   dconf:
     key: "/org/gnome/settings-daemon/plugins/color/night-light-enabled"
     value: "true"
-
-
