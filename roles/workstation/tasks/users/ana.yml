@@ -1,12 +1,3 @@
-- name: users | ana | check if user exists
-  getent:
-    database: passwd
-    key: ana
-    fail_key: False
-- debug: var=getent_password
-
-
-
 - name: users | ana | copy profile image
   tags: dotfiles,dotfiles-ana
   copy:
@@ -16,6 +7,30 @@
     group: root
     mode: 0644
 
+- name: users | ana | check if user has logged in before
+  tags: users,ana
+  stat: 
+    path: /var/lib/AccountsService/users/ana
+  register: p
+
+- name: users | ana | set profile image 
+  tags: dotfiles,dotfiles-ana
+  lineinfile:
+    path: /var/lib/AccountsService/users/ana
+    regexp: '^Icon='
+    line: Icon=/var/lib/AccountsService/icons/ana
+  when: p.stat.isreg is defined
+
+- name: users | ana | create config/autostart directory
+  tags: dotfiles,ana,users
+  file:
+    path: /home/ana/.config/autostart
+    state: directory
+    owner: ana
+    group: ana
+    mode: 0755
+  when: p.stat.isreg is defined
+
 - name: users | ana | enable chrome autostart
   tags: users,ana,google-chrome
   file:
@@ -24,5 +39,30 @@
     owner: ana
     group: ana
     state: link
-  # when: signal is defined and signal == true
+  when: p.stat.isreg is defined 
 
+# GNOME config
+- name: users | ana | enable natural scrolling (mouse)
+  tags: gnome,mouse,peripherals
+  become: true
+  become_user: ana
+  dconf:
+    key: "/org/gnome/desktop/peripherals/mouse/natural-scroll"
+    value: "true"
+
+- name: users | ana | read favorite apps
+  become_user: ana
+  dconf:
+    key: "/org/gnome/shell/favorite-apps"
+    state: read
+  register: favorite_apps
+
+- name: users | ana | set favorite apps
+  tags: gnome,mouse,peripherals
+  become_user: ana
+  dconf:
+    key: "/org/gnome/shell/favorite-apps"
+    value: "['google-chrome.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']"
+  when: 
+    - ansible_distribution == "Fedora"
+    - not favorite_apps.value

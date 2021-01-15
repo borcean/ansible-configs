@@ -3,29 +3,29 @@
   tags: always
 
 - block:
-  ## User configs
-  - import_tasks: users/jeffrey.yml
-
-## desktop environment
-  - include_tasks: desktop_environments/gnome/packages.yml
-    when: gnome
-  - include_tasks: desktop_environments/gnome/peripherals.yml
-    when: gnome
-
-
-  ## system setup
-  # - import_tasks: system_setup/tweaks.yml
-
   ## enable repositories
   - import_tasks: software/repositories.yml
   - import_tasks: software/flathub.yml
-
 
   ## install software
   - import_tasks: software/google_chrome.yml
   - import_tasks: software/packages.yml
   - import_tasks: software/packages_flatpak.yml
   - import_tasks: software/vscode.yml
+
+  ## User configs
+  - import_tasks: users/ana.yml
+    when: user_ana
+  - import_tasks: users/nelu.yml
+    when: user_nelu
+  - import_tasks: users/jeffrey.yml
+
+  ## desktop environment
+  - include_tasks: desktop_environments/gnome/packages.yml
+    when: gnome
+  - include_tasks: desktop_environments/gnome/peripherals.yml
+    when: gnome
+
 
   rescue:
     - set_fact: task_failed=true

@@ -90,7 +90,6 @@ elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then
     if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 10 ]]; then
         echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu bionic main" >  /etc/apt/sources.list.d/ansible.list
         apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
-        echo -e "\nOK\n"
     fi
     apt update
     apt dist-upgrade -y
@@ -107,6 +106,7 @@ if [[ "$OS" == debian ]] && [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz
 fi
 
 # Ansible pull command
+echo -e "\n"
 ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
 
 # Offer restart after ansible pull finished

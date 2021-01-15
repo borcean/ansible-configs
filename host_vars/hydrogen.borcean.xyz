@@ -10,3 +10,7 @@ timers:
    pull:
       timer_boot: 10s
       timer_active: 10m
+
+user_ana: true
+
+user_nelu: true

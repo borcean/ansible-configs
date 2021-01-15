@@ -36,3 +36,7 @@ timers:
 automatic_updates: true
 
 sshd: true
+
+user_ana: false
+
+user_nelu: false

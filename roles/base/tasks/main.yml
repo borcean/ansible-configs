@@ -6,14 +6,18 @@
   tags: always
 
 - block:
- # Set up the ansible environment
+  # Set up the ansible environment
   - import_tasks: ansible_setup.yml
 
   # install software
   - import_tasks: software/packages_utilities.yml
 
-  # Make sure users exist on the system
+  # Basic user configuration
+  - import_tasks: users/ana.yml
+    when: user_ana
   - import_tasks: users/jeffrey.yml
+  - import_tasks: users/nelu.yml
+    when: user_nelu
 
   # Perform remaining tasks:
   - import_tasks: system_setup/automatic_updates.yml

@@ -4,7 +4,7 @@
 REPO="https://github.com/borcean/ansible-configs.git"
 BRANCH=main
 VAULT_FILE=/root/.ansible_vault_key
-INVENTORY="https://raw.githubusercontent.com/borcean/ansible-configs/main/hosts"
+INVENTORY="https://raw.githubusercontent.com/borcean/ansible-configs/"$BRANCH"/hosts"
 
 confirm() {
     PROMPT="$1"
@@ -22,7 +22,7 @@ check_hostname () {
 
     HOSTNAME="$(hostnamectl --static)"
 
-    if [ "$(curl -sL "$INVENTORY" | grep -m 1 "$HOSTNAME")" == "$HOSTNAME" ]; then
+    if [ "$(wget -qO- "$INVENTORY" | grep -m 1 "$HOSTNAME")" == "$HOSTNAME" ]; then
         echo -e "Host "$HOSTNAME" found in inventory."
     else 
         echo -e "Host "$HOSTNAME" not found in inventory."
@@ -86,19 +86,30 @@ elif [[ "$OS" == opensuse ]]; then
         exit
     fi
 elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then 
+    # Check if Debian Buster, if so use Ansible PPA
+    if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 10 ]]; then
+        echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu bionic main" >  /etc/apt/sources.list.d/ansible.list
+        apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+    fi
     apt update
     apt dist-upgrade -y
-    apt install ansible -y
+    apt install ansible git -y
 else
     if ! confirm "Unsupported distro detected, continue anyways?  y/n: "; then
         exit
     fi
 fi
 
+# Install SPICE agent if running Debian test VM
+if [[ "$OS" == debian ]] && [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
+    apt install spice-vdagent -y
+fi
+
 # Ansible pull command
+echo -e "\n"
 ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
 
 # Offer restart after ansible pull finished
 if confirm "Reboot system now?  y/n: "; then
-    reboot
+    systemctl reboot
 fi
