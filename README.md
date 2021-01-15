@@ -1,46 +1,21 @@
-# ansible
+# Ansilble Configs
 My personal Ansible configuration
 
+## Bootstrap new system
+```bash
+bash -c "$(wget -O- ansible.borcean.xyz)"
 ```
-bash -c "$(curl -L ansible.borcean.xyz)"
-```
 
-TODO:
+## Compatibility
 
-base:
-- [x] system_setup
-    - [x] ansible
-        - [x] ansible-pull systemd timer
-        - [x] ansible vault
-- [ ] User jeffrey
-    - [x] vault - private key
-    - [x] fish shell
-        - [x] set as default shell
-        - [x] Install Oh My Fish
-        - [x] Install fish theme bobthefish
-        - [x] omf update
+| Distro | Release |
+| --- | --- |
+| Debian | 11 (Bullseye)&dagger; |
+| Fedora | 33 |
+| Ubuntu | 20.10 (Groovy) |
 
-workstation:
-- [x] repositories
-    - [x] RPM Fusion
-    - [x] Google Chrome
-    - [x] VS Code
-- [x] packages
-    - [x] google-chrome-stable
-    - [x] code
-    - [x] vlc
-- [x] FlatPak
-    - [x] Flathub
-        - [x] Discord
-        - [x] Minecraft
-        - [x] Steam
+ &dagger; Debian will fail on initial provision upon first invocation of `dconf` module, subsequent runs initiated by `ansible-pull.service` will pass.
 
-thinkpad:
-- [x] tlp
-    - [x] repository tlp
-    - [x] install tlp akmod-acpi_call
-    - [x] configure charge thresholds
-- [x] configuration
-    - [x] bluetooth - ControllerMode = bredr
 
+##
 Based upon [Jay LaCroix's](https://github.com/LearnLinuxTV/personal_ansible_desktop_configs) set up.
