@@ -67,5 +67,3 @@
   dconf:
     key: "/org/gnome/settings-daemon/plugins/color/night-light-enabled"
     value: "true"
-
-

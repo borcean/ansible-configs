@@ -1,4 +1,4 @@
-- name: software | vscode | add repository
+- name: software | vscode | add repository (fedora)
   tags: vscode,repositories,software,workstation
   yum_repository:
     name: vscode
@@ -6,8 +6,31 @@
     baseurl: https://packages.microsoft.com/yumrepos/vscode
     gpgkey: https://packages.microsoft.com/keys/microsoft.asc
     gpgcheck: yes
-  when: ansible_distribution == 'Fedora'
+  when: ansible_os_family == "RedHat"
 
+- name: software | vscode | add repository key (debian)
+  tags: vscode,repositories,software,workstation
+  apt_key:
+    url: https://packages.microsoft.com/keys/microsoft.asc 
+    state: present
+    keyring: /etc/apt/trusted.gpg.d/packages.microsoft.gpg
+  when: ansible_os_family == "Debian"
+
+- name: software | vscode | add repository (debian)
+  tags: vscode,repositories,software,workstation
+  apt_repository:
+    repo: deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main
+    state: present
+    filename: vscode
+  register: vscode_repo
+  when: ansible_os_family == "Debian"
+
+- name: software | vscode | update sources (repo added or changed) (debian)
+  apt:
+    update_cache: yes
+  changed_when: False
+  when: vscode_repo.changed
+  
 - name: software | vscode | install package
   package:
     state: latest

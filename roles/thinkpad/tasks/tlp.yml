@@ -1,19 +1,24 @@
-- name: thinkpad | tlp | add tlp repository
+- name: thinkpad | tlp | add tlp repository (fedora)
   tags: thinkpad,repositories,tlp
   dnf:
     name: "https://repo.linrunner.de/fedora/tlp/repos/releases/tlp-release.fc{{ansible_distribution_major_version}}.noarch.rpm"    
     state: present
     disable_gpg_check: yes
-  when: ansible_distribution == 'Fedora'
+  when: ansible_distribution == "Fedora"
+
+- name: thinkpad | tlp | add tlp repository (ubuntu)
+  tags: thinkpad,repositories,tlp
+  apt_repository:
+    repo: ppa:linrunner/tlp
+  when: ansible_distribution == "Ubuntu" 
 
 - name: thinkpad | packages | install tlp
   tags: thinkpad,packages,tlp
   package:
     state: latest
     name: 
-      - akmod-acpi_call
+      - "{{ tlp_kmod_package }}"
       - tlp
-  when: ansible_distribution == 'Fedora'
 
 - name: system setup | scripts | copy tlp charge-thresholds
   tags: thinkpad,tlp

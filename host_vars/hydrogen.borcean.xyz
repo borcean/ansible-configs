@@ -1,0 +1,16 @@
+---
+# BASE
+# Ansible setup
+branch: dev
+
+timers:
+   refresh:
+      timer_boot: 1s
+      timer_active: 1h
+   pull:
+      timer_boot: 10s
+      timer_active: 10m
+
+user_ana: true
+
+user_nelu: true

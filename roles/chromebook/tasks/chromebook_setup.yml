@@ -1,0 +1,84 @@
+- name: chromebook | setup | install font packages
+  tags: packages,chromebook,fonts
+  package:
+    state: latest
+    name:
+    - fonts-cantarell
+    - fonts-dejavu
+
+- name: chromebook | setup | set font
+  tags: chromeook,setup,fonts
+  become_user: jeffrey
+  dconf:
+    key: "/org/gnome/desktop/interface/font-name"
+    value: "'Cantarell 11'"
+
+- name: chromebook | setup | set document font
+  tags: chromeook,setup,fonts
+  become_user: jeffrey
+  dconf:
+    key: "/org/gnome/desktop/interface/document-font-name"
+    value: "'Sans 11'"
+
+- name: chromebook | setup | set monospace font
+  tags: chromeook,setup,fonts
+  become_user: jeffrey
+  dconf:
+    key: "/org/gnome/desktop/interface/monospace-font-name"
+    value: "'Monospace 11'"
+
+- name: chromebook | setup | set text scaling factor
+  tags: chromeook,setup,fonts
+  become_user: jeffrey
+  dconf:
+    key: "/org/gnome/desktop/interface/text-scaling-factor"
+    value: "1.0"
+
+- name: chromebook | setup | set antialiasing mode
+  tags: chromeook,setup,fonts
+  become_user: jeffrey
+  dconf:
+    key: "/org/gnome/settings-daemon/plugins/xsettings/antialiasing"
+    value: "'grayscale'"
+
+- name: chromebook | setup | set font hinting
+  tags: chromeook,setup,fonts
+  become_user: jeffrey
+  dconf:
+    key: "/org/gnome/settings-daemon/plugins/xsettings/hinting"
+    value: "'slight'"
+
+- name: chromebook | setup | set icon theme
+  tags: chromeook,setup,theme
+  become_user: jeffrey
+  dconf:
+    key: "/org/gnome/desktop/interface/icon-theme"
+    value: "'Adwaita'"
+
+- name: chromebook | setup | set gtk theme
+  tags: chromeook,setup,theme
+  become_user: jeffrey
+  dconf:
+    key: "/org/gnome/desktop/interface/gtk-theme"
+    value: "'Adwaita'"
+
+- name: chromebook | setup | wm button prefrences
+  tags: chromeook,setup
+  become_user: jeffrey
+  dconf:
+    key: "/org/gnome/desktop/wm/preferences/button-layout"
+    value: "':close'"
+
+- name: chromebook | downloads | check cros downloads dir 
+  tags: chromebook,setup
+  stat: 
+    path: /mnt/chromeos/MyFiles/Downloads
+  register: p
+
+- name: chromebook | downloads | link cros downloads dir 
+  tags: chromebook,setup
+  file:
+    src: "{{ p.stat.path }}"
+    dest: /home/jeffrey/Downloads
+    state: link
+  when: p.stat.isdir is defined 

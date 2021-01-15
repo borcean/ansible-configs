@@ -1,8 +1,14 @@
-- name: gnome | packages | install gnome packages
+- name: gnome | packages | install gnome packages (all)
   tags: gnome,gnome-packages
   package:
     name:
       - gnome-tweaks
-      - gnome-backgrounds-extras
-      - gnome-extensions-app
       - seahorse
+
+- name: gnome | packages | install gnome packages (fedora)
+  tags: gnome,gnome-packages
+  package:
+    name:
+      - gnome-backgrounds-extras
+      - "{{ gnome_extensions_app_package }}"
+  when: ansible_distribution == "Fedora"

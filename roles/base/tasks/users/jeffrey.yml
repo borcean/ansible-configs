@@ -77,7 +77,7 @@
     path: '/home/jeffrey/.config/fish/functions/fish_prompt.fish'
   register: fishprompt
 
-- name: Clone oh-my-fish repo
+- name: users | jeffrey | clone oh-my-fish repo
   git:
     repo: 'https://github.com/oh-my-fish/oh-my-fish'
     dest: '/tmp/omf'

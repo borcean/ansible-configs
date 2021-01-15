@@ -26,5 +26,5 @@
   become: yes
   at:
     command: "systemctl start ansible-refresh.service"
-    count: 60
+    count: 15
     units: minutes

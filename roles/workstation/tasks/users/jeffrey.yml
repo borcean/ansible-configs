@@ -6,3 +6,10 @@
     owner: root
     group: root
     mode: 0644
+
+- name: users | jeffrey | set profile image
+  tags: dotfiles,dotfiles-jeffrey
+  lineinfile:
+    path: /var/lib/AccountsService/users/jeffrey
+    regexp: '^Icon='
+    line: Icon=/var/lib/AccountsService/icons/jeffrey

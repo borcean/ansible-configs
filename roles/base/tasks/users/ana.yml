@@ -1,0 +1,8 @@
+- name: users | ana | create user
+  tags: ana,users
+  user:
+    name: ana
+    state: present
+    comment: "Ana Borcean"
+    password: "{{ ana_passwd }}"
+    shell: /bin/bash

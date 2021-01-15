@@ -3,6 +3,9 @@
   package:
     state: latest
     name:
+      - at
+      - colordiff
+      - curl
       - fish
       - git
       - htop

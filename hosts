@@ -1,3 +1,5 @@
+[base]
+
 [workstation]
 xenon.borcean.xyz
 neon.borcean.xyz
@@ -6,3 +8,6 @@ hydrogen.borcean.xyz
 [thinkpad]
 neon.borcean.xyz
 hydrogen.borcean.xyz
+
+[chromebook]
+penguin

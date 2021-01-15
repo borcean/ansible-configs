@@ -7,13 +7,18 @@
       tags: always
       dnf: update_cache=yes
       changed_when: False
-      when: ansible_distribution == "Fedora"
+      when: ansible_os_family == "RedHat"
+
+    - name: pre-run | update package cache (debian, etc)
+      tags: always
+      apt: update_cache=yes
+      changed_when: False
+      when: ansible_os_family == "Debian"
 
 # run roles
 - hosts: all
   tags: base
   become: true
-  any_errors_fatal: true
   roles:
     - base
 
@@ -29,6 +34,12 @@
   roles:
     - thinkpad
 
+- hosts: chromebook
+  tags: chromebook
+  become: true
+  roles:
+    - chromebook
+
 # end of run cleanup and reporting
 - hosts: all
   become: true
@@ -37,7 +48,21 @@
     tags: always
     dnf:
       autoremove: yes
-    when: ansible_distribution == "Fedora"
+    when: ansible_os_family == "RedHat"
+
+  - name: cleanup package cache (debian, etc)
+    tags: always
+    apt:
+      autoclean: yes
+    changed_when: false
+    when: ansible_os_family == "Debian"
+
+  - name: autoremove orphan packages (debian, etc)
+    tags: always
+    apt:
+      autoremove: yes
+      purge: yes
+    when: ansible_os_family == "Debian"
 
   - name: send completion alert
     include_tasks: playbooks/send_completion_alert.yml
