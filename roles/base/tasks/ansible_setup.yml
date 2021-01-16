@@ -1,14 +1,14 @@
-- name: ansible setup | ensure ansible is the latest version
+- name: ansible setup | ensure ansible is installed
   tags: ansible,ansible-setup
   package:
     name: ansible
-    state: latest
+    state: present
 
 - name: ansible setup | install required packages
   tags: ansible,ansible-setup,packages
   package:
     name: "{{ python_psutil_package }}"
-    state: latest
+    state: present
 
 - name: ansible setup | copy ansible_vault_key
   tags: ansible,ansible-setup,ansible-vault

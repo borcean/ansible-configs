@@ -2,7 +2,7 @@
   tags: openssh,ssh,system,settings
   package:
     name: "{{ openssh_package }}"
-    state: latest
+    state: present
   notify: restart_sshd
 
 - name: system setup | openssh | enable daemon

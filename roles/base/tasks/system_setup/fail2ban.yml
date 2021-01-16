@@ -2,7 +2,7 @@
   tags: fail2ban,system,settings
   package:
     name: fail2ban
-    state: latest
+    state: present
 
 - name: system setup | fail2ban | enable daemon
   tags: fail2ban,system,settings

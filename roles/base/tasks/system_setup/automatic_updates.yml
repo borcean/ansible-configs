@@ -2,7 +2,7 @@
   tags: automaticupdates,system,settings
   package:
     name: "{{ automatic_updates_package }}"
-    state: latest
+    state: present
   when: automatic_updates_package is defined
 
 - name: system setup | automatic updates | Enable a timer for automatic updates

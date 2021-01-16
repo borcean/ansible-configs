@@ -22,7 +22,7 @@
   # Perform remaining tasks:
   - import_tasks: system_setup/automatic_updates.yml
     when:  automatic_updates
-      
+
   - import_tasks: system_setup/openssh.yml
     when: sshd
 

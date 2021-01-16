@@ -18,19 +18,13 @@
 - name: software | google-chrome | add repository (debian)
   tags: google-chrome,repositories,software,workstation
   apt_repository:
-    repo: deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main 
+    repo: deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main
     state: present
     filename: google-chrome
-  register: chrome_repo
+  notify: refresh_apt_cache
   when: ansible_os_family == "Debian"
-
-- name: software | google-chrome | update sources (repo added or changed) (debian)
-  apt:
-    update_cache: yes
-  changed_when: False
-  when: chrome_repo.changed
 
 - name: software | google-chrome | install package
   package:
-    state: latest
+    state: present
     name: google-chrome-stable

@@ -81,6 +81,7 @@
   git:
     repo: 'https://github.com/oh-my-fish/oh-my-fish'
     dest: '/tmp/omf'
+    version: master
     clone: yes
   when: not omf.stat.exists
 

@@ -9,11 +9,11 @@
 
 - name: users | ana | check if user has logged in before
   tags: users,ana
-  stat: 
+  stat:
     path: /var/lib/AccountsService/users/ana
   register: p
 
-- name: users | ana | set profile image 
+- name: users | ana | set profile image
   tags: dotfiles,dotfiles-ana
   lineinfile:
     path: /var/lib/AccountsService/users/ana
@@ -39,7 +39,7 @@
     owner: ana
     group: ana
     state: link
-  when: p.stat.isreg is defined 
+  when: p.stat.isreg is defined
 
 # GNOME config
 - name: users | ana | enable natural scrolling (mouse)
@@ -63,6 +63,6 @@
   dconf:
     key: "/org/gnome/shell/favorite-apps"
     value: "['google-chrome.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']"
-  when: 
+  when:
     - ansible_distribution == "Fedora"
     - not favorite_apps.value
