@@ -1,0 +1,8 @@
+# automatic_updates_package:
+# automatic_updates_timer:
+lm_sensors_package: sensors
+openssh_package: openssh
+openssh_service: sshd
+powerline_fonts_package: powerline-fonts
+python_psutil_package: python-psutil
+vim_package: vim

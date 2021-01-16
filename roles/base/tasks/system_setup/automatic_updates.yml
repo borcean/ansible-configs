@@ -3,10 +3,12 @@
   package:
     name: "{{ automatic_updates_package }}"
     state: latest
+  when: automatic_updates_package is defined
 
-- name: Enable a timer for automatic updates
+- name: system setup | automatic updates | Enable a timer for automatic updates
   tags: automaticupdates,system,settings
   systemd:
     name: "{{ automatic_updates_timer }}"
     state: started
     enabled: yes
+  when: automatic_updates_timer is defined

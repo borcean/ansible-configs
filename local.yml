@@ -15,6 +15,12 @@
       changed_when: False
       when: ansible_os_family == "Debian"
 
+    - name: pre-run | update package cache (suse)
+      tags: always
+      zypper: update_cache=yes
+      changed_when: False
+      when: ansible_os_family == "Suse"
+
 # run roles
 - hosts: all
   tags: base
@@ -44,35 +50,35 @@
 - hosts: all
   become: true
   tasks:
-  - name: autoremove orphan packages (fedora)
-    tags: always
-    dnf:
-      autoremove: yes
-    when: ansible_os_family == "RedHat"
+    - name: autoremove orphan packages (fedora)
+      tags: always
+      dnf:
+        autoremove: yes
+      when: ansible_os_family == "RedHat"
 
-  - name: cleanup package cache (debian, etc)
-    tags: always
-    apt:
-      autoclean: yes
-    changed_when: false
-    when: ansible_os_family == "Debian"
+    - name: cleanup package cache (debian, etc)
+      tags: always
+      apt:
+        autoclean: yes
+      changed_when: false
+      when: ansible_os_family == "Debian"
 
-  - name: autoremove orphan packages (debian, etc)
-    tags: always
-    apt:
-      autoremove: yes
-      purge: yes
-    when: ansible_os_family == "Debian"
+    - name: autoremove orphan packages (debian, etc)
+      tags: always
+      apt:
+        autoremove: yes
+        purge: yes
+      when: ansible_os_family == "Debian"
 
-  - name: send completion alert
-    include_tasks: playbooks/send_completion_alert.yml
-    tags: always
-    when:
-      - task_failed is not defined
+    - name: send completion alert
+      include_tasks: playbooks/send_completion_alert.yml
+      tags: always
+      when:
+        - task_failed is not defined
 
-  - name: send failure alert
-    include_tasks: playbooks/send_failure_alert.yml
-    tags: always
-    when:
-      - task_failed is defined
-      - task_failed == true
+    - name: send failure alert
+      include_tasks: playbooks/send_failure_alert.yml
+      tags: always
+      when:
+        - task_failed is defined
+        - task_failed == true

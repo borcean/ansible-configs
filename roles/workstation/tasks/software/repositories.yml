@@ -13,3 +13,31 @@
     state: present
     disable_gpg_check: yes
   when: ansible_distribution == "Fedora"
+
+- name: system setup | repositories | add packman repository (opensuse)
+  tags: packman,repositories
+  zypper_repository:
+    repo: 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/'
+    auto_import_keys: yes
+    priority: 90
+    autorefresh: true
+  register: packman_repo
+  when: ansible_distribution == "openSUSE Tumbleweed"
+
+# - name: system setup | repositories | refresh packman (repo added or changed) (opensuse)
+#   tags: packman,repositories
+#   zypper_repository:
+#     repo: packman
+#     runrefresh: yes
+#   changed_when: False
+#   when: packman_repo.changed
+
+- name: system setup | repositories | switch system packages to packman (repo added or changed) (opensuse)
+  tags: packman,repositories
+  zypper:
+    name: '*'
+    state: dist-upgrade
+    allow_vendor_change: true
+    update_cache: yes
+    extra_args: '--from packman'
+  when: packman_repo.changed
