@@ -37,6 +37,8 @@ automatic_updates: true
 
 sshd: true
 
+fail2ban: false
+
 user_ana: false
 
 user_nelu: false

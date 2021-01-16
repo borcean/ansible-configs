@@ -3,3 +3,8 @@
   service:
     name: "{{ openssh_service }}"
     state: restarted
+
+- name: restart_fail2ban
+  service:
+    name: fail2ban
+    state: restarted

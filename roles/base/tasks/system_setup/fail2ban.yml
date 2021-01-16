@@ -1,0 +1,33 @@
+- name: system setup | fail2ban | install or update daemon package
+  tags: fail2ban,system,settings
+  package:
+    name: fail2ban
+    state: latest
+
+- name: system setup | fail2ban | enable daemon
+  tags: fail2ban,system,settings
+  service:
+    name: fail2ban
+    enabled: yes
+    state: started
+
+- name: system setup | fail2ban | generate jail.local file from template
+  tags: fail2ban,system,settings
+  template:
+    src: fail2ban/jail_local.j2
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_sshd
+
+- name: system setup | fail2ban | generate sshd.local file from template
+  tags: fail2ban,sshd,system,settings
+  template:
+    src: fail2ban/sshd_local.j2
+    dest: /etc/fail2ban/sshd.local
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_sshd
+  when: sshd

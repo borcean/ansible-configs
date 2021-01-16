@@ -26,5 +26,8 @@
   - import_tasks: system_setup/openssh.yml
     when: sshd
 
+  - import_tasks: system_setup/fail2ban.yml
+    when: fail2ban
+
   rescue:
     - set_fact: task_failed=true
