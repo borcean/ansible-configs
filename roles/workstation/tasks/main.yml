@@ -1,6 +1,6 @@
-# Load distro-specific variables
-- include_vars: "{{ ansible_distribution }}.yml"
+- name: Load distro-specific variables
   tags: always
+  include_vars: "{{ ansible_distribution }}.yml"
 
 - block:
   ## enable repositories
@@ -28,4 +28,5 @@
 
 
   rescue:
-    - set_fact: task_failed=true
+  - name: Set fact if task failed
+    set_fact: task_failed=true
