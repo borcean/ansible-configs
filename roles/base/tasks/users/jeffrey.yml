@@ -16,24 +16,31 @@
     key: "{{ item }}"
   with_file:
     - users/jeffrey/ssh/id_rsa.pub
+    - users/jeffrey/ssh/id_ed25519.pub
 
 - name: users | jeffrey | add public key
   tags: dotfiles,jeffrey,ssh,ssh-keys,users
   copy:
-    src: users/jeffrey/ssh/id_rsa.pub
-    dest: /home/jeffrey/.ssh/id_rsa.pub
+    src: users/jeffrey/ssh/{{ item.key }}.pub
+    dest: /home/jeffrey/.ssh/{{ item.key }}.pub
     owner: jeffrey
     group: "{{ user_group_name | default('jeffrey') }}"
     mode: 0644
+  with_items:
+    - { key: 'id_rsa' }
+    - { key: 'id_ed25519' }
 
 - name: users | jeffrey | add private key
   tags: dotfiles,jeffrey,ssh,ssh-keys,users,ansible-vault
   copy:
-    src: users/jeffrey/ssh/id_rsa
-    dest: /home/jeffrey/.ssh/id_rsa
+    src: users/jeffrey/ssh/{{ item.key }}
+    dest: /home/jeffrey/.ssh/{{ item.key }}
     owner: jeffrey
     group: "{{ user_group_name | default('jeffrey') }}"
     mode: 0600
+  with_items:
+  - { key: 'id_rsa' }
+  - { key: 'id_ed25519' }
 
 - name: users | jeffrey | create config directories
   tags: dotfiles,fish,jeffrey,users

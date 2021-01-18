@@ -1,9 +1,10 @@
 [base]
 
 [workstation]
-xenon.borcean.xyz
-neon.borcean.xyz
 hydrogen.borcean.xyz
+mbp.borcean.xyz
+neon.borcean.xyz
+xenon.borcean.xyz
 
 [thinkpad]
 neon.borcean.xyz
