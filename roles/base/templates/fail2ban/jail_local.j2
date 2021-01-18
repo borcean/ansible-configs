@@ -1,0 +1,9 @@
+[DEFAULT]
+# "bantime" is the number of seconds that a host is banned.
+bantime  = {{ fail2ban_bantime | default("7d") }}
+
+# A host is banned if it has generated "maxretry" during the last "findtime"
+findtime  =  {{ fail2ban_findtime | default("24h") }}
+
+# "maxretry" is the number of failures before a host get banned.
+maxretry =  {{ fail2ban_maxretry | default("2") }}

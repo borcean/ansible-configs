@@ -2,8 +2,11 @@
 - name: thinkpad | bluetooth | set controller mode bredr
   tags: thinkpad,configuration,bluetooth
   ini_file:
-    dest=/etc/bluetooth/main.conf
-    section=General
-    option=ControllerMode
-    value=bredr
-    backup=no
+    dest: /etc/bluetooth/main.conf
+    section: General
+    option: ControllerMode
+    value: bredr
+    backup: no
+    owner: root
+    group: root
+    mode: 0644

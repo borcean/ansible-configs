@@ -1,9 +1,9 @@
-# Load distro-specific variables
-- include_vars: "{{ item }}"
+- name: Load distro-specific variables
+  tags: always
+  include_vars: "{{ item }}"
   with_first_found:
     - "{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml"
     - "{{ ansible_distribution }}.yml"
-  tags: always
 
 - block:
   # Set up the ansible environment
@@ -22,9 +22,13 @@
   # Perform remaining tasks:
   - import_tasks: system_setup/automatic_updates.yml
     when:  automatic_updates
-      
+
   - import_tasks: system_setup/openssh.yml
     when: sshd
 
+  - import_tasks: system_setup/fail2ban.yml
+    when: fail2ban
+
   rescue:
-    - set_fact: task_failed=true
+  - name: Set fact if task failed
+    set_fact: task_failed=true

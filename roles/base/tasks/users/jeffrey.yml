@@ -4,7 +4,7 @@
     path: "{{ item.dir }}"
     state: directory
     owner: jeffrey
-    group: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
     mode: 0700
   with_items:
     - { dir: '/home/jeffrey/.ssh' }
@@ -16,24 +16,31 @@
     key: "{{ item }}"
   with_file:
     - users/jeffrey/ssh/id_rsa.pub
+    - users/jeffrey/ssh/id_ed25519.pub
 
 - name: users | jeffrey | add public key
   tags: dotfiles,jeffrey,ssh,ssh-keys,users
   copy:
-    src: users/jeffrey/ssh/id_rsa.pub
-    dest: /home/jeffrey/.ssh/id_rsa.pub
+    src: users/jeffrey/ssh/{{ item.key }}.pub
+    dest: /home/jeffrey/.ssh/{{ item.key }}.pub
     owner: jeffrey
-    group: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
     mode: 0644
+  with_items:
+    - { key: 'id_rsa' }
+    - { key: 'id_ed25519' }
 
 - name: users | jeffrey | add private key
   tags: dotfiles,jeffrey,ssh,ssh-keys,users,ansible-vault
   copy:
-    src: users/jeffrey/ssh/id_rsa
-    dest: /home/jeffrey/.ssh/id_rsa
+    src: users/jeffrey/ssh/{{ item.key }}
+    dest: /home/jeffrey/.ssh/{{ item.key }}
     owner: jeffrey
-    group: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
     mode: 0600
+  with_items:
+  - { key: 'id_rsa' }
+  - { key: 'id_ed25519' }
 
 - name: users | jeffrey | create config directories
   tags: dotfiles,fish,jeffrey,users
@@ -41,7 +48,7 @@
     path: /home/jeffrey/{{ item.dir }}
     state: directory
     owner: jeffrey
-    group: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
     mode: 0700
   with_items:
     - { dir: '.config' }
@@ -53,7 +60,7 @@
     src: users/jeffrey/{{ item.src }}
     dest: /home/jeffrey/{{ item.dest }}
     owner: jeffrey
-    group: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
     mode: 0600
   with_items:
     - { src: 'fish/configfish', dest: '.config/fish/config.fish' }
@@ -81,6 +88,7 @@
   git:
     repo: 'https://github.com/oh-my-fish/oh-my-fish'
     dest: '/tmp/omf'
+    version: master
     clone: yes
   when: not omf.stat.exists
 
@@ -100,4 +108,5 @@
   become: true
   become_user: jeffrey
   command: fish -c 'omf update'
+  changed_when: false
   when: omf.stat.exists

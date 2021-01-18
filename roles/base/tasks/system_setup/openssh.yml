@@ -1,8 +1,8 @@
-- name: system setup | openssh | install or update daemon package
+- name: system setup | openssh | install daemon package
   tags: openssh,ssh,system,settings
   package:
     name: "{{ openssh_package }}"
-    state: latest
+    state: present
   notify: restart_sshd
 
 - name: system setup | openssh | enable daemon
@@ -12,7 +12,23 @@
     enabled: yes
     state: started
 
-- name: system setup | openssh | copy custom sshd_config
+- name: system setup | openssh | check if sshd_config.d exists
+  tags: openssh,ssh,system,settings
+  stat:
+    path: /etc/ssh/sshd_config.d
+  register: p
+
+- name: system setup | openssh | modify sshd_config disable password auth
+  tags: openssh,ssh,system,settings
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^(# *)?PasswordAuthentication.*yes'
+    line: PasswordAuthentication no
+    validate: sshd -t -f %s
+  notify: restart_sshd
+  when: p.stat.isdir is not defined
+
+- name: system setup | openssh | copy borcean.conf to config.d
   tags: openssh,ssh,system,settings
   copy:
     src: system_setup/sshd_config_borcean
@@ -21,3 +37,4 @@
     group: root
     mode: 0644
   notify: restart_sshd
+  when: p.stat.isdir is defined and p.stat.isdir

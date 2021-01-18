@@ -11,6 +11,8 @@ timers:
       timer_boot: 10s
       timer_active: 10m
 
+fail2ban: true
+
 user_ana: true
 
 user_nelu: true

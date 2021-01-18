@@ -1,8 +1,9 @@
 - block:
- 
+
    - import_tasks: chromebook_setup.yml
    - import_tasks: software/flathub.yml
    - import_tasks: software/vscode.yml
-  
+
   rescue:
-    - set_fact: task_failed=true
+  - name: Set fact if task failed
+    set_fact: task_failed=true

@@ -1,7 +1,7 @@
 - name: chromebook | setup | install font packages
   tags: packages,chromebook,fonts
   package:
-    state: latest
+    state: present
     name:
     - fonts-cantarell
     - fonts-dejavu
@@ -69,16 +69,16 @@
     key: "/org/gnome/desktop/wm/preferences/button-layout"
     value: "':close'"
 
-- name: chromebook | downloads | check cros downloads dir 
+- name: chromebook | downloads | check cros downloads dir
   tags: chromebook,setup
-  stat: 
+  stat:
     path: /mnt/chromeos/MyFiles/Downloads
   register: p
 
-- name: chromebook | downloads | link cros downloads dir 
+- name: chromebook | downloads | link cros downloads dir
   tags: chromebook,setup
   file:
     src: "{{ p.stat.path }}"
     dest: /home/jeffrey/Downloads
     state: link
-  when: p.stat.isdir is defined 
+  when: p.stat.isdir is defined

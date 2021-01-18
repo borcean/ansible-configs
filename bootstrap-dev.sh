@@ -8,7 +8,7 @@ INVENTORY="https://raw.githubusercontent.com/borcean/ansible-configs/"$BRANCH"/h
 
 confirm() {
     PROMPT="$1"
-    while true; do 
+    while true; do
         read -r -p "$PROMPT" CHOICE
             if [[ $CHOICE =~ ^[Yy]$ ]]; then
                 return 0
@@ -24,12 +24,12 @@ check_hostname () {
 
     if [ "$(wget -qO- "$INVENTORY" | grep -m 1 "$HOSTNAME")" == "$HOSTNAME" ]; then
         echo -e "Host "$HOSTNAME" found in inventory."
-    else 
+    else
         echo -e "Host "$HOSTNAME" not found in inventory."
         if confirm "Change hostname now?  y/n: "; then
             read -p "New hostname: " NEW_HOSTNAME
             hostnamectl set-hostname "$NEW_HOSTNAME"
-            check_hostname 
+            check_hostname
         fi
     fi
 }
@@ -53,7 +53,7 @@ set_vault_password () {
       read -s -p "Confirm password: " PASS2
       printf '\n'
    }
-   
+
    get_vault_password
 
    if [ "$PASS1" == "$PASS2" ]; then
@@ -68,24 +68,20 @@ set_vault_password () {
 
 if [ -f "$VAULT_FILE" ]; then
     echo -e "\nAnsible vault key exists at $VAULT_FILE\n"
-else 
+else
    set_vault_password
 fi
 
 # Detect if supported distro
-OS=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }')
+OS=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }' | sed 's/"//g')
 
 if [[ "$OS" == fedora ]]; then
-   dnf update -y
-   dnf install ansible -y
-elif [[ "$OS" == opensuse ]]; then
-    if confirm "OpenSUSE is not fully supported, continue anyways?  y/n: "; then
-        zypper dup -y
-        zypper install ansible -y
-    else
-        exit
-    fi
-elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then 
+    dnf update -y
+    dnf install ansible -y
+elif [[ "$OS" == opensuse-tumbleweed ]]; then
+    zypper --non-interactive dup
+    zypper --non-interactive install ansible git-core
+elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then
     # Check if Debian Buster, if so use Ansible PPA
     if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 10 ]]; then
         echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu bionic main" >  /etc/apt/sources.list.d/ansible.list

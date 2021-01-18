@@ -16,8 +16,7 @@ telegram_token: !vault |
           64623535326437386238303338616233363836393365626633633334663633393065623731316433
           6562336539373362313336613864326635633634353837333632
 
-# BASE
-# Ansible setup
+ansible_python_interpreter: "/usr/bin/python3"
 
 repo: https://github.com/borcean/ansible-configs.git
 
@@ -36,6 +35,8 @@ timers:
 automatic_updates: true
 
 sshd: true
+
+fail2ban: false
 
 user_ana: false
 

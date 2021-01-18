@@ -9,11 +9,11 @@
 
 - name: users | nelu | check if user has logged in once
   tags: users,nelu
-  stat: 
+  stat:
     path: /var/lib/AccountsService/users/nelu
   register: p
 
-- name: users | nelu | set profile image 
+- name: users | nelu | set profile image
   tags: dotfiles,dotfiles-nelu
   lineinfile:
     path: /var/lib/AccountsService/users/nelu
@@ -27,7 +27,7 @@
     path: /home/nelu/.config/autostart
     state: directory
     owner: nelu
-    group: nelu
+    group: "{{ user_group_name | default('nelu') }}"
     mode: 0755
   when: p.stat.isreg is defined
 
@@ -37,9 +37,9 @@
     src: /usr/share/applications/google-chrome.desktop
     dest: /home/nelu/.config/autostart/google-chrome.desktop
     owner: nelu
-    group: nelu
+    group: "{{ user_group_name | default('nelu') }}"
     state: link
-  when: p.stat.isreg is defined 
+  when: p.stat.isreg is defined
 
 # GNOME config
 - name: users | nelu | enable natural scrolling (mouse)
@@ -63,6 +63,6 @@
   dconf:
     key: "/org/gnome/shell/favorite-apps"
     value: "['google-chrome.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']"
-  when: 
+  when:
     - ansible_distribution == "Fedora"
     - not favorite_apps.value
