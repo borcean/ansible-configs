@@ -27,7 +27,7 @@
     path: /home/ana/.config/autostart
     state: directory
     owner: ana
-    group: ana
+    group: "{{ user_group_name | default('ana') }}"
     mode: 0755
   when: p.stat.isreg is defined
 
@@ -37,7 +37,7 @@
     src: /usr/share/applications/google-chrome.desktop
     dest: /home/ana/.config/autostart/google-chrome.desktop
     owner: ana
-    group: ana
+    group: "{{ user_group_name | default('ana') }}"
     state: link
   when: p.stat.isreg is defined
 

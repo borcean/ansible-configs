@@ -73,18 +73,14 @@ else
 fi
 
 # Detect if supported distro
-OS=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }')
+OS=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }' | sed 's/"//g')
 
 if [[ "$OS" == fedora ]]; then
-   dnf update -y
-   dnf install ansible -y
-elif [[ "$OS" == opensuse ]]; then
-    if confirm "OpenSUSE is not fully supported, continue anyways?  y/n: "; then
-        zypper dup -y
-        zypper install ansible -y
-    else
-        exit
-    fi
+    dnf update -y
+    dnf install ansible -y
+elif [[ "$OS" == opensuse-tumbleweed ]]; then
+    zypper --non-interactive dup
+    zypper --non-interactive install ansible git-core
 elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then
     # Check if Debian Buster, if so use Ansible PPA
     if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 10 ]]; then

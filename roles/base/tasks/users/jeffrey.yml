@@ -4,7 +4,7 @@
     path: "{{ item.dir }}"
     state: directory
     owner: jeffrey
-    group: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
     mode: 0700
   with_items:
     - { dir: '/home/jeffrey/.ssh' }
@@ -23,7 +23,7 @@
     src: users/jeffrey/ssh/id_rsa.pub
     dest: /home/jeffrey/.ssh/id_rsa.pub
     owner: jeffrey
-    group: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
     mode: 0644
 
 - name: users | jeffrey | add private key
@@ -32,7 +32,7 @@
     src: users/jeffrey/ssh/id_rsa
     dest: /home/jeffrey/.ssh/id_rsa
     owner: jeffrey
-    group: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
     mode: 0600
 
 - name: users | jeffrey | create config directories
@@ -41,7 +41,7 @@
     path: /home/jeffrey/{{ item.dir }}
     state: directory
     owner: jeffrey
-    group: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
     mode: 0700
   with_items:
     - { dir: '.config' }
@@ -53,7 +53,7 @@
     src: users/jeffrey/{{ item.src }}
     dest: /home/jeffrey/{{ item.dest }}
     owner: jeffrey
-    group: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
     mode: 0600
   with_items:
     - { src: 'fish/configfish', dest: '.config/fish/config.fish' }
@@ -101,4 +101,5 @@
   become: true
   become_user: jeffrey
   command: fish -c 'omf update'
+  changed_when: false
   when: omf.stat.exists

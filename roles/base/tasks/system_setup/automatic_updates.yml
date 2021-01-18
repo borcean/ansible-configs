@@ -1,4 +1,4 @@
-- name: system setup | automatic updates | install or update automatic updates package
+- name: system setup | automatic updates | install automatic updates package
   tags: automaticupdates,system,settings
   package:
     name: "{{ automatic_updates_package }}"

@@ -9,7 +9,7 @@
       changed_when: False
       when: ansible_os_family == "RedHat"
 
-    - name: pre-run | update package cache (debian, etc)
+    - name: pre-run | update package cache (debian)
       tags: always
       apt: update_cache=yes
       changed_when: False
@@ -17,7 +17,9 @@
 
     - name: pre-run | update package cache (suse)
       tags: always
-      zypper: update_cache=yes
+      zypper_repository:
+        repo: '*'
+        runrefresh: yes
       changed_when: False
       when: ansible_os_family == "Suse"
 
@@ -56,7 +58,7 @@
         autoremove: yes
       when: ansible_os_family == "RedHat"
 
-    - name: cleanup package cache (debian, etc)
+    - name: cleanup package cache (debian)
       tags: always
       apt:
         autoclean: yes

@@ -17,6 +17,7 @@
 - name: system setup | repositories | add packman repository (opensuse)
   tags: packman,repositories
   zypper_repository:
+    name: packman
     repo: 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/'
     auto_import_keys: yes
     priority: 90

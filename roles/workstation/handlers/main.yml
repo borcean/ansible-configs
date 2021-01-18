@@ -4,8 +4,9 @@
     update_cache: yes
 
 - name: refresh_zypper_cache
-  zypper:
-    update_cache: yes
+  zypper_repository:
+    repo: '*'
+    runrefresh: yes
 
 - name: packman_vendor_change
   tags: packman,repositories,opensuse

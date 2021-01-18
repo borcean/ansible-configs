@@ -12,6 +12,7 @@
   tags: google-chrome,repositories,software,workstation
   apt_key:
     url: https://dl-ssl.google.com/linux/linux_signing_key.pub
+    id: 4CCA1EAF950CEE4AB83976DCA040830F7FAC5991
     state: present
   when: ansible_os_family == "Debian"
 
@@ -23,6 +24,24 @@
     filename: google-chrome
   notify: refresh_apt_cache
   when: ansible_os_family == "Debian"
+
+
+- name: software | google-chrome | add repository key (suse)
+  tags: google-chrome,repositories,software,workstation
+  rpm_key:
+    key: https://dl-ssl.google.com/linux/linux_signing_key.pub
+    fingerprint: 4CCA 1EAF 950C EE4A B839 76DC A040 830F 7FAC 5991
+    state: present
+  when: ansible_os_family == "Suse"
+
+- name: software | google-chrome | add repository (suse)
+  tags: google-chrome,repositories,software,workstation
+  zypper_repository:
+    name: google-chrome
+    repo: http://dl.google.com/linux/chrome/rpm/stable/x86_64
+    state: present
+  notify: refresh_zypper_cache
+  when: ansible_os_family == "Suse"
 
 - name: software | google-chrome | install package
   package:

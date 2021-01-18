@@ -1,4 +1,4 @@
-- name: system setup | fail2ban | install or update daemon package
+- name: system setup | fail2ban | install daemon package
   tags: fail2ban,system,settings
   package:
     name: fail2ban
@@ -19,7 +19,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart_sshd
+  notify: restart_fail2ban
 
 - name: system setup | fail2ban | generate sshd.local file from template
   tags: fail2ban,sshd,system,settings
@@ -29,5 +29,5 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart_sshd
+  notify: restart_fail2ban
   when: sshd

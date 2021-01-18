@@ -27,7 +27,7 @@
     path: /home/nelu/.config/autostart
     state: directory
     owner: nelu
-    group: nelu
+    group: "{{ user_group_name | default('nelu') }}"
     mode: 0755
   when: p.stat.isreg is defined
 
@@ -37,7 +37,7 @@
     src: /usr/share/applications/google-chrome.desktop
     dest: /home/nelu/.config/autostart/google-chrome.desktop
     owner: nelu
-    group: nelu
+    group: "{{ user_group_name | default('nelu') }}"
     state: link
   when: p.stat.isreg is defined
 
