@@ -23,7 +23,6 @@
     repo: deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main
     state: present
     filename: vscode
-  notify: refresh_apt_cache
   when: ansible_os_family == "Debian"
 
 - name: software | vscode | add repository key (suse)
@@ -40,7 +39,6 @@
     name: code
     repo: https://packages.microsoft.com/yumrepos/vscode
     state: present
-  notify: refresh_zypper_cache
   when: ansible_os_family == "Suse"
 
 - name: software | vscode | install package
