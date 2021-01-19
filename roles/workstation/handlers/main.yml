@@ -1,4 +1,9 @@
 ---
+- name: rpmfusion_appstream_metadata
+  dnf:
+    name: '@core'
+    state: latest
+
 - name: packman_vendor_change
   tags: packman,repositories,opensuse
   zypper:
