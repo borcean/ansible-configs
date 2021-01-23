@@ -13,6 +13,10 @@
   - import_tasks: software/packages_flatpak.yml
   - import_tasks: software/vscode.yml
 
+  ## vpn client setup
+  - include_tasks: vpn_client.yml
+    when: vpn_client
+
   ## User configs
   - import_tasks: users/ana.yml
     when: user_ana
@@ -25,7 +29,6 @@
     when: gnome
   - include_tasks: desktop_environments/gnome/peripherals.yml
     when: gnome
-
 
   rescue:
   - name: Set fact if task failed
