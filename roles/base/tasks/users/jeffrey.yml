@@ -79,10 +79,10 @@
     path: '/home/jeffrey/.config/fish/conf.d/omf.fish'
   register: omf
 
-- name: users | jeffrey | check if fishprompt is set
+- name: users | jeffrey | check if bobthefish is installed
   stat:
-    path: '/home/jeffrey/.config/fish/functions/fish_prompt.fish'
-  register: fishprompt
+    path: '/home/jeffrey/.local/share/omf/themes/bobthefish'
+  register: bobthefish
 
 - name: users | jeffrey | clone oh-my-fish repo
   git:
@@ -102,7 +102,7 @@
   become: true
   become_user: jeffrey
   command: fish -c 'omf install bobthefish'
-  when: not fishprompt.stat.exists
+  when: not bobthefish.stat.exists
 
 - name: users | jeffrey | update oh-my-fish
   become: true
