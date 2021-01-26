@@ -100,9 +100,13 @@ else
     fi
 fi
 
-# Install SPICE agent if running Debian test VM
-if [[ "$OS" == debian ]] && [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
-    apt install spice-vdagent -y
+# Test VM set up
+if [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
+    if [[ "$OS" == debian ]]; then
+        apt install spice-vdagent -y
+    fi
+    systemctl enable serial-getty@ttyS0.service
+    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout '0'
 fi
 
 # Ansible pull command

@@ -21,7 +21,7 @@ The primary target is the latest Fedora release, however `base` and `workstation
 
 <sup>1</sup>Debian Buster requires `ansible_python_interpreter: "/usr/bin/python"`.
 
-<sup>2</sup>Debian Bullseye will fail on initial provision upon first invocation of `dconf` module, subsequent runs initiated by `ansible-pull.service` will pass.
+<sup>2</sup>Debian Bullseye VPN client fails to connect.
 
 ##
 Based upon [Jay LaCroix's](https://github.com/LearnLinuxTV/personal_ansible_desktop_configs) set up.

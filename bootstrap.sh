@@ -76,7 +76,11 @@ fi
 OS=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }' | sed 's/"//g')
 
 if [[ "$OS" == fedora ]]; then
-    dnf update -y
+    dnf upgrade  --refresh -y
+    dnf install ansible -y
+elif [[ "$OS" == centos ]]; then
+    dnf upgrade --refresh -y
+    dnf install centos-release-ansible-29 -y
     dnf install ansible -y
 elif [[ "$OS" == opensuse-tumbleweed ]]; then
     zypper --non-interactive dup
@@ -88,7 +92,7 @@ elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then
         apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
     fi
     apt update
-    apt dist-upgrade -y
+    apt full-upgrade -y
     apt install ansible git -y
 else
     if ! confirm "Unsupported distro detected, continue anyways?  y/n: "; then
@@ -96,9 +100,13 @@ else
     fi
 fi
 
-# Install SPICE agent if running Debian test VM
-if [[ "$OS" == debian ]] && [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
-    apt install spice-vdagent -y
+# Test VM set up
+if [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
+    if [[ "$OS" == debian ]]; then
+        apt install spice-vdagent -y
+    fi
+    systemctl enable serial-getty@ttyS0.service
+    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout '0'
 fi
 
 # Ansible pull command

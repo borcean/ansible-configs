@@ -19,6 +19,8 @@
   - import_tasks: users/ana.yml
     when: user_ana
   - import_tasks: users/jeffrey.yml
+  - import_tasks: users/josh.yml
+    when: user_josh
   - import_tasks: users/nelu.yml
     when: user_nelu
 
