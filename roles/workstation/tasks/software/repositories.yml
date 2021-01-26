@@ -15,6 +15,23 @@
   notify: rpmfusion_appstream_metadata
   when: ansible_distribution == "Fedora"
 
+- name: system setup | repositories | add rpm fusion free repository (centos)
+  tags: rpmfusion,repositories
+  dnf:
+    name: "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+    state: present
+    disable_gpg_check: yes
+  when: ansible_distribution == "CentOS"
+
+- name: system setup | repositories | add rpm fusion non-free repository (centos)
+  tags: rpmfusion,repositories
+  dnf:
+    name: "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+    state: present
+    disable_gpg_check: yes
+  notify: rpmfusion_appstream_metadata
+  when: ansible_distribution == "CentOS"
+
 - name: system setup | repositories | add packman repository (opensuse)
   tags: packman,repositories
   zypper_repository:

@@ -76,7 +76,11 @@ fi
 OS=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }' | sed 's/"//g')
 
 if [[ "$OS" == fedora ]]; then
-    dnf update -y
+    dnf upgrade  --refresh -y
+    dnf install ansible -y
+elif [[ "$OS" == centos ]]; then
+    dnf upgrade --refresh -y
+    dnf install centos-release-ansible-29 -y
     dnf install ansible -y
 elif [[ "$OS" == opensuse-tumbleweed ]]; then
     zypper --non-interactive dup
@@ -88,7 +92,7 @@ elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then
         apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
     fi
     apt update
-    apt dist-upgrade -y
+    apt full-upgrade -y
     apt install ansible git -y
 else
     if ! confirm "Unsupported distro detected, continue anyways?  y/n: "; then

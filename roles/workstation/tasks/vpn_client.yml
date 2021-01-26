@@ -20,6 +20,16 @@
     dest: /tmp/Seattle.ovpn
   when: not vpn_defined.stat.exists
 
+- name: vpn client | remove inline clr-verify (centos, debian 10)
+  replace:
+    path: /tmp/Seattle.ovpn
+    after: reneg-sec 0
+    before: <ca>
+    regexp: '.*'
+  when:
+    - not vpn_defined.stat.exists
+    - ansible_distribution in ["Debian", "CentOS"]
+
 - name: vpn client | import vpn configuration
   become_user: jeffrey
   command:
@@ -54,9 +64,9 @@
   # Disabling due to bug in NetworkManger-openvpn on Debian/Ubuntu
   # https://gitlab.gnome.org/GNOME/NetworkManager-openvpn/-/issues/57
   # https://bugs.launchpad.net/ubuntu/+source/network-manager-openvpn/+bug/1835644
-- name: vpn client | disable cert revocation list file (debian)
+- name: vpn client | disable cert revocation list file (ubuntu)
   command: nmcli connection modify Seattle -vpn.data crl-verify-file
   when:
     - vpn_imported is defined
     - vpn_imported.changed
-    - ansible_os_family == "Debian"
+    - ansible_distribution == "Ubuntu"
