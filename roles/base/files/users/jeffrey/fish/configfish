@@ -1,7 +1,8 @@
 ### Aliases ###
+alias checkip="curl checkip.amazonaws.com"
+alias diff colordiff
 alias g git
 alias irc="ssh ash.osuosl.org -t screen -dr irc"
-alias diff colordiff
 alias sleep-off="gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout '0'"
 alias sleep-on="gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout '7200'"
 
