@@ -3,4 +3,4 @@ Description= Ansible pull service
 
 [Service]
 Type=oneshot
-ExecStart=ansible-pull --vault-password-file={{ vault_file }} -o -U {{ repo }} -C {{ branch }}
+ExecStart=/usr/bin/ansible-pull --vault-password-file={{ vault_file }} -o -U {{ repo }} -C {{ branch }}

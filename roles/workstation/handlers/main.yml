@@ -9,6 +9,5 @@
   zypper:
     name: '*'
     state: dist-upgrade
-    allow_vendor_change: true
-    update_cache: yes
-    extra_args: '--from packman'
+    extra_args: '--from packman --allow-vendor-change'
+    update_cache: no

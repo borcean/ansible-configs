@@ -32,7 +32,7 @@
   notify: rpmfusion_appstream_metadata
   when: ansible_distribution == "CentOS"
 
-- name: system setup | repositories | add packman repository (opensuse)
+- name: system setup | repositories | add packman repository (opensuse tumbleweed)
   tags: packman,repositories
   zypper_repository:
     name: packman
@@ -42,3 +42,14 @@
     autorefresh: true
   notify: packman_vendor_change
   when: ansible_distribution == "openSUSE Tumbleweed"
+
+- name: system setup | repositories | add packman repository (opensuse leap)
+  tags: packman,repositories
+  zypper_repository:
+    name: packman
+    repo: "https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Leap_{{ ansible_distribution_version }}/"
+    auto_import_keys: yes
+    priority: 90
+    autorefresh: true
+  notify: packman_vendor_change
+  when: ansible_distribution == "openSUSE Leap"

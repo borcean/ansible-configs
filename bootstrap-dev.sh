@@ -82,7 +82,7 @@ elif [[ "$OS" == centos ]]; then
     dnf upgrade --refresh -y
     dnf install centos-release-ansible-29 -y
     dnf install ansible -y
-elif [[ "$OS" == opensuse-tumbleweed ]]; then
+elif [[ "$OS" == opensuse-tumbleweed ]] || [[ "$OS" == opensuse-leap ]]; then
     zypper --non-interactive dup
     zypper --non-interactive install ansible git-core
 elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then
@@ -106,12 +106,15 @@ if [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
         apt install spice-vdagent -y
     fi
     systemctl enable serial-getty@ttyS0.service
-    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout '0'
 fi
 
 # Ansible pull command
 echo -e "\n"
-ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
+if [[ "$OS" == debian ]] && [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 10 ]]; then
+    ansible-pull --vault-password-file="$VAULT_FILE" -e 'ansible_python_interpreter=/usr/bin/python' -U "$REPO" -C "$BRANCH"
+else
+    ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
+fi
 
 # Offer restart after ansible pull finished
 if confirm "Reboot system now?  y/n: "; then

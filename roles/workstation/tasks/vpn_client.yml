@@ -20,7 +20,7 @@
     dest: /tmp/Seattle.ovpn
   when: not vpn_defined.stat.exists
 
-- name: vpn client | remove inline clr-verify (centos, debian 10)
+- name: vpn client | remove inline clr-verify (centos, debian, opensuse leap)
   replace:
     path: /tmp/Seattle.ovpn
     after: reneg-sec 0
@@ -28,10 +28,17 @@
     regexp: '.*'
   when:
     - not vpn_defined.stat.exists
-    - ansible_distribution in ["Debian", "CentOS"]
+    - ansible_distribution in ["CentOS", "Debian", "openSUSE Leap"]
+
+      #- name: vpn client | import vpn configuration as jeffrey
+      #  become_user: jeffrey
+      #  command:
+      #    cmd: "nmcli connection import type openvpn file /tmp/Seattle.ovpn"
+      #    creates: /etc/NetworkManager/system-connections/Seattle.nmconnection
+      #  register: vpn_imported
+      #  when: not ansible_os_family == "Suse"
 
 - name: vpn client | import vpn configuration
-  become_user: jeffrey
   command:
     cmd: "nmcli connection import type openvpn file /tmp/Seattle.ovpn"
     creates: /etc/NetworkManager/system-connections/Seattle.nmconnection
