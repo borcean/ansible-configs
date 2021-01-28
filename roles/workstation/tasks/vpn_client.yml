@@ -18,6 +18,7 @@
   copy:
     src: vpn_client/Seattle.ovpn
     dest: /tmp/Seattle.ovpn
+    mode: 0644
   when: not vpn_defined.stat.exists
 
 - name: vpn client | remove inline clr-verify (centos, debian, opensuse leap)
@@ -30,45 +31,35 @@
     - not vpn_defined.stat.exists
     - ansible_distribution in ["CentOS", "Debian", "openSUSE Leap"]
 
-      #- name: vpn client | import vpn configuration as jeffrey
-      #  become_user: jeffrey
-      #  command:
-      #    cmd: "nmcli connection import type openvpn file /tmp/Seattle.ovpn"
-      #    creates: /etc/NetworkManager/system-connections/Seattle.nmconnection
-      #  register: vpn_imported
-      #  when: not ansible_os_family == "Suse"
-
 - name: vpn client | import vpn configuration
   command:
     cmd: "nmcli connection import type openvpn file /tmp/Seattle.ovpn"
     creates: /etc/NetworkManager/system-connections/Seattle.nmconnection
   register: vpn_imported
+  when: not ansible_os_family == "RedHat"
 
-- name: vpn client | remove password-flags
-  command: nmcli connection modify Seattle -vpn.data password-flags
+# Because selinux is hard...
+# Note this will fail if not run from graphical console
+- name: vpn client | import vpn configuration (red hat)
+  become_user: jeffrey
+  command:
+    cmd: "nmcli connection import type openvpn file /tmp/Seattle.ovpn"
+    creates: /etc/NetworkManager/system-connections/Seattle.nmconnection
+  register: vpn_imported
+  when: ansible_os_family == "RedHat"
+
+- name: vpn client | configure authentication
+  command: "nmcli connection modify Seattle {{ item }}"
+  loop:
+    - -vpn.data password-flags
+    - +vpn.data password-flags=0
+    - +vpn.data username={{ vpn_client_username }}
+    - +vpn.secrets password={{ vpn_client_password }}
   when:
     - vpn_imported is defined
-    - vpn_imported.changed
+    - not vpn_defined.stat.exists
 
-- name: vpn client | set password-flags
-  command: nmcli connection modify Seattle +vpn.data password-flags=0
-  when:
-    - vpn_imported is defined
-    - vpn_imported.changed
-
-- name: vpn client | set username
-  command: "nmcli connection modify Seattle +vpn.data username={{ vpn_client_username }}"
-  when:
-    - vpn_imported is defined
-    - vpn_imported.changed
-
-- name: vpn client | set password
-  command: "nmcli connection modify Seattle +vpn.secrets password={{ vpn_client_password }}"
-  when:
-    - vpn_imported is defined
-    - vpn_imported.changed
-
-  # Disabling due to bug in NetworkManger-openvpn on Debian/Ubuntu
+  # Disabling due to bug in NetworkManger-openvpn shipped in Debian/Ubuntu
   # https://gitlab.gnome.org/GNOME/NetworkManager-openvpn/-/issues/57
   # https://bugs.launchpad.net/ubuntu/+source/network-manager-openvpn/+bug/1835644
 - name: vpn client | disable cert revocation list file (ubuntu)

@@ -26,7 +26,6 @@
   - import_tasks: users/nelu.yml
     when: user_nelu
 
-
   ## desktop environment
   - include_tasks: desktop_environments/gnome/packages.yml
     when: gnome

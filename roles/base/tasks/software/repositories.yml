@@ -5,6 +5,7 @@
     section: powertools
     option: enabled
     value: "1"
+    mode: 0644
   when: ansible_distribution == "CentOS"
 
 - name: system setup | repositories | add epel repository (centos)
