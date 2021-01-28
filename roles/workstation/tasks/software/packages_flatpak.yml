@@ -3,6 +3,7 @@
     name: "{{ item }}"
     state: present
     remote: flathub
+  register: flatpak_pkg_install
   loop:
     - com.discordapp.Discord
     - com.mojang.Minecraft

@@ -110,7 +110,11 @@ fi
 
 # Ansible pull command
 echo -e "\n"
-ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
+if [[ "$OS" == debian ]] && [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 10 ]]; then
+    ansible-pull --vault-password-file="$VAULT_FILE" -e 'ansible_python_interpreter=/usr/bin/python' -U "$REPO" -C "$BRANCH"
+else
+    ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
+fi
 
 # Offer restart after ansible pull finished
 if confirm "Reboot system now?  y/n: "; then
