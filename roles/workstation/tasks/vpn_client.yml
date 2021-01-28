@@ -66,5 +66,5 @@
   command: nmcli connection modify Seattle -vpn.data crl-verify-file
   when:
     - vpn_imported is defined
-    - vpn_imported.changed
+    - not vpn_defined.stat.exists
     - ansible_distribution == "Ubuntu"
