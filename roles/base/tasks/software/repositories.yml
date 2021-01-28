@@ -1,0 +1,17 @@
+- name: system setup | repositories | enable powertools repository (centos)
+  tags: powertools,repositories
+  ini_file:
+    path: /etc/yum.repos.d/CentOS-Stream-PowerTools.repo
+    section: powertools
+    option: enabled
+    value: "1"
+    mode: 0644
+  when: ansible_distribution == "CentOS"
+
+- name: system setup | repositories | add epel repository (centos)
+  tags: epel,repositories
+  dnf:
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+    state: present
+    disable_gpg_check: yes
+  when: ansible_distribution == "CentOS"

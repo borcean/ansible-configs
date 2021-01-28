@@ -6,20 +6,25 @@
     - "{{ ansible_distribution }}.yml"
 
 - block:
-  # Set up the ansible environment
+  # set up the ansible environment
   - import_tasks: ansible_setup.yml
+
+  # enable repositories
+  - import_tasks: software/repositories.yml
 
   # install software
   - import_tasks: software/packages_utilities.yml
 
-  # Basic user configuration
+  # basic user configuration
   - import_tasks: users/ana.yml
     when: user_ana
   - import_tasks: users/jeffrey.yml
+  - import_tasks: users/josh.yml
+    when: user_josh
   - import_tasks: users/nelu.yml
     when: user_nelu
 
-  # Perform remaining tasks:
+  # perform remaining tasks:
   - import_tasks: system_setup/automatic_updates.yml
     when:  automatic_updates
 

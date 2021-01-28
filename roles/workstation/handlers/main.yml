@@ -1,9 +1,13 @@
 ---
+- name: rpmfusion_appstream_metadata
+  dnf:
+    name: '@core'
+    state: present
+
 - name: packman_vendor_change
   tags: packman,repositories,opensuse
   zypper:
     name: '*'
     state: dist-upgrade
-    allow_vendor_change: true
-    update_cache: yes
-    extra_args: '--from packman'
+    extra_args: '--from packman --allow-vendor-change'
+    update_cache: no

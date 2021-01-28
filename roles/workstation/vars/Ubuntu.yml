@@ -1,2 +1,3 @@
 gnome_extensions_app_package:
 font_noto_emoji_package: fonts-noto-color-emoji
+networkmanager_openvpn_gnome_package: network-manager-openvpn-gnome

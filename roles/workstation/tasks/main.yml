@@ -13,12 +13,18 @@
   - import_tasks: software/packages_flatpak.yml
   - import_tasks: software/vscode.yml
 
+  ## vpn client setup
+  - include_tasks: vpn_client.yml
+    when: vpn_client
+
   ## User configs
   - import_tasks: users/ana.yml
     when: user_ana
+  - import_tasks: users/jeffrey.yml
+  - import_tasks: users/josh.yml
+    when: user_josh
   - import_tasks: users/nelu.yml
     when: user_nelu
-  - import_tasks: users/jeffrey.yml
 
   ## desktop environment
   - include_tasks: desktop_environments/gnome/packages.yml
@@ -26,7 +32,12 @@
   - include_tasks: desktop_environments/gnome/peripherals.yml
     when: gnome
 
-
   rescue:
   - name: Set fact if task failed
     set_fact: task_failed=true
+
+  - name: Run flatpak repair
+    command: flatpak repair
+    when:
+      - flatpak_pkg_install.rc is defined
+      - flatpak_pkg_install.rc not 0

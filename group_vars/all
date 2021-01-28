@@ -39,5 +39,5 @@ sshd: true
 fail2ban: false
 
 user_ana: false
-
+user_josh: false
 user_nelu: false

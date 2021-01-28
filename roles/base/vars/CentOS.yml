@@ -1,0 +1,8 @@
+automatic_updates_package: dnf-automatic
+automatic_updates_timer: dnf-automatic-install.timer
+lm_sensors_package: lm_sensors
+openssh_package: openssh
+openssh_service: sshd
+powerline_fonts_package: powerline-fonts
+python_psutil_package: python3-psutil
+vim_package: vim-enhanced

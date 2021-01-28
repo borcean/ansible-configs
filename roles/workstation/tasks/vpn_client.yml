@@ -1,0 +1,70 @@
+- name: Load vpn credentials variables
+  tags: always
+  include_vars: vpn_credentials.yml
+
+- name: vpn client | install networkmanager-openvpn plugin for GNOME
+  tags: vpn,vpnclient,gnome,packages
+  package:
+    state: present
+    name: "{{ networkmanager_openvpn_gnome_package }}"
+  when: gnome
+
+- name: vpn client | check if connection is already defined
+  stat:
+    path: /etc/NetworkManager/system-connections/Seattle.nmconnection
+  register: vpn_defined
+
+- name: vpn client | copy openvpn config to tmp
+  copy:
+    src: vpn_client/Seattle.ovpn
+    dest: /tmp/Seattle.ovpn
+    mode: 0644
+  when: not vpn_defined.stat.exists
+
+- name: vpn client | remove inline clr-verify (centos, debian, opensuse leap)
+  replace:
+    path: /tmp/Seattle.ovpn
+    after: reneg-sec 0
+    before: <ca>
+    regexp: '.*'
+  when:
+    - not vpn_defined.stat.exists
+    - ansible_distribution in ["CentOS", "Debian", "openSUSE Leap"]
+
+- name: vpn client | import vpn configuration
+  command:
+    cmd: "nmcli connection import type openvpn file /tmp/Seattle.ovpn"
+    creates: /etc/NetworkManager/system-connections/Seattle.nmconnection
+  register: vpn_imported
+  when: not ansible_os_family == "RedHat"
+
+# Because selinux is hard...
+# Note this will fail if not run from graphical console
+- name: vpn client | import vpn configuration (red hat)
+  become_user: jeffrey
+  command:
+    cmd: "nmcli connection import type openvpn file /tmp/Seattle.ovpn"
+    creates: /etc/NetworkManager/system-connections/Seattle.nmconnection
+  register: vpn_imported
+  when: ansible_os_family == "RedHat"
+
+- name: vpn client | configure authentication
+  command: "nmcli connection modify Seattle {{ item }}"
+  loop:
+    - -vpn.data password-flags
+    - +vpn.data password-flags=0
+    - +vpn.data username={{ vpn_client_username }}
+    - +vpn.secrets password={{ vpn_client_password }}
+  when:
+    - vpn_imported is defined
+    - not vpn_defined.stat.exists
+
+  # Disabling due to bug in NetworkManger-openvpn shipped in Debian/Ubuntu
+  # https://gitlab.gnome.org/GNOME/NetworkManager-openvpn/-/issues/57
+  # https://bugs.launchpad.net/ubuntu/+source/network-manager-openvpn/+bug/1835644
+- name: vpn client | disable cert revocation list file (ubuntu)
+  command: nmcli connection modify Seattle -vpn.data crl-verify-file
+  when:
+    - vpn_imported is defined
+    - not vpn_defined.stat.exists
+    - ansible_distribution == "Ubuntu"

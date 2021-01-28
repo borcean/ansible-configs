@@ -22,9 +22,7 @@
     repo: deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main
     state: present
     filename: google-chrome
-  notify: refresh_apt_cache
   when: ansible_os_family == "Debian"
-
 
 - name: software | google-chrome | add repository key (suse)
   tags: google-chrome,repositories,software,workstation
@@ -40,7 +38,6 @@
     name: google-chrome
     repo: http://dl.google.com/linux/chrome/rpm/stable/x86_64
     state: present
-  notify: refresh_zypper_cache
   when: ansible_os_family == "Suse"
 
 - name: software | google-chrome | install package

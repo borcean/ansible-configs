@@ -3,8 +3,10 @@
     name: "{{ item }}"
     state: present
     remote: flathub
+  register: flatpak_pkg_install
   loop:
     - com.discordapp.Discord
     - com.mojang.Minecraft
     - com.spotify.Client
     - com.valvesoftware.Steam
+    - org.gimp.GIMP
