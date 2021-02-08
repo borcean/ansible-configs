@@ -72,7 +72,7 @@ else
    set_vault_password
 fi
 
-# Detect if supported distro
+# Update OS and install Ansible on supported distros
 OS=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }' | sed 's/"//g')
 
 if [[ "$OS" == fedora ]]; then
@@ -98,6 +98,12 @@ else
     if ! confirm "Unsupported distro detected, continue anyways?  y/n: "; then
         exit
     fi
+fi
+
+# Update and fix existing flatpak installs
+if command -v flatpak &> /dev/null; then
+    flatpak update -y
+    flatpak repair
 fi
 
 # Test VM set up
