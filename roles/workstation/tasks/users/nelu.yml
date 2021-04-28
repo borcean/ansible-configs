@@ -31,6 +31,13 @@
     mode: 0755
   when: p.stat.isreg is defined
 
+- name: users | nelu | check if chrome is set to autostart
+  tags: users,nelu,google-chrome
+  stat:
+    path: /home/nelu/.config/autostart/google-chrome.desktop
+  register: q
+  when: p.stat.isreg is defined
+
 - name: users | nelu | enable chrome autostart
   tags: users,nelu,google-chrome
   file:
@@ -39,7 +46,9 @@
     owner: nelu
     group: "{{ user_group_name | default('nelu') }}"
     state: link
-  when: p.stat.isreg is defined
+  when:
+    - q.stat.islnk is not defined
+    - p.stat.isreg is defined
 
 # GNOME config
 - name: users | nelu | GNOME | enable natural scrolling (mouse)

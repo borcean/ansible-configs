@@ -31,6 +31,13 @@
     mode: 0755
   when: p.stat.isreg is defined
 
+- name: users | josh | check if chrome is set to autostart
+  tags: users,josh,google-chrome
+  stat:
+    path: /home/josh/.config/autostart/google-chrome.desktop
+  register: q
+  when: p.stat.isreg is defined
+
 - name: users | josh | enable chrome autostart
   tags: users,josh,google-chrome
   file:
@@ -39,7 +46,9 @@
     owner: josh
     group: "{{ user_group_name | default('josh') }}"
     state: link
-  when: p.stat.isreg is defined
+  when:
+    - q.stat.islnk is not defined
+    - p.stat.isreg is defined
 
 # GNOME config
 - name: users | josh | GNOME | enable natural scrolling (mouse)
