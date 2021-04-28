@@ -42,7 +42,7 @@
   when: p.stat.isreg is defined
 
 # GNOME config
-- name: users | ana | enable natural scrolling (mouse)
+- name: users | ana | GNOME | enable natural scrolling (mouse)
   tags: gnome,mouse,peripherals
   become: true
   become_user: ana
@@ -50,19 +50,55 @@
     key: "/org/gnome/desktop/peripherals/mouse/natural-scroll"
     value: "true"
 
-- name: users | ana | read favorite apps
+- name: users | ana | GNOME | enable natural scrolling (touchpad)
+  tags: gnome,mouse,peripherals
+  become_user: ana
+  dconf:
+    key: "/org/gnome/desktop/peripherals/touchpad/natural-scroll"
+    value: "true"
+
+- name: users | ana | GNOME | enable tap to click (touchpad)
+  tags: gnome,touchpad,peripherals
+  become_user: ana
+  dconf:
+    key: "/org/gnome/desktop/peripherals/touchpad/tap-to-click"
+    value: "true"
+
+- name: users | ana | GNOME | enable two finger scrolling  (touchpad)
+  tags: gnome,touchpad,peripherals
+  become_user: ana
+  dconf:
+    key: "/org/gnome/desktop/peripherals/touchpad/two-finger-scrolling-enabled"
+    value: "true"
+
+- name: users | ana | GNOME | read favorite apps
   become_user: ana
   dconf:
     key: "/org/gnome/shell/favorite-apps"
     state: read
   register: favorite_apps
 
-- name: users | ana | set favorite apps
-  tags: gnome,mouse,peripherals
+- name: users | ana | GNOME | set favorite apps (Fedora)
+  tags: gnome,users,ana
   become_user: ana
   dconf:
     key: "/org/gnome/shell/favorite-apps"
-    value: "['google-chrome.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']"
+    value: "['google-chrome.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']"
   when:
     - ansible_distribution == "Fedora"
     - not favorite_apps.value
+
+- name: users | ana | GNOME | disable ABRT notifications (Red Hat)
+  tags: gnome,users,ana
+  become_user: ana
+  dconf:
+    key: "/org/gnome/desktop/notifications/application/org-freedesktop-problems-applet/enable"
+    value: "false"
+  when: ansible_os_family == "RedHat"
+
+- name: users | ana | GNOME | enable location services
+  tags: gnome,users,ana
+  become_user: ana
+  dconf:
+    key: "/org/gnome/system/location/enabled"
+    value: "true"
