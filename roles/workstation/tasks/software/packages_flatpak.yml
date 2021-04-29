@@ -1,6 +1,7 @@
 - name: software | flatpak | flatpak repair
-  ansible.builtin.command:
+  command:
     cmd: /usr/bin/flatpak repair --system
+  changed_when: false
 
 - name: software | flatpak | install flatpack packages
   flatpak:
@@ -15,5 +16,7 @@
     - org.gimp.GIMP
 
 - name: software | flatpak | update flatpak packages
-  ansible.builtin.command:
+  command:
     cmd: /usr/bin/flatpak update --system --noninteractive
+  register: flatpak_update_result
+  changed_when: flatpak_update_result is not search('Nothing to do.')
