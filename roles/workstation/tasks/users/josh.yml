@@ -31,6 +31,13 @@
     mode: 0755
   when: p.stat.isreg is defined
 
+- name: users | josh | check if chrome is set to autostart
+  tags: users,josh,google-chrome
+  stat:
+    path: /home/josh/.config/autostart/google-chrome.desktop
+  register: q
+  when: p.stat.isreg is defined
+
 - name: users | josh | enable chrome autostart
   tags: users,josh,google-chrome
   file:
@@ -39,10 +46,12 @@
     owner: josh
     group: "{{ user_group_name | default('josh') }}"
     state: link
-  when: p.stat.isreg is defined
+  when:
+    - q.stat.islnk is not defined
+    - p.stat.isreg is defined
 
 # GNOME config
-- name: users | josh | enable natural scrolling (mouse)
+- name: users | josh | GNOME | enable natural scrolling (mouse)
   tags: gnome,mouse,peripherals
   become: true
   become_user: josh
@@ -50,19 +59,55 @@
     key: "/org/gnome/desktop/peripherals/mouse/natural-scroll"
     value: "true"
 
-- name: users | josh | read favorite apps
+- name: users | josh | GNOME | enable natural scrolling (touchpad)
+  tags: gnome,mouse,peripherals
+  become_user: josh
+  dconf:
+    key: "/org/gnome/desktop/peripherals/touchpad/natural-scroll"
+    value: "true"
+
+- name: users | josh | GNOME | enable tap to click (touchpad)
+  tags: gnome,touchpad,peripherals
+  become_user: josh
+  dconf:
+    key: "/org/gnome/desktop/peripherals/touchpad/tap-to-click"
+    value: "true"
+
+- name: users | josh | GNOME | enable two finger scrolling  (touchpad)
+  tags: gnome,touchpad,peripherals
+  become_user: josh
+  dconf:
+    key: "/org/gnome/desktop/peripherals/touchpad/two-finger-scrolling-enabled"
+    value: "true"
+
+- name: users | josh | GNOME | read favorite apps
   become_user: josh
   dconf:
     key: "/org/gnome/shell/favorite-apps"
     state: read
   register: favorite_apps
 
-- name: users | josh | set favorite apps
-  tags: gnome,mouse,peripherals
+- name: users | josh | GNOME | set favorite apps (Fedora)
+  tags: gnome,users,josh
   become_user: josh
   dconf:
     key: "/org/gnome/shell/favorite-apps"
-    value: "['google-chrome.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']"
+    value: "['google-chrome.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']"
   when:
     - ansible_distribution == "Fedora"
     - not favorite_apps.value
+
+- name: users | josh | GNOME | disable ABRT notifications (Red Hat)
+  tags: gnome,users,josh
+  become_user: josh
+  dconf:
+    key: "/org/gnome/desktop/notifications/application/org-freedesktop-problems-applet/enable"
+    value: "false"
+  when: ansible_os_family == "RedHat"
+
+- name: users | josh | GNOME | enable location services
+  tags: gnome,users,josh
+  become_user: josh
+  dconf:
+    key: "/org/gnome/system/location/enabled"
+    value: "true"

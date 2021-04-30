@@ -13,10 +13,10 @@ The primary target is the latest Fedora release, however `base` and `workstation
 | --- | --- |
 | CentOS | Stream 8 |
 | Debian | 10 (Buster)<sup>1</sup>, 11 (Bullseye)<sup>2</sup> |
-| Fedora | 33 |
-| openSUSE | Leap 15.2 |
+| Fedora | 33, 34 |
+| openSUSE | Leap 15.2, Leap 15.3 |
 | | Tumbleweed |
-| Ubuntu | 20.10 (Groovy) |
+| Ubuntu | 20.04 (Focal), 20.10 (Groovy), 21.04 (Hirsute) |
 
 
 <sup>1</sup>Debian Buster requires `ansible_python_interpreter: "/usr/bin/python"`.

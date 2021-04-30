@@ -7,7 +7,7 @@
     group: root
     mode: 0644
 
-- name: users | nelu | check if user has logged in once
+- name: users | nelu | check if user has logged in before
   tags: users,nelu
   stat:
     path: /var/lib/AccountsService/users/nelu
@@ -31,6 +31,13 @@
     mode: 0755
   when: p.stat.isreg is defined
 
+- name: users | nelu | check if chrome is set to autostart
+  tags: users,nelu,google-chrome
+  stat:
+    path: /home/nelu/.config/autostart/google-chrome.desktop
+  register: q
+  when: p.stat.isreg is defined
+
 - name: users | nelu | enable chrome autostart
   tags: users,nelu,google-chrome
   file:
@@ -39,10 +46,12 @@
     owner: nelu
     group: "{{ user_group_name | default('nelu') }}"
     state: link
-  when: p.stat.isreg is defined
+  when:
+    - q.stat.islnk is not defined
+    - p.stat.isreg is defined
 
 # GNOME config
-- name: users | nelu | enable natural scrolling (mouse)
+- name: users | nelu | GNOME | enable natural scrolling (mouse)
   tags: gnome,mouse,peripherals
   become: true
   become_user: nelu
@@ -50,19 +59,55 @@
     key: "/org/gnome/desktop/peripherals/mouse/natural-scroll"
     value: "true"
 
-- name: users | nelu | read favorite apps
+- name: users | nelu | GNOME | enable natural scrolling (touchpad)
+  tags: gnome,mouse,peripherals
+  become_user: nelu
+  dconf:
+    key: "/org/gnome/desktop/peripherals/touchpad/natural-scroll"
+    value: "true"
+
+- name: users | nelu | GNOME | enable tap to click (touchpad)
+  tags: gnome,touchpad,peripherals
+  become_user: nelu
+  dconf:
+    key: "/org/gnome/desktop/peripherals/touchpad/tap-to-click"
+    value: "true"
+
+- name: users | nelu | GNOME | enable two finger scrolling  (touchpad)
+  tags: gnome,touchpad,peripherals
+  become_user: nelu
+  dconf:
+    key: "/org/gnome/desktop/peripherals/touchpad/two-finger-scrolling-enabled"
+    value: "true"
+
+- name: users | nelu | GNOME | read favorite apps
   become_user: nelu
   dconf:
     key: "/org/gnome/shell/favorite-apps"
     state: read
   register: favorite_apps
 
-- name: users | nelu | set favorite apps
-  tags: gnome,mouse,peripherals
+- name: users | nelu | GNOME | set favorite apps (Fedora)
+  tags: gnome,users,nelu
   become_user: nelu
   dconf:
     key: "/org/gnome/shell/favorite-apps"
-    value: "['google-chrome.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']"
+    value: "['google-chrome.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']"
   when:
     - ansible_distribution == "Fedora"
     - not favorite_apps.value
+
+- name: users | nelu | GNOME | disable ABRT notifications (Red Hat)
+  tags: gnome,users,nelu
+  become_user: nelu
+  dconf:
+    key: "/org/gnome/desktop/notifications/application/org-freedesktop-problems-applet/enable"
+    value: "false"
+  when: ansible_os_family == "RedHat"
+
+- name: users | nelu | GNOME | enable location services
+  tags: gnome,users,nelu
+  become_user: nelu
+  dconf:
+    key: "/org/gnome/system/location/enabled"
+    value: "true"

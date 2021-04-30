@@ -35,9 +35,3 @@
   rescue:
   - name: Set fact if task failed
     set_fact: task_failed=true
-
-  - name: Run flatpak repair
-    command: flatpak repair
-    when:
-      - flatpak_pkg_install.rc is defined
-      - flatpak_pkg_install.rc not 0

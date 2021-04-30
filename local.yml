@@ -42,6 +42,12 @@
   roles:
     - thinkpad
 
+- hosts: macintosh
+  tags: macintosh
+  become: true
+  roles:
+    - macintosh
+
 - hosts: chromebook
   tags: chromebook
   become: true

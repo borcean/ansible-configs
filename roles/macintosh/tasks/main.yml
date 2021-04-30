@@ -1,0 +1,12 @@
+- name: Load distro-specific variables
+  tags: always
+  include_vars: "{{ ansible_distribution }}.yml"
+
+- block:
+  ## install broadcom wifi driver
+  - import_tasks: broadcom_wlan.yml
+    when: broadcom_wlan
+
+  rescue:
+  - name: Set fact if task failed
+    set_fact: task_failed=true
