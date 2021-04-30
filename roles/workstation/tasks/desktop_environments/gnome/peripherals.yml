@@ -31,14 +31,14 @@
   become_user: jeffrey
   dconf:
     key: "/org/gnome/desktop/peripherals/mouse/speed"
-    value: "0.63970588235294112"
+    value: "0.63333333333333333"
 
 - name: gnome | peripherals | increase cursor speed (touchpad)
   tags: gnome,mouse,peripherals
   become_user: jeffrey
   dconf:
     key: "/org/gnome/desktop/peripherals/touchpad/speed"
-    value: "0.42647058823529416"
+    value: "0.43333333333333333"
 
 - name: gnome | peripherals | set manual night-light schedule
   tags: gnome,peripherals,night-light
@@ -59,7 +59,7 @@
   become_user: jeffrey
   dconf:
     key: "/org/gnome/settings-daemon/plugins/color/night-light-schedule-to"
-    value: "5.0"
+    value: "6.0"
 
 - name: gnome | peripherals | enable night-light
   tags: gnome,peripherals,night-light
