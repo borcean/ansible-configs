@@ -9,6 +9,7 @@
 
   ## set bluetooth controler mode edr only
   - import_tasks: bluetooth.yml
+    when: bluetooth_edr_only
 
   rescue:
   - name: Set fact if task failed

@@ -29,8 +29,10 @@
     name: "{{ tlp_kmod_package }}"
   when:
     - tlp_kmod
-    -  ansible_distribution in ["Fedora", "Ubuntu"]
+    - ansible_distribution in ["Fedora", "Ubuntu"]
 
+# Requires TLP version ≥ 1.3
+# Not compatible with CentOS, Debian 10, or openSUSE Leap 15.2
 - name: system setup | scripts | copy tlp charge-thresholds
   tags: thinkpad,tlp
   copy:
