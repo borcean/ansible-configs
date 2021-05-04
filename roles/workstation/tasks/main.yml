@@ -31,6 +31,8 @@
     when: gnome
   - include_tasks: desktop_environments/gnome/peripherals.yml
     when: gnome
+  - include_tasks: desktop_environments/gnome/software_settings.yml
+    when: gnome
 
   rescue:
   - name: Set fact if task failed
