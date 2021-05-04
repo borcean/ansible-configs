@@ -3,5 +3,6 @@
   package:
     state: present
     name:
+      - "{{ ansible_lint_package }}"
       - deja-dup
       - vlc
