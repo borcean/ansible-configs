@@ -15,6 +15,7 @@
     - com.spotify.Client
     - com.valvesoftware.Steam
     - org.gimp.GIMP
+    - org.signal.Signal
 
 - name: software | flatpak | update flatpak packages
   command:
