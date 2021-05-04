@@ -9,6 +9,7 @@
     state: present
     remote: flathub
   loop:
+    - com.belmoussaoui.Authenticator
     - com.discordapp.Discord
     - com.mojang.Minecraft
     - com.spotify.Client

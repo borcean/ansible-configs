@@ -3,4 +3,5 @@
   package:
     state: present
     name:
+      - deja-dup
       - vlc
