@@ -12,5 +12,6 @@
       - "{{ lm_sensors_package }}"
       - neofetch
       - "{{ powerline_fonts_package }}"
+      - pwgen
       - tree
       - "{{ vim_package }}"
