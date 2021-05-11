@@ -13,6 +13,7 @@
     - com.discordapp.Discord
     - com.mojang.Minecraft
     - com.spotify.Client
+    - com.transmissionbt.Transmission
     - com.valvesoftware.Steam
     - org.gimp.GIMP
     - org.signal.Signal
