@@ -6,3 +6,12 @@
       - "{{ ansible_lint_package }}"
       - deja-dup
       - vlc
+
+- name: software | packages | install toolbox (Red Hat)
+  tags: packages,workstation
+  package:
+    state: present
+    name: toolbox
+  when:
+    - ansible_os_family == "RedHat"
+    - toolbox_install

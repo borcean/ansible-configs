@@ -1,3 +1,6 @@
 ---
 gnome: true
 vpn_client: true
+
+# Optional Packages
+toolbox_install: false
