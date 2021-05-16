@@ -25,6 +25,7 @@
 - name: ansible job failed, clear cache later on to trigger another provision run
   become: yes
   at:
-    command: "systemctl start ansible-refresh.service"
-    count: 15
+    command: /bin/rm -rf /root/.ansible/
+    count: 10
     units: minutes
+    unique: yes
