@@ -5,6 +5,7 @@
     name:
       - "{{ ansible_lint_package }}"
       - deja-dup
+      - transmission-gtk
       - vlc
 
 - name: software | packages | install toolbox (Red Hat)
@@ -15,3 +16,10 @@
   when:
     - ansible_os_family == "RedHat"
     - toolbox_install
+
+- name: software | packages | install virt-manager
+  tags: packages,workstation
+  package:
+    state: present
+    name: virt-manager
+  when: virt_manager_install

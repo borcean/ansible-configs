@@ -1,3 +1,8 @@
 ---
-# Packages
+# Optional Packages
 toolbox_install: true
+virt_manager_install: true
+
+# Optional Flatpaks
+minecraft_install: true
+steam_install: true

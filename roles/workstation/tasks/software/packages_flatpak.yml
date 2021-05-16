@@ -3,7 +3,20 @@
     cmd: /usr/bin/flatpak repair --system
   changed_when: false
 
-- name: software | flatpak | install flatpack packages
+- name: software | flatpak | remove flatpack packages
+  flatpak:
+    name: "{{ item }}"
+    state: absent
+  loop:
+    - com.transmissionbt.Transmission
+
+- name: software | flatpak | update flatpak packages
+  command:
+    cmd: /usr/bin/flatpak update --system --noninteractive
+  register: flatpak_update_result
+  changed_when: flatpak_update_result is not search('Nothing to do.')
+
+- name: software | flatpak | install base flatpack packages
   flatpak:
     name: "{{ item }}"
     state: present
@@ -11,15 +24,20 @@
   loop:
     - com.belmoussaoui.Authenticator
     - com.discordapp.Discord
-    - com.mojang.Minecraft
     - com.spotify.Client
-    - com.transmissionbt.Transmission
-    - com.valvesoftware.Steam
     - org.gimp.GIMP
     - org.signal.Signal
 
-- name: software | flatpak | update flatpak packages
-  command:
-    cmd: /usr/bin/flatpak update --system --noninteractive
-  register: flatpak_update_result
-  changed_when: flatpak_update_result is not search('Nothing to do.')
+- name: software | flatpak | install Minecraft flatpack
+  flatpak:
+    name: com.mojang.Minecraft
+    state: present
+    remote: flathub
+  when: minecraft_install
+
+- name: software | flatpak | install Steam flatpack
+  flatpak:
+    name: com.valvesoftware.Steam
+    state: present
+    remote: flathub
+  when: steam_install
