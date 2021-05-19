@@ -1,6 +1,6 @@
 ---
-# BASE
-# Ansible setup
+# base
+# ansible setup
 branch: dev
 
 timers:
@@ -11,8 +11,15 @@ timers:
       timer_boot: 10s
       timer_active: 10m
 
-fail2ban: true
-
+# users
 user_ana: true
 user_josh: true
 user_nelu: true
+
+# system setup
+fail2ban: true
+
+# workstation
+# optional packages
+toolbox_install: true
+virt_manager_install: true
