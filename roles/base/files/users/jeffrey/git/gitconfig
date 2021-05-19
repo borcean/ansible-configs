@@ -1,6 +1,7 @@
 [user]
 	email = jeffrey@borcean.xyz
 	name = Jeffrey Borcean
+	signingkey = 9F28D142427374A4
 [alias]
 	co = checkout
 	br = branch
@@ -8,3 +9,5 @@
 	st = status
 	unstage = reset HEAD --
 	hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+[commit]
+	gpgsign = true
