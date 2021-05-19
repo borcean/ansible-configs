@@ -1,4 +1,5 @@
 ansible_lint_package: python3-ansible-lint
+deja_dup_package: deja-dup
 gnome_extensions_app_package: gnome-extensions-app
 font_noto_emoji_package: google-noto-emoji-color-fonts
 networkmanager_openvpn_gnome_package: NetworkManager-openvpn-gnome
