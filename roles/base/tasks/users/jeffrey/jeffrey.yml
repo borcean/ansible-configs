@@ -110,3 +110,5 @@
   command: fish -c 'omf update'
   changed_when: false
   when: omf.stat.exists
+
+- import_tasks: gpg.yml

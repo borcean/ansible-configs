@@ -1,0 +1,23 @@
+- name: users | jeffrey | check if gpg key is present
+  become_user: jeffrey
+  command: gpg --list-secret-keys 1804274F573F0B07258542389F28D142427374A4
+  register: key_check
+  changed_when: false
+  failed_when: ( key_check.rc not in [ 0, 2 ] )
+
+- name: users | jeffrey | copy gpg key to tmp
+  copy:
+    src: users/jeffrey/gpg/427374A4.key
+    dest: /tmp/427374A4.key
+    owner: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
+    mode: '0400'
+  when: '"No secret key" in key_check.stderr'
+
+- name: users | jeffrey | import gpg key
+  become_user: jeffrey
+  command: "gpg --batch
+              --passphrase {{ jeffrey_gpg_passphrase }}
+              --pinentry-mode loopback
+              --import /tmp/427374A4.key"
+  when: '"No secret key" in key_check.stderr'
