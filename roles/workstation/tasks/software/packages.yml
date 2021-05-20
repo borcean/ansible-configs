@@ -29,9 +29,11 @@
     - ansible_os_family == "RedHat"
     - toolbox_install
 
-- name: software | workstation packages | install virt-manager
+- name: software | workstation packages | install virt-manager, libvirt-client
   tags: packages,workstation
   package:
     state: present
-    name: virt-manager
+    name:
+      -  virt-manager
+      - "{{ libvirt_client_package }}"
   when: virt_manager_install
