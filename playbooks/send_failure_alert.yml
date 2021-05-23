@@ -11,6 +11,16 @@
         *Error Message*: \n ```{{ ansible_failed_result | to_nice_json }}```"
     changed_when: False
 
+  - name: send distribution and version via telegram
+    tags: always
+    telegram:
+      token: "{{ telegram_token }}"
+      chat_id: "{{ telegram_chat_id }}"
+      msg_format: markdown
+      msg: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
+    changed_when: False
+    when: branch == "dev"
+
   rescue:
     - name: send failure notification via telegram
       tags: always
@@ -21,6 +31,16 @@
         msg: "⚠️  Provision failed on *{{ ansible_hostname }}*\n\n
           The specific error couldn't be shown, check the log."
       changed_when: False
+
+    - name: send distribution and version via telegram
+      tags: always
+      telegram:
+        token: "{{ telegram_token }}"
+        chat_id: "{{ telegram_chat_id }}"
+        msg_format: markdown
+        msg: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
+      changed_when: False
+      when: branch == "dev"
 
 - name: ansible job failed, clear cache later on to trigger another provision run
   become: yes
