@@ -42,10 +42,7 @@
       changed_when: False
       when: branch == "dev"
 
-- name: ansible job failed, clear cache later on to trigger another provision run
-  become: yes
-  at:
-    command: /bin/rm -rf /root/.ansible/
-    count: 10
-    units: minutes
-    unique: yes
+- name: ansible job failed, clear cache to trigger another provision run
+  ansible.builtin.systemd:
+    name: ansible-refresh.service
+    state: started
