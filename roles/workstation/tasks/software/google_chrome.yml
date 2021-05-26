@@ -44,3 +44,4 @@
   package:
     state: present
     name: google-chrome-stable
+  when: not ansible_os_family == "Archlinux"

@@ -45,3 +45,4 @@
   package:
     state: present
     name: code
+  when: not ansible_os_family == "Archlinux"
