@@ -1,3 +1,9 @@
+- name: users | jeffrey | set full name
+  tags: users,jeffrey
+  user:
+    name: jeffrey
+    comment: Jeffrey Borcean
+
 - name: users | jeffrey | create .ssh directory
   tags: dotfiles,jeffrey,ssh,users
   file:

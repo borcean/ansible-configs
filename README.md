@@ -11,6 +11,7 @@ The primary target is the latest Fedora release, however `base` and `workstation
 
 | Distro | Release |
 | --- | --- |
+| Arch | N/A |
 | CentOS | Stream 8 |
 | Debian | 10 (Buster)<sup>1</sup>, 11 (Bullseye)<sup>2</sup> |
 | Fedora | 33, 34 |

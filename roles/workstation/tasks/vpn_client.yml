@@ -50,6 +50,7 @@
 
 - name: vpn client | configure authentication
   command: "nmcli connection modify Seattle {{ item }}"
+  no_log: true
   loop:
     - -vpn.data password-flags
     - +vpn.data password-flags=0
