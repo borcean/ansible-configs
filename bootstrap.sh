@@ -103,9 +103,6 @@ else
     fi
 fi
 
-# Install third party modules locally
-git clone https://github.com/kewlfft/ansible-aur.git /root/.ansible/plugins/modules/aur
-
 # Update and fix existing flatpak installs
 if command -v flatpak &> /dev/null; then
     flatpak update -y
@@ -121,6 +118,12 @@ if [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
     fi
     systemctl enable serial-getty@ttyS0.service
 fi
+
+# Clear Ansible directory
+rm -rf /root/.ansible/
+
+# Install third party modules
+git clone https://github.com/kewlfft/ansible-aur.git /root/.ansible/plugins/modules/aur
 
 # Ansible pull command
 echo -e "\n"
