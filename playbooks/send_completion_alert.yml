@@ -6,6 +6,7 @@
     msg_format: markdown
     msg: "✅  Provision finished on *{{ ansible_hostname }}*"
   changed_when: False
+  when: not branch == "dev"
 
 - name: send distribution and version via telegram
   tags: always
@@ -13,6 +14,6 @@
     token: "{{ telegram_token }}"
     chat_id: "{{ telegram_chat_id }}"
     msg_format: markdown
-    msg: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
+    msg: "✅  Provision finished on *{{ ansible_hostname }}* {{ ansible_distribution }} {{ ansible_distribution_version }}"
   changed_when: False
   when: branch == "dev"

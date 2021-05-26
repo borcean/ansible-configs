@@ -10,14 +10,18 @@
         *Action*: {{ ansible_failed_task.action }}\n
         *Error Message*: \n ```{{ ansible_failed_result | to_nice_json }}```"
     changed_when: False
+    when: not branch == "dev"
 
-  - name: send distribution and version via telegram
+  - name: send failure notification via telegram
     tags: always
     telegram:
       token: "{{ telegram_token }}"
       chat_id: "{{ telegram_chat_id }}"
       msg_format: markdown
-      msg: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
+      msg: "⚠️  Provision failed on *{{ ansible_hostname }}* {{ ansible_distribution }} {{ ansible_distribution_version }}\n\n
+        *Task*:  {{ ansible_failed_task.name }}\n
+        *Action*: {{ ansible_failed_task.action }}\n
+        *Error Message*: \n ```{{ ansible_failed_result | to_nice_json }}```"
     changed_when: False
     when: branch == "dev"
 
@@ -31,6 +35,7 @@
         msg: "⚠️  Provision failed on *{{ ansible_hostname }}*\n\n
           The specific error couldn't be shown, check the log."
       changed_when: False
+      when: not branch == "dev"
 
     - name: send distribution and version via telegram
       tags: always
@@ -38,7 +43,9 @@
         token: "{{ telegram_token }}"
         chat_id: "{{ telegram_chat_id }}"
         msg_format: markdown
-        msg: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
+        msg: "⚠️  Provision failed on *{{ ansible_hostname }}* {{ ansible_distribution }} {{ ansible_distribution_version }}\n\n
+          The specific error couldn't be shown, check the log."
+        msg: ""
       changed_when: False
       when: branch == "dev"
 
