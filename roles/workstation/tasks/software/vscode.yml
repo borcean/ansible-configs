@@ -46,3 +46,10 @@
     state: present
     name: code
   when: not ansible_os_family == "Archlinux"
+
+- name: software | vscode | install package (arch)
+  become_user: aur_builder
+  aur:
+    state: latest
+    name: visual-studio-code-bin
+  when: ansible_os_family == "Archlinux"

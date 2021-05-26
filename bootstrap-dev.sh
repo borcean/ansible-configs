@@ -84,7 +84,7 @@ elif [[ "$OS" == centos ]]; then
     dnf install ansible -y
 elif [[ "$OS" == arch ]]; then
     pacman -Syu
-    pacman -S --noconfirm ansible git
+    pacman -S --noconfirm --needed ansible git
 elif [[ "$OS" == opensuse-tumbleweed ]] || [[ "$OS" == opensuse-leap ]]; then
     zypper --non-interactive dup
     zypper --non-interactive install ansible git-core
@@ -103,6 +103,9 @@ else
     fi
 fi
 
+# Install third party modules locally
+git clone https://github.com/kewlfft/ansible-aur.git /root/.ansible/plugins/modules/aur
+
 # Update and fix existing flatpak installs
 if command -v flatpak &> /dev/null; then
     flatpak update -y
@@ -114,7 +117,7 @@ if [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
     if [[ "$OS" == debian ]]; then
         apt install spice-vdagent -y
     elif [[ "$OS" == arch ]]; then
-        pacman -S --noconfirm spice-vdagent
+        pacman -S --noconfirm --needed spice-vdagent xf86-video-qxl
     fi
     systemctl enable serial-getty@ttyS0.service
 fi

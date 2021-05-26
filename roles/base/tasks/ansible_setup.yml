@@ -58,3 +58,9 @@
     masked: false
     daemon_reload: true
   with_dict: "{{ timers }}"
+
+- name: ansible setup | update aur helper module (arch)
+  ansible.builtin.git:
+    repo: 'https://github.com/kewlfft/ansible-aur.git'
+    dest: /root/.ansible/plugins/modules/aur
+  when: ansible_distribution == "Archlinux"

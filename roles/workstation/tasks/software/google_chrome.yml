@@ -45,3 +45,10 @@
     state: present
     name: google-chrome-stable
   when: not ansible_os_family == "Archlinux"
+
+- name: software | google-chrome | install package (arch)
+  become_user: aur_builder
+  aur:
+    state: latest
+    name: google-chrome
+  when: ansible_os_family == "Archlinux"
