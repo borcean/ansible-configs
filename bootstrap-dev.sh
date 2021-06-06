@@ -5,6 +5,7 @@ REPO="https://github.com/borcean/ansible-configs.git"
 BRANCH=dev
 VAULT_FILE=/root/.ansible_vault_key
 INVENTORY="https://raw.githubusercontent.com/borcean/ansible-configs/"$BRANCH"/hosts"
+REQUIREMENTS="https://raw.githubusercontent.com/borcean/ansible-configs/"$BRANCH"/requirements.yml"
 
 confirm() {
     PROMPT="$1"
@@ -103,9 +104,6 @@ else
     fi
 fi
 
-# Install third party modules locally
-git clone https://github.com/kewlfft/ansible-aur.git /root/.ansible/plugins/modules/aur
-
 # Update and fix existing flatpak installs
 if command -v flatpak &> /dev/null; then
     flatpak update -y
@@ -121,6 +119,14 @@ if [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
     fi
     systemctl enable serial-getty@ttyS0.service
 fi
+
+# Clean Ansible cache
+rm -rf /root/.ansible/
+
+# Install collections/roles from Ansible Galaxy
+wget -O /tmp/requirements.yml "$REQUIREMENTS"
+ansible-galaxy role install -r /tmp/requirements.yml --force
+ansible-galaxy collection install -r /tmp/requirements.yml --force
 
 # Ansible pull command
 echo -e "\n"

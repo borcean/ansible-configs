@@ -59,8 +59,21 @@
     daemon_reload: true
   with_dict: "{{ timers }}"
 
-- name: ansible setup | update aur helper module (arch)
-  ansible.builtin.git:
-    repo: 'https://github.com/kewlfft/ansible-aur.git'
-    dest: /root/.ansible/plugins/modules/aur
-  when: ansible_distribution == "Archlinux"
+- name: ansible setup | copy ansible requirements.yml file
+  tags: ansible,ansible-setup
+  copy:
+    src: ansible/requirements
+    dest: /root/.ansible/requirements.yml
+    owner: root
+    group: root
+    mode: 0640
+  changed_when: False
+
+- name: ansible setup | install content from Ansible Galaxy
+  tags: ansible,ansible-setup
+  command:
+    cmd: ansible-galaxy "{{ item }}" install -r requirements.yml --force
+  loop:
+    - collection
+    - role
+  changed_when: False
