@@ -69,11 +69,22 @@
     mode: 0640
   changed_when: False
 
-- name: ansible setup | install content from Ansible Galaxy
+- name: ansible setup | install content from ansible galaxy
   tags: ansible,ansible-setup
   command:
     cmd: ansible-galaxy "{{ item }}" install -r requirements.yml --force
   loop:
     - collection
     - role
-  changed_when: False
+  when: ansible_version.full is version('2.11.0', '<')
+  changed_when: false
+
+- name: ansible setup | install content from ansible galaxy
+  tags: ansible,ansible-setup
+  command:
+    cmd: ansible-galaxy "{{ item.type }}" install -r requirements.yml --"{{item.flag}}"
+  loop:
+    - { type: 'collection', flag: 'upgrade' }
+    - { type: 'role', flag: 'force' }
+  when: ansible_version.full is version('2.11.0', '>=')
+  changed_when: false
