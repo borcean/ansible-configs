@@ -1,4 +1,6 @@
 ---
 ansible_python_interpreter: "/usr/bin/python"
 
+debian_enable_contrib_non_free: false
+
 sshd: false

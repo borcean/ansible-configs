@@ -32,6 +32,8 @@ timers:
       timer_boot: 10m
       timer_active: 1h
 
+debian_enable_contrib_non_free: true
+
 automatic_updates: true
 
 sshd: true
