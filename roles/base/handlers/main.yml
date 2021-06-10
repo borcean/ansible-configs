@@ -2,7 +2,6 @@
 - name: apt_refresh
   ansible.builtin.apt: update_cache=yes
   changed_when: False
-  when: ansible_os_family == "Debian"
 
 - name: restart_sshd
   service:

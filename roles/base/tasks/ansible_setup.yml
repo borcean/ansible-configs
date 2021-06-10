@@ -82,7 +82,7 @@
 - name: ansible setup | install content from ansible galaxy
   tags: ansible,ansible-setup
   command:
-    cmd: ansible-galaxy "{{ item.type }}" install -r requirements.yml --"{{item.flag}}"
+    cmd: ansible-galaxy "{{ item.type }}" install -r requirements.yml --"{{ item.flag }}"
   loop:
     - { type: 'collection', flag: 'upgrade' }
     - { type: 'role', flag: 'force' }
