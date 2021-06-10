@@ -31,6 +31,9 @@
     - tlp_kmod
     - ansible_distribution in ["Fedora", "Ubuntu"]
 
+- name: gather package facts
+  ansible.builtin.package_facts:
+
 # Requires TLP version ≥ 1.3
 # Not compatible with CentOS, Debian 10, or openSUSE Leap 15.2
 - name: system setup | scripts | copy tlp charge-thresholds
@@ -41,3 +44,4 @@
     owner: root
     group: root
     mode: 0644
+  when: ansible_facts.packages['tlp'][0].version is version('1.3', '>=')
