@@ -24,6 +24,7 @@
     regexp: 'main$'
     replace: 'main contrib non-free'
     backup: yes
+  notify: apt_refresh
   when:
     - ansible_distribution == "Debian"
     - debian_enable_contrib_non_free
