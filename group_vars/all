@@ -40,6 +40,8 @@ sshd: true
 
 fail2ban: false
 
+microcode: true
+
 user_ana: false
 user_josh: false
 user_nelu: false

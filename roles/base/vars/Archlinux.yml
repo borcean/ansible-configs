@@ -1,3 +1,5 @@
+amd_microcode_package: amd-ucode
+intel_microcode_package: intel-ucode
 lm_sensors_package: lm_sensors
 openssh_package: openssh
 openssh_service: sshd
