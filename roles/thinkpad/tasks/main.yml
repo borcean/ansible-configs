@@ -11,6 +11,9 @@
   - import_tasks: bluetooth.yml
     when: bluetooth_edr_only
 
+  ## configure peripheral settings
+  - import_tasks: peripherals/keyboard.yml
+
   rescue:
   - name: Set fact if task failed
     set_fact: task_failed=true
