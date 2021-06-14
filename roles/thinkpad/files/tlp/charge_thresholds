@@ -7,14 +7,14 @@
 # Main / Internal battery (values in %)
 # Default: <none>
 
-START_CHARGE_THRESH_BAT0=50
-STOP_CHARGE_THRESH_BAT0=61
+START_CHARGE_THRESH_BAT0=45
+STOP_CHARGE_THRESH_BAT0=51
 
 # Ultrabay / Slice / Replaceable battery (values in %)
 # Default: <none>
 
-START_CHARGE_THRESH_BAT1=50
-STOP_CHARGE_THRESH_BAT1=61
+START_CHARGE_THRESH_BAT1=45
+STOP_CHARGE_THRESH_BAT1=51
 
 # Restore charge thresholds when AC is unplugged: 0=disable, 1=enable.
 # Default: 0
