@@ -16,13 +16,15 @@
     disable_gpg_check: yes
   when: ansible_distribution == "CentOS"
 
-# This is not ideal, revisit in the future
 - name: system setup | repositories | add contrib non-free (debian)
   tags: contrib,non-free,debian,repositories
-  ansible.builtin.replace:
-    path: /etc/apt/sources.list
-    regexp: 'main$'
-    replace: 'main contrib non-free'
+  ansible.builtin.template:
+    src: software/debian_sourceslist.j2
+    dest: /etc/apt/sources.list
+    owner: root
+    group: root
+    mode: '0644'
+    validate: apt update -o dir::etc::sourcelist=%s
     backup: yes
   notify: apt_refresh
   when:

@@ -33,6 +33,7 @@ timers:
       timer_active: 1h
 
 debian_enable_contrib_non_free: true
+debian_mirror: "debian.osuosl.org"
 
 automatic_updates: true
 
