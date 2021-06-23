@@ -1,0 +1,9 @@
+---
+roles:
+  # Install a role from Ansible Galaxy.
+  - name: kewlfft.aur
+
+collections:
+  # Install collections from Ansible Galaxy.
+  - name: ansible.posix
+  - name: community.general

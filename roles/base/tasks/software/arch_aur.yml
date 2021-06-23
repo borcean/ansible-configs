@@ -9,6 +9,9 @@
     path: /etc/sudoers.d/11-install-aur_builder
     line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
     create: yes
+    owner: root
+    group: root
+    mode: '0440'
     validate: 'visudo -cf %s'
 
 - name: system setup | arch aur | install yay

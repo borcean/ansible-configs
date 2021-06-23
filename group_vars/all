@@ -32,11 +32,16 @@ timers:
       timer_boot: 10m
       timer_active: 1h
 
+debian_enable_contrib_non_free: true
+debian_mirror: "debian.osuosl.org"
+
 automatic_updates: true
 
 sshd: true
 
 fail2ban: false
+
+microcode: true
 
 user_ana: false
 user_josh: false

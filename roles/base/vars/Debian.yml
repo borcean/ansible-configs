@@ -1,8 +1,1 @@
-automatic_updates_package: unattended-upgrades
-automatic_updates_timer: apt-daily-upgrade.timer
-lm_sensors_package: lm-sensors
-openssh_package: openssh-server
-openssh_service: ssh
-powerline_fonts_package: fonts-powerline
-python_psutil_package: python3-psutil
-vim_package: vim
+Ubuntu.yml

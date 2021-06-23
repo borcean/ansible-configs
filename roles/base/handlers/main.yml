@@ -1,4 +1,8 @@
 ---
+- name: apt_refresh
+  ansible.builtin.apt: update_cache=yes
+  changed_when: False
+
 - name: restart_sshd
   service:
     name: "{{ openssh_service }}"

@@ -1,5 +1,7 @@
+amd_microcode_package: amd64-microcode
 automatic_updates_package: unattended-upgrades
 automatic_updates_timer: apt-daily-upgrade.timer
+intel_microcode_package: intel-microcode
 lm_sensors_package: lm-sensors
 openssh_package: openssh-server
 openssh_service: ssh

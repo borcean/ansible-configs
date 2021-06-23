@@ -1,19 +1,21 @@
 - name: send completion notification via telegram
   tags: always
-  telegram:
+  community.general.telegram:
     token: "{{ telegram_token }}"
-    chat_id: "{{ telegram_chat_id }}"
-    msg_format: markdown
-    msg: "✅  Provision finished on *{{ ansible_hostname }}*"
+    api_args:
+      chat_id: "{{ telegram_chat_id }}"
+      parse_mode: "markdown"
+      text: "✅  Provision finished on *{{ ansible_hostname }}*"
   changed_when: False
   when: not branch == "dev"
 
 - name: send distribution and version via telegram
   tags: always
-  telegram:
+  community.general.telegram:
     token: "{{ telegram_token }}"
-    chat_id: "{{ telegram_chat_id }}"
-    msg_format: markdown
-    msg: "✅  Provision finished on *{{ ansible_hostname }}* {{ ansible_distribution }} {{ ansible_distribution_version }}"
+    api_args:
+      chat_id: "{{ telegram_chat_id }}"
+      parse_mode: "markdown"
+      text: "✅  Provision finished on *{{ ansible_hostname }}* {{ ansible_distribution }} {{ ansible_distribution_version }}"
   changed_when: False
   when: branch == "dev"

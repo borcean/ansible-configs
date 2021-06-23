@@ -29,12 +29,14 @@
   # perform remaining tasks:
   - import_tasks: system_setup/automatic_updates.yml
     when:  automatic_updates
-
   - import_tasks: system_setup/openssh.yml
     when: sshd
-
   - import_tasks: system_setup/fail2ban.yml
     when: fail2ban
+  - import_tasks: system_setup/microcode.yml
+    when:
+      - microcode
+      - ansible_architecture == "x86_64"
 
   rescue:
   - name: Set fact if task failed
