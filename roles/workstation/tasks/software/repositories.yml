@@ -53,3 +53,36 @@
     autorefresh: true
   notify: packman_vendor_change
   when: ansible_distribution == "openSUSE Leap"
+
+- name: system setup | repositories | enable multilib repository (arch)
+  lineinfile:
+    dest: "/etc/pacman.conf"
+    state: "present"
+    line: "[multilib]"
+    regexp: "^\\[multilib\\]"
+    insertafter: "^#\\[multilib\\]"
+  when:
+    - ansible_os_family == "Archlinux"
+    - ansible_architecture == "x86_64"
+    - steam_install == "native"
+
+- name: system setup | repositories | enable multilib repository (arch)
+  lineinfile:
+    dest: "/etc/pacman.conf"
+    state: "present"
+    line: "Include = /etc/pacman.d/mirrorlist"
+    insertafter: "^\\[multilib\\]"
+    regexp: "Include = /etc/pacman.d/mirrorlist"
+  notify: pacman_refresh
+  when:
+    - ansible_os_family == "Archlinux"
+    - ansible_architecture == "x86_64"
+    - steam_install == "native"
+
+- name: system setup | repositories | enable multilib (x86) (debian)
+  ansible.builtin.command: dpkg --add-architecture i386
+  notify: apt_refresh
+  when:
+    - ansible_distribution == "Debian"
+    - ansible_architecture == "x86_64"
+    - steam_install == "native"

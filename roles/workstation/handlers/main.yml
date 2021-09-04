@@ -1,4 +1,13 @@
 ---
+- name: apt_refresh
+  ansible.builtin.apt: update_cache=yes
+  changed_when: False
+
+- name: pacman_refresh
+  community.general.pacman:
+    update_cache: yes
+  changed_when: False
+
 - name: rpmfusion_appstream_metadata
   dnf:
     name: '@core'

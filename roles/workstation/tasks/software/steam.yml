@@ -1,0 +1,22 @@
+- name: trigger package cache refresh if needed
+  meta: flush_handlers
+  when: steam_install == "native"
+
+- name: software | steam | install via native package
+  package:
+    name: "{{ steam_package }}"
+    state: present
+  when: steam_install == "native"
+
+- name: software | steam | install via flatpack
+  flatpak:
+    name: com.valvesoftware.Steam
+    state: present
+    remote: flathub
+  when: steam_install == "flatpak"
+
+- name: software | steam | remove flatpak if installed
+  flatpak:
+    name: com.valvesoftware.Steam"
+    state: absent
+  when: steam_install != "flatpak"
