@@ -16,6 +16,6 @@
 
 - name: system setup | arch aur | install yay
   become_user: aur_builder
-  aur:
+  kewlfft.aur.aur:
     name: yay
     state: latest
