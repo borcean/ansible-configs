@@ -80,7 +80,7 @@
     - steam_install == "native"
 
 - name: system setup | repositories | enable multilib (x86) (debian)
-  ansible.builtin.command: dpkg --add-architecture i386
+  command: dpkg --add-architecture i386
   notify: apt_refresh
   when:
     - ansible_distribution == "Debian"
