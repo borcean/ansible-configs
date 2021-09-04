@@ -2,6 +2,26 @@
   meta: flush_handlers
   when: steam_install == "native"
 
+- name: gather package facts
+  ansible.builtin.package_facts:
+  when:
+    - ansible_distribution == "Debian"
+    - steam_install == "native"
+
+- name: software | steam | agree to steam license (debian)
+  debconf:
+    name: steam
+    question: "{{ item.question }}"
+    value: "{{ item.value }}"
+    vtype: "{{ item.vtype }}"
+  loop:
+    - { question: 'steam/license', value: '', vtype: 'note'}
+    - { question: 'steam/question', value: 'I AGREE', vtype: 'select'}
+  when:
+    - "'steam' not in ansible_facts.packages"
+    - ansible_distribution == "Debian"
+    - steam_install == "native"
+
 - name: software | steam | install via native package
   package:
     name: "{{ steam_package }}"
