@@ -125,7 +125,6 @@ rm -rf /root/.ansible/
 
 # Install collections/roles from Ansible Galaxy
 wget -O /tmp/requirements.yml "$REQUIREMENTS"
-ansible-galaxy role install -r /tmp/requirements.yml --force
 ansible-galaxy collection install -r /tmp/requirements.yml --force
 
 # Ansible pull command
