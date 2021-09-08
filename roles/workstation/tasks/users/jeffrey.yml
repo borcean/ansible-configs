@@ -13,3 +13,16 @@
     path: /var/lib/AccountsService/users/jeffrey
     regexp: '^Icon='
     line: Icon=/var/lib/AccountsService/icons/jeffrey
+
+- name: users | jeffrey | transmission | check if settings.json exists
+  stat:
+    path: /home/jeffrey/.config/transmission/settings.json
+  register: p
+
+- name: users | jeffrey | tranmission | disable ipv6
+  lineinfile:
+    path: /home/jeffrey/.config/transmission/settings.json
+    regex: '^    "bind-address-ipv6": "::",$'
+    line: '    "bind-address-ipv6": "fe80::",'
+    validate: 'python -m json.tool %s'
+  when: p.stat.isreg is defined and p.stat.isreg
