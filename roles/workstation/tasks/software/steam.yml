@@ -18,8 +18,8 @@
     - { question: 'steam/license', value: '', vtype: 'note'}
     - { question: 'steam/question', value: 'I AGREE', vtype: 'select'}
   when:
-    - "'steam' not in ansible_facts.packages"
     - ansible_distribution == "Debian"
+    - "'steam' not in ansible_facts.packages"
     - steam_install == "native"
 
 - name: software | steam | install via native package
