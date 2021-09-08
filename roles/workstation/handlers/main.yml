@@ -8,6 +8,11 @@
     update_cache: yes
   changed_when: False
 
+- name: zypper_refresh
+  community.general.zypper_repository:
+    repo: '*'
+    runrefresh: yes
+
 - name: rpmfusion_appstream_metadata
   dnf:
     name: '@core'
@@ -15,8 +20,8 @@
 
 - name: packman_vendor_change
   tags: packman,repositories,opensuse
-  zypper:
-    name: '*'
+  community.general.zypper:
+    name: "*"
     state: dist-upgrade
-    extra_args: '--from packman --allow-vendor-change'
-    update_cache: no
+    allow_vendor_change: true
+    extra_args: "--from packman"
