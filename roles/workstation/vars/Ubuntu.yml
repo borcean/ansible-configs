@@ -4,3 +4,4 @@ gnome_extensions_app_package:
 font_noto_emoji_package: fonts-noto-color-emoji
 libvirt_client_package: libvirt-clients
 networkmanager_openvpn_gnome_package: network-manager-openvpn-gnome
+steam_package: steam-installer

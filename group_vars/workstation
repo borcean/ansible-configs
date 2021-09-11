@@ -5,7 +5,8 @@ vpn_client: true
 # Optional Packages
 toolbox_install: false
 virt_manager_install: false
+# Steam can be false/native/flatpak
+steam_install: false
 
 # Optional Flatpaks
 minecraft_install: false
-steam_install: false

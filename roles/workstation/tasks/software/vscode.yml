@@ -49,7 +49,7 @@
 
 - name: software | vscode | install package (arch)
   become_user: aur_builder
-  aur:
+  kewlfft.aur.aur:
     state: latest
     name: visual-studio-code-bin
   when: ansible_os_family == "Archlinux"

@@ -34,10 +34,3 @@
     state: present
     remote: flathub
   when: minecraft_install
-
-- name: software | flatpak | install Steam flatpack
-  flatpak:
-    name: com.valvesoftware.Steam
-    state: present
-    remote: flathub
-  when: steam_install

@@ -40,16 +40,62 @@
     auto_import_keys: yes
     priority: 90
     autorefresh: true
-  notify: packman_vendor_change
+  notify:
+    - zypper_refresh
+    - packman_vendor_change
   when: ansible_distribution == "openSUSE Tumbleweed"
+
+- name: system setup | repositories | add packman repository keys (opensuse leap)
+  tags: packman,repositories
+  rpm_key:
+    key: "https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Leap_{{ ansible_distribution_version }}/repodata/repomd.xml.key"
+    fingerprint: F887 5B88 0D51 8B6B 8C53 0D13 45A1 D067 1ABD 1AFB
+  when: ansible_distribution == "openSUSE Leap"
 
 - name: system setup | repositories | add packman repository (opensuse leap)
   tags: packman,repositories
   zypper_repository:
     name: packman
-    repo: "https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Leap_{{ ansible_distribution_version }}/"
-    auto_import_keys: yes
+    repo: "https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Leap_$releasever/"
     priority: 90
     autorefresh: true
-  notify: packman_vendor_change
+  notify:
+    - zypper_refresh
+    - packman_vendor_change
   when: ansible_distribution == "openSUSE Leap"
+
+- name: system setup | repositories | enable multilib repository (arch)
+  lineinfile:
+    dest: "/etc/pacman.conf"
+    state: "present"
+    line: "[multilib]"
+    regexp: "^\\[multilib\\]"
+    insertafter: "^#\\[multilib\\]"
+  when:
+    - ansible_os_family == "Archlinux"
+    - ansible_architecture == "x86_64"
+    - steam_install == "native"
+
+- name: system setup | repositories | enable multilib repository (arch)
+  lineinfile:
+    dest: "/etc/pacman.conf"
+    state: "present"
+    line: "Include = /etc/pacman.d/mirrorlist"
+    insertafter: "^\\[multilib\\]"
+    regexp: "Include = /etc/pacman.d/mirrorlist"
+  notify: pacman_refresh
+  when:
+    - ansible_os_family == "Archlinux"
+    - ansible_architecture == "x86_64"
+    - steam_install == "native"
+
+- name: system setup | repositories | enable multilib (x86) (debian)
+  command: dpkg --add-architecture i386
+  notify: apt_refresh
+  when:
+    - ansible_distribution == "Debian"
+    - ansible_architecture == "x86_64"
+    - steam_install == "native"
+
+- name: trigger package cache refresh, and/or vendor change
+  meta: flush_handlers

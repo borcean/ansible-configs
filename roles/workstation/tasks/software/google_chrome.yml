@@ -48,7 +48,7 @@
 
 - name: software | google-chrome | install package (arch)
   become_user: aur_builder
-  aur:
+  kewlfft.aur.aur:
     state: latest
     name: google-chrome
   when: ansible_os_family == "Archlinux"

@@ -14,3 +14,11 @@
       - pwgen
       - tree
       - "{{ vim_package }}"
+
+- name: system setup | utilities | install utility packages (debian)
+  tags: packages,system,settings
+  package:
+    state: present
+    name:
+      - debconf-utils
+  when: ansible_os_family == "Debian"
