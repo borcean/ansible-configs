@@ -6,14 +6,6 @@
       - transmission-gtk
       - vlc
 
-- name: software | workstation packages | install vlc-codecs (suse)
-  tags: packages,workstation,suse
-  package:
-    state: present
-    name: vlc-codecs
-  notify: packman_vendor_change
-  when: ansible_os_family == "Suse"
-
 - name: software | workstation packages | install ansible-lint
   tags: packages,workstation
   package:

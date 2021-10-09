@@ -11,6 +11,7 @@
   - import_tasks: software/google_chrome.yml
   - import_tasks: software/packages.yml
   - import_tasks: software/packages_flatpak.yml
+  - import_tasks: software/media_codecs.yml
   - import_tasks: software/steam.yml
     when: steam_install != "false"
   - import_tasks: software/vscode.yml
