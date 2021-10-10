@@ -13,15 +13,33 @@
     path: /var/lib/AccountsService/users/nelu
   register: p
 
+- name: users | nelu | create AccountsService/users/username
+  tags: users,nelu
+  copy:
+    src: users/AccountsService_user
+    dest: /var/lib/AccountsService/users/nelu
+    owner: root
+    group: root
+    mode: 0600
+  when: p.stat.isreg is not defined
+
 - name: users | nelu | set profile image
   tags: dotfiles,dotfiles-nelu
   lineinfile:
     path: /var/lib/AccountsService/users/nelu
     regexp: '^Icon='
     line: Icon=/var/lib/AccountsService/icons/nelu
-  when: p.stat.isreg is defined
 
-- name: users | nelu | create config/autostart directory
+- name: users | nelu | create ~/.config directory
+  tags: dotfiles,nelu,users
+  file:
+    path: /home/nelu/.config
+    state: directory
+    owner: nelu
+    group: "{{ user_group_name | default('nelu') }}"
+    mode: 0700
+
+- name: users | nelu | create ~/.config/autostart directory
   tags: dotfiles,nelu,users
   file:
     path: /home/nelu/.config/autostart
@@ -29,14 +47,12 @@
     owner: nelu
     group: "{{ user_group_name | default('nelu') }}"
     mode: 0755
-  when: p.stat.isreg is defined
 
 - name: users | nelu | check if chrome is set to autostart
   tags: users,nelu,google-chrome
   stat:
     path: /home/nelu/.config/autostart/google-chrome.desktop
   register: q
-  when: p.stat.isreg is defined
 
 - name: users | nelu | enable chrome autostart
   tags: users,nelu,google-chrome
@@ -48,7 +64,6 @@
     state: link
   when:
     - q.stat.islnk is not defined
-    - p.stat.isreg is defined
 
 # GNOME config
 - name: users | nelu | GNOME | enable natural scrolling (mouse)

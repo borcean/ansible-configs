@@ -13,15 +13,33 @@
     path: /var/lib/AccountsService/users/ana
   register: p
 
+- name: users | ana | create AccountsService/users/username
+  tags: users,ana
+  copy:
+    src: users/AccountsService_user
+    dest: /var/lib/AccountsService/users/ana
+    owner: root
+    group: root
+    mode: 0600
+  when: p.stat.isreg is not defined
+
 - name: users | ana | set profile image
   tags: dotfiles,dotfiles-ana
   lineinfile:
     path: /var/lib/AccountsService/users/ana
     regexp: '^Icon='
     line: Icon=/var/lib/AccountsService/icons/ana
-  when: p.stat.isreg is defined
 
-- name: users | ana | create config/autostart directory
+- name: users | ana | create ~/.config directory
+  tags: dotfiles,ana,users
+  file:
+    path: /home/ana/.config
+    state: directory
+    owner: ana
+    group: "{{ user_group_name | default('ana') }}"
+    mode: 0700
+
+- name: users | ana | create ~/.config/autostart directory
   tags: dotfiles,ana,users
   file:
     path: /home/ana/.config/autostart
@@ -29,14 +47,12 @@
     owner: ana
     group: "{{ user_group_name | default('ana') }}"
     mode: 0755
-  when: p.stat.isreg is defined
 
 - name: users | ana | check if chrome is set to autostart
   tags: users,ana,google-chrome
   stat:
     path: /home/ana/.config/autostart/google-chrome.desktop
   register: q
-  when: p.stat.isreg is defined
 
 - name: users | ana | enable chrome autostart
   tags: users,ana,google-chrome
@@ -48,7 +64,6 @@
     state: link
   when:
     - q.stat.islnk is not defined
-    - p.stat.isreg is defined
 
 # GNOME config
 - name: users | ana | GNOME | enable natural scrolling (mouse)
