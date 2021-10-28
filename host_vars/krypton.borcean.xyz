@@ -1,0 +1,14 @@
+---
+# base
+# ansible setup
+branch: dev
+
+# workstation
+# desktop enviornment
+gnome: false
+
+# optional packages
+steam_install: native
+
+# optional flatpaks
+minecraft_install: true
