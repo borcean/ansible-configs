@@ -6,3 +6,6 @@ steam_install: native
 
 # Optional Flatpaks
 minecraft_install: true
+
+# ThinkPad
+bluetooth_edr_only: true
