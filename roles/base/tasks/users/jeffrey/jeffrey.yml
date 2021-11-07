@@ -118,3 +118,6 @@
   when: omf.stat.exists
 
 - import_tasks: gpg.yml
+
+- include_tasks: weechat.yml
+  when: weechat

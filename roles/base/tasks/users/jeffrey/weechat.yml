@@ -1,0 +1,50 @@
+- name: users | jeffrey | weechat | install packages
+  tags: packages,weechat,users,jeffrey
+  package:
+    state: present
+    name:
+      - aspell
+      - weechat
+
+- name: gather package facts
+  ansible.builtin.package_facts:
+
+- name: users | jeffrey | weechat | create config directory (≥3.2)
+  tags: dotfiles,weechat,jeffrey,users
+  file:
+    path: /home/jeffrey/.config/weechat
+    state: directory
+    owner: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
+    mode: 0700
+  when: ansible_facts.packages['weechat'][0].version is version('3.2', '>=')
+
+- name: users | jeffrey | weechat | copy irc config (≥3.2)
+  tags: dotfiles,weechat,jeffrey,users
+  copy:
+    src: users/jeffrey/weechat/irc
+    dest: /home/jeffrey/.config/weechat/irc.conf
+    owner: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
+    mode: 0600
+  when: ansible_facts.packages['weechat'][0].version is version('3.2', '>=')
+
+- name: users | jeffrey | weechat | create config directory (<3.2)
+  tags: dotfiles,weechat,jeffrey,users
+  file:
+    path: /home/jeffrey/.weechat
+    state: directory
+    owner: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
+    mode: 0700
+  when: ansible_facts.packages['weechat'][0].version is version('3.2', '<')
+
+- name: users | jeffrey | weechat | copy irc config (<3.2)
+  tags: dotfiles,weechat,jeffrey,users
+  copy:
+    src: users/jeffrey/weechat/irc
+    dest: /home/jeffrey/.weechat/irc.conf
+    owner: jeffrey
+    group: "{{ user_group_name | default('jeffrey') }}"
+    mode: 0600
+  when: ansible_facts.packages['weechat'][0].version is version('3.2', '<')

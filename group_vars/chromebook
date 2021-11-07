@@ -6,3 +6,5 @@ debian_enable_contrib_non_free: false
 sshd: false
 
 microcode: false
+
+weechat: true
