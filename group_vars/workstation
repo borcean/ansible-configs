@@ -1,4 +1,8 @@
 ---
+#Base
+weechat: true
+
+# Workstation
 gnome: true
 vpn_client: true
 
@@ -10,3 +14,7 @@ steam_install: false
 
 # Optional Flatpaks
 minecraft_install: false
+
+# Users
+# Jeffrey
+profile_sync_daemon: false

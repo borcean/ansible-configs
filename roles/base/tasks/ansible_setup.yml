@@ -1,7 +1,7 @@
 - name: ansible setup | ensure ansible is installed
   tags: ansible,ansible-setup
   package:
-    name: ansible
+    name: "{{ ansible_package | default('ansible') }}"
     state: present
 
 - name: ansible setup | install required packages

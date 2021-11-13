@@ -13,15 +13,33 @@
     path: /var/lib/AccountsService/users/josh
   register: p
 
+- name: users | josh | create AccountsService/users/username
+  tags: users,josh
+  copy:
+    src: users/AccountsService_user
+    dest: /var/lib/AccountsService/users/josh
+    owner: root
+    group: root
+    mode: 0600
+  when: p.stat.isreg is not defined
+
 - name: users | josh | set profile image
   tags: dotfiles,dotfiles-josh
   lineinfile:
     path: /var/lib/AccountsService/users/josh
     regexp: '^Icon='
     line: Icon=/var/lib/AccountsService/icons/josh
-  when: p.stat.isreg is defined
 
-- name: users | josh | create config/autostart directory
+- name: users | josh | create ~/.config directory
+  tags: dotfiles,josh,users
+  file:
+    path: /home/josh/.config
+    state: directory
+    owner: josh
+    group: "{{ user_group_name | default('josh') }}"
+    mode: 0700
+
+- name: users | josh | create ~/.config/autostart directory
   tags: dotfiles,josh,users
   file:
     path: /home/josh/.config/autostart
@@ -29,14 +47,12 @@
     owner: josh
     group: "{{ user_group_name | default('josh') }}"
     mode: 0755
-  when: p.stat.isreg is defined
 
 - name: users | josh | check if chrome is set to autostart
   tags: users,josh,google-chrome
   stat:
     path: /home/josh/.config/autostart/google-chrome.desktop
   register: q
-  when: p.stat.isreg is defined
 
 - name: users | josh | enable chrome autostart
   tags: users,josh,google-chrome
@@ -48,7 +64,6 @@
     state: link
   when:
     - q.stat.islnk is not defined
-    - p.stat.isreg is defined
 
 # GNOME config
 - name: users | josh | GNOME | enable natural scrolling (mouse)

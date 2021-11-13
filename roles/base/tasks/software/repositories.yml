@@ -8,12 +8,14 @@
     mode: 0644
   when: ansible_distribution == "CentOS"
 
+# Note this only support CentOS Stream
 - name: system setup | repositories | add epel repository (centos)
   tags: epel,repositories
   dnf:
-    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+    name:
+      - epel-release
+      - epel-next-release
     state: present
-    disable_gpg_check: yes
   when: ansible_distribution == "CentOS"
 
 - name: system setup | repositories | add contrib non-free (debian)

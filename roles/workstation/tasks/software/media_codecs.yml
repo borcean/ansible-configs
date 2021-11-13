@@ -1,0 +1,15 @@
+- name: software | media codecs | install codecs from rpmfusion (red hat)
+  ansible.builtin.dnf:
+    name: '@multimedia'
+    install_weak_deps: no
+    exclude: PackageKit-gstreamer-plugin
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: software | workstation packages | install vlc-codecs (suse)
+  tags: packages,workstation,suse
+  package:
+    state: present
+    name: vlc-codecs
+  notify: packman_vendor_change
+  when: ansible_os_family == "Suse"

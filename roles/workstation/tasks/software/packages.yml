@@ -3,16 +3,7 @@
   package:
     state: present
     name:
-      - transmission-gtk
       - vlc
-
-- name: software | workstation packages | install vlc-codecs (suse)
-  tags: packages,workstation,suse
-  package:
-    state: present
-    name: vlc-codecs
-  notify: packman_vendor_change
-  when: ansible_os_family == "Suse"
 
 - name: software | workstation packages | install ansible-lint
   tags: packages,workstation
@@ -20,13 +11,6 @@
     state: present
     name: "{{ ansible_lint_package }}"
   when: ansible_lint_package is defined
-
-- name: software | workstation packages | install deja-dup
-  tags: packages,workstation
-  package:
-    state: present
-    name: "{{ deja_dup_package }}"
-  when: deja_dup_package is defined
 
 - name: software | workstation packages | install toolbox (Red Hat)
   tags: packages,workstation
