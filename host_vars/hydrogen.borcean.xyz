@@ -24,3 +24,7 @@ fail2ban: true
 toolbox_install: true
 virt_manager_install: true
 steam_install: native
+
+# users
+# jeffrey
+profile_sync_daemon: true

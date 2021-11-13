@@ -1,0 +1,55 @@
+- name: users | jeffrey | profile sync daemon | install package
+  tags: packages,workstation,users,jeffrey,profile-sync-daemon
+  package:
+    state: present
+    name: profile-sync-daemon
+
+- name: users | jeffrey | profile sync daemon | get uid for env
+  getent:
+    database: passwd
+    key: jeffrey
+
+- name: users | jeffrey | profile sync daemon | create config
+  tags: workstation,users,jeffrey,profile-sync-daemon
+  become: true
+  become_user: jeffrey
+  command: psd
+  args:
+    chdir: /home/jeffrey/
+    creates: /home/jeffrey/.config/psd/psd.conf
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ getent_passwd.jeffrey.1 }}"
+
+- name: users | jeffrey | profile sync daemon | enable service
+  tags: workstation,users,jeffrey,profile-sync-daemon
+  become: true
+  become_user: jeffrey
+  systemd:
+    name: psd.service
+    state: started
+    enabled: yes
+    scope: user
+  when: ansible_distribution not in ["Archlinux", "Ubuntu"]
+
+- name: users | jeffrey | profile sync daemon | check if user signed in (arch, ubuntu)
+  shell: |
+    set -o pipefail
+    ps -C gnome-shell -o user -o cmd | grep jeffrey
+  args:
+    executable: /bin/bash
+  register: signin_status
+  failed_when: ( signin_status.rc not in [ 0, 1 ] )
+  when: ansible_distribution in ["Archlinux", "Ubuntu"]
+
+- name: users | jeffrey | profile sync daemon | enable service (arch, ubuntu)
+  tags: workstation,users,jeffrey,profile-sync-daemon
+  become: true
+  become_user: jeffrey
+  systemd:
+    name: psd.service
+    state: started
+    enabled: yes
+    scope: user
+  when:
+    - ansible_distribution in ["Archlinux", "Ubuntu"]
+    - signin_status.rc == 0

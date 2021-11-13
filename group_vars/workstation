@@ -14,3 +14,7 @@ steam_install: false
 
 # Optional Flatpaks
 minecraft_install: false
+
+# Users
+# Jeffrey
+profile_sync_daemon: false
