@@ -19,23 +19,23 @@
 
   # basic user configuration
   - import_tasks: users/ana.yml
-    when: user_ana
+    when: user_ana | bool
   - import_tasks: users/jeffrey/jeffrey.yml
   - import_tasks: users/josh.yml
-    when: user_josh
+    when: user_josh | bool
   - import_tasks: users/nelu.yml
-    when: user_nelu
+    when: user_nelu | bool
 
   # perform remaining tasks:
   - import_tasks: system_setup/automatic_updates.yml
-    when:  automatic_updates
+    when:  automatic_updates | bool
   - import_tasks: system_setup/openssh.yml
-    when: sshd
+    when: sshd | bool
   - import_tasks: system_setup/fail2ban.yml
-    when: fail2ban
+    when: fail2ban | bool
   - import_tasks: system_setup/microcode.yml
     when:
-      - microcode
+      - microcode | bool
       - ansible_architecture == "x86_64"
 
   rescue:

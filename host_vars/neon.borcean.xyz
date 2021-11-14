@@ -11,3 +11,6 @@ minecraft_install: true
 # Users
 # Jeffrey
 profile_sync_daemon: true
+
+# ThinkPad
+bluetooth_edr_only: true

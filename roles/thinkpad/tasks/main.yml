@@ -5,11 +5,11 @@
 - block:
   ## install and configure tlp
   - import_tasks: tlp.yml
-    when: tlp
+    when: tlp | bool
 
   ## set bluetooth controler mode edr only
   - import_tasks: bluetooth.yml
-    when: bluetooth_edr_only
+    when: bluetooth_edr_only | bool
 
   ## configure peripheral settings
   - import_tasks: peripherals/keyboard.yml

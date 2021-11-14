@@ -33,4 +33,4 @@
     name: com.mojang.Minecraft
     state: present
     remote: flathub
-  when: minecraft_install
+  when: minecraft_install | bool
