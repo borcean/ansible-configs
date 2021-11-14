@@ -18,26 +18,26 @@
 
   ## vpn client setup
   - include_tasks: vpn_client.yml
-    when: vpn_client
+    when: vpn_client | bool
 
   ## User configs
   - import_tasks: users/ana.yml
-    when: user_ana
+    when: user_ana | bool
   - import_tasks: users/jeffrey/jeffrey.yml
   - import_tasks: users/josh.yml
-    when: user_josh
+    when: user_josh | bool
   - import_tasks: users/nelu.yml
-    when: user_nelu
+    when: user_nelu | bool
 
   ## desktop environment
   - include_tasks: desktop_environments/gnome/packages.yml
-    when: gnome
+    when: gnome | bool
   - include_tasks: desktop_environments/gnome/peripherals.yml
-    when: gnome
+    when: gnome | bool
   - include_tasks: desktop_environments/gnome/software_settings.yml
-    when: gnome
+    when: gnome | bool
   - include_tasks: desktop_environments/gnome/keyboard_shortcuts.yml
-    when: gnome
+    when: gnome | bool
 
   rescue:
   - name: Set fact if task failed

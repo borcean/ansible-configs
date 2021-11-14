@@ -31,4 +31,4 @@
   notify: apt_refresh
   when:
     - ansible_distribution == "Debian"
-    - debian_enable_contrib_non_free
+    - debian_enable_contrib_non_free | bool

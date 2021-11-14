@@ -95,4 +95,4 @@
       tags: always
       when:
         - task_failed is defined
-        - task_failed
+        - task_failed | bool

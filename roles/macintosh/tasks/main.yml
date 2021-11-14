@@ -5,7 +5,7 @@
 - block:
   ## install broadcom wifi driver
   - import_tasks: broadcom_wlan.yml
-    when: broadcom_wlan
+    when: broadcom_wlan | bool
 
   rescue:
   - name: Set fact if task failed

@@ -5,7 +5,7 @@
     state: present
     disable_gpg_check: yes
   when:
-    - tlp_kmod
+    - tlp_kmod | bool
     - ansible_distribution == "Fedora"
 
 - name: thinkpad | tlp | add tlp repository (ubuntu)
@@ -13,7 +13,7 @@
   apt_repository:
     repo: ppa:linrunner/tlp
   when:
-    - tlp_kmod
+    - tlp_kmod | bool
     - ansible_distribution == "Ubuntu"
 
 - name: thinkpad | packages | install tlp
@@ -28,7 +28,7 @@
     state: present
     name: "{{ tlp_kmod_package }}"
   when:
-    - tlp_kmod
+    - tlp_kmod | bool
     - ansible_distribution in ["Fedora", "Ubuntu"]
 
 - name: gather package facts
