@@ -1,4 +1,3 @@
-ansible_package: ansible-core
 amd_microcode_package: microcode_ctl
 automatic_updates_package: dnf-automatic
 automatic_updates_timer: dnf-automatic-install.timer
