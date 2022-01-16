@@ -1,4 +1,4 @@
-- name: system setup | repositories | enable powertools repository (centos)
+- name: system setup | repositories | enable powertools repository (centos 8)
   tags: powertools,repositories
   ini_file:
     path: /etc/yum.repos.d/CentOS-Stream-PowerTools.repo
@@ -6,17 +6,45 @@
     option: enabled
     value: "1"
     mode: 0644
-  when: ansible_distribution == "CentOS"
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == "8"
 
 # Note this only support CentOS Stream
-- name: system setup | repositories | add epel repository (centos)
+- name: system setup | repositories | add epel repositories (centos 8)
   tags: epel,repositories
   dnf:
     name:
       - epel-release
       - epel-next-release
     state: present
-  when: ansible_distribution == "CentOS"
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == "8"
+
+- name: system setup | repositories | enable crb repository (centos 9)
+  tags: crb,repositories
+  ini_file:
+    path: /etc/yum.repos.d/centos.repo
+    section: crb
+    option: enabled
+    value: "1"
+    mode: 0644
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == "9"
+
+- name: system setup | repositories | add epel repositories (centos 9)
+  tags: epel,repositories
+  dnf:
+    name:
+      - "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+      - "https://dl.fedoraproject.org/pub/epel/epel-next-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+    state: present
+    disable_gpg_check: yes
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == "9"
 
 - name: system setup | repositories | add contrib non-free (debian)
   tags: contrib,non-free,debian,repositories
