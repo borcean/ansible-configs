@@ -43,6 +43,8 @@
     validate: 'python -m json.tool %s'
   when: p.stat.isreg is defined and p.stat.isreg
 
+- include_tasks: backup.yml
+
 - include_tasks: profile_sync_daemon.yml
   when:
     - profile_sync_daemon
