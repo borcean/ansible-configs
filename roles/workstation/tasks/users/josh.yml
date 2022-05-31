@@ -72,14 +72,14 @@
   become_user: josh
   dconf:
     key: "/org/gnome/desktop/peripherals/mouse/natural-scroll"
-    value: "true"
+    value: "false"
 
 - name: users | josh | GNOME | enable natural scrolling (touchpad)
   tags: gnome,mouse,peripherals
   become_user: josh
   dconf:
     key: "/org/gnome/desktop/peripherals/touchpad/natural-scroll"
-    value: "true"
+    value: "false"
 
 - name: users | josh | GNOME | enable tap to click (touchpad)
   tags: gnome,touchpad,peripherals
