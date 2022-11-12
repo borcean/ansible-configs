@@ -23,7 +23,6 @@
     remote: flathub
   loop:
     - com.belmoussaoui.Authenticator
-    - com.borgbase.Vorta
     - com.discordapp.Discord
     - com.spotify.Client
     - org.gimp.GIMP
