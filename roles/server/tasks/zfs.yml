@@ -14,19 +14,31 @@
     - zypper_refresh
   when: ansible_distribution == "openSUSE Leap"
 
+- name: server | zfs | add openzfs repo (centos)
+  dnf:
+    name: "https://zfsonlinux.org/epel/zfs-release-2-2.el{{ ansible_distribution_version }}.noarch.rpm"
+    state: present
+    disable_gpg_check: yes
+  when: ansible_distribution == "CentOS"
+
 - name: trigger package cache refresh if needed
   meta: flush_handlers
 
-- name: server | zfs | install zfs package
-  tags: packages,system,settings
+- name: server | zfs | install zfs, dkms
   package:
     state: present
     name:
+      - dkms
       - "{{ zfs_package }}"
-      - zfs-kmp-default
   # notify:
   #   - load_zfs_kmod
   when: zfs_package is defined
+
+- name: server | zfs | install zfs kmp
+  package:
+    state: present
+    name: "{{ zfs_kmp_package }}"
+  when: zfs_kmp_package is defined
 
 # - name: load zfs kernel module if needed
 #   meta: flush_handlers
