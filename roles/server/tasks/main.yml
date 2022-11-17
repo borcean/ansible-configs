@@ -3,9 +3,7 @@
   include_vars: "{{ ansible_distribution }}.yml"
 
 - block:
-  # ## enable repositories
-  # - import_tasks: software/repositories.yml
-
+  - import_tasks: zfs.yml
 
   rescue:
   - name: Set fact if task failed

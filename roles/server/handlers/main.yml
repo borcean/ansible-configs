@@ -1,0 +1,10 @@
+---
+- name: zypper_refresh
+  community.general.zypper_repository:
+    repo: '*'
+    runrefresh: yes
+
+- name: load_zfs_kmod
+  community.general.modprobe:
+    name: zfs
+    state: present

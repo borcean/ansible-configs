@@ -1,0 +1,14 @@
+---
+zfs: {
+  poolName: data,
+  DISK1: '/dev/vdb',
+  DISK2: '/dev/vdc',
+}
+
+docker: {
+  external_network: traefik_proxy,
+  data_dir: '/{{zfs.poolName}}/docker/data',
+  # data for docker env
+  PUID: '1000',
+  PGID: '115'
+}
