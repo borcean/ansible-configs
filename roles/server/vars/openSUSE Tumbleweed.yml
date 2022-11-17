@@ -1,1 +1,2 @@
 zfs_package: zfs
+zfs_kmp_package: zfs-kmp-default
