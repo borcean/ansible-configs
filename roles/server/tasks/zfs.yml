@@ -23,12 +23,18 @@
     state: present
     name:
       - "{{ zfs_package }}"
-  notify:
-    - load_zfs_kmod
+      - zfs-kmp-default
+  # notify:
+  #   - load_zfs_kmod
   when: zfs_package is defined
 
-- name: load zfs kernel module if needed
-  meta: flush_handlers
+# - name: load zfs kernel module if needed
+#   meta: flush_handlers
+
+- name: server | zfs | load kernel module
+  community.general.modprobe:
+    name: zfs
+    state: present
 
 - name: server | zfs | gather space usage about all imported zfs pools
   community.general.zpool_facts: properties='free,size'
