@@ -8,7 +8,7 @@
 
 - name: server | zfs | add filesystems repo (opensuse leap)
   community.general.zypper_repository:
-    repo: "https://download.opensuse.org/repositories/filesystems/$releasever/filesystems.repo"
+    repo: "https://download.opensuse.org/repositories/filesystems/{{ ansible_distribution_version }}/filesystems.repo"
     auto_import_keys: yes
   notify:
     - zypper_refresh
