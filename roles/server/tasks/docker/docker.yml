@@ -5,7 +5,7 @@
     baseurl: https://download.docker.com/linux/centos/docker-ce.repo
     gpgkey: https://download.docker.com/linux/centos/gpg
     gpgcheck: yes
-  when: ansible_distribution is "CentOS"
+  when: ansible_distribution == "CentOS"
 
 - name: docker | install required package (centos)
   ansible.builtin.package:
@@ -15,7 +15,7 @@
       - docker-ce-cli
       - containerd.io
       - docker-compose-plugin
-  when: ansible_distribution is "CentOS"
+  when: ansible_distribution == "CentOS"
 
 - name: docker | install required packages
   ansible.builtin.package:
@@ -23,14 +23,14 @@
     name:
       - "{{ docker_package }}"
       - "{{ docker_compose_package }}"
-  when: ansible_distribution is not "CentOS"
+  when: ansible_distribution != "CentOS"
 
 
 - name: docker | install docker-compose-switch (opensuse tumbleweed)
   ansible.builtin.package:
     state: present
     name: docker-compose-switch
-  when: ansible_distribution is "openSUSE Tumbleweed"
+  when: ansible_distribution == "openSUSE Tumbleweed"
 
 - name: docker | ensure group exists
   ansible.builtin.group:
