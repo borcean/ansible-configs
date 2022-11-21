@@ -79,17 +79,17 @@ OS=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }' | sed 's/"/
 if [[ "$OS" == fedora ]]; then
     dnf upgrade  --refresh -y
     if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" -gt 34 ]]; then
-        dnf install ansible-core -y --allowerasing
+        dnf install ansible-core git -y --allowerasing
     else
-        dnf install ansible -y
+        dnf install ansible git -y
     fi
 elif [[ "$OS" == centos ]]; then
     dnf upgrade --refresh -y
     if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 8 ]]; then
         dnf install centos-release-ansible-29 -y
-        dnf install ansible -y
+        dnf install ansible git -y
     elif [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 9 ]]; then
-        dnf install ansible-core -y
+        dnf install ansible-core git -y
     fi
 elif [[ "$OS" == arch ]]; then
     pacman -Syu
