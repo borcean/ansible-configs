@@ -1,13 +1,33 @@
+- name: docker | add official docker repo (centos)
+  ansible.builtin.yum_repository:
+    name: google-chrome
+    description: Google Chrome
+    baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+    gpgkey: https://download.docker.com/linux/centos/gpg
+    gpgcheck: yes
+  when: ansible_distribution is "CentOS"
+
+- name: docker | install required package (centos)
+  ansible.builtin.package:
+    state: present
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+  when: ansible_distribution is "CentOS"
+
 - name: docker | install required packages
-  package:
+  ansible.builtin.package:
     state: present
     name:
       - "{{ docker_package }}"
       - "{{ docker_compose_package }}"
+  when: ansible_distribution is not "CentOS"
 
 
 - name: docker | install docker-compose-switch (opensuse tumbleweed)
-  package:
+  ansible.builtin.package:
     state: present
     name: docker-compose-switch
   when: ansible_distribution is "openSUSE Tumbleweed"
@@ -31,3 +51,4 @@
 # - name: docker | create external network {{docker.external_network}}
 #   docker_network:
 #     name: "{{docker.external_network}}"
+
