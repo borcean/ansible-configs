@@ -4,6 +4,7 @@
 
 - block:
   - import_tasks: zfs.yml
+  - import_tasks: docker/docker.yml
 
   rescue:
   - name: Set fact if task failed
