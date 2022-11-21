@@ -21,6 +21,13 @@
     disable_gpg_check: yes
   when: ansible_distribution == "CentOS"
 
+- name: zfs | add openzfs repo (fedora)
+  dnf:
+    name: "https://zfsonlinux.org/fedora/zfs-release-2-2.fc{{ ansible_distribution_version }}.noarch.rpm"
+    state: present
+    disable_gpg_check: yes
+  when: ansible_distribution == "Fedora"
+
 - name: trigger package cache refresh if needed
   meta: flush_handlers
 
