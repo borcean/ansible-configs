@@ -1,0 +1,33 @@
+- name: docker | install required packages
+  package:
+    state: present
+    name:
+      - "{{ docker_package }}"
+      - "{{ docker_compose_package }}"
+
+
+- name: docker | install docker-compose-switch (opensuse tumbleweed)
+  package:
+    state: present
+    name: docker-compose-switch
+  when: ansible_distribution is "openSUSE Tumbleweed"
+
+- name: docker | ensure group exists
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+- name: docker | add jeffrey to docker group
+  ansible.builtin.user:
+    name: jeffrey
+    groups: docker
+    append: yes
+
+- name: docker | enable docker service
+  ansible.builtin.systemd:
+    name: docker
+    enabled: yes
+
+# - name: docker | create external network {{docker.external_network}}
+#   docker_network:
+#     name: "{{docker.external_network}}"
