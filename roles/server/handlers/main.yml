@@ -4,6 +4,10 @@
     repo: '*'
     runrefresh: yes
 
+- name: build_kmods
+  ansible.builtin.command: dkms autoinstall
+  when: ansible_os_family == "RedHat"
+
 - name: load_zfs_kmod
   community.general.modprobe:
     name: zfs

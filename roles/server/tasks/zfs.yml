@@ -1,73 +1,88 @@
-- name: zfs | add filesystems repo (opensuse tumbleweed)
+- name: ZFS | Add filesystems repo (openSUSE Tumbleweed)
   community.general.zypper_repository:
     repo: 'https://download.opensuse.org/repositories/filesystems/openSUSE_Tumbleweed/filesystems.repo'
-    auto_import_keys: yes
+    auto_import_keys: true
   notify:
     - zypper_refresh
   when: ansible_distribution == "openSUSE Tumbleweed"
 
-- name: zfs | add filesystems repo (opensuse leap)
+- name: ZFS | Add filesystems repo (openSUSE Leap)
   community.general.zypper_repository:
     repo: "https://download.opensuse.org/repositories/filesystems/{{ ansible_distribution_version }}/filesystems.repo"
-    auto_import_keys: yes
+    auto_import_keys: true
   notify:
     - zypper_refresh
   when: ansible_distribution == "openSUSE Leap"
 
-- name: zfs | add openzfs repo (centos)
-  dnf:
+- name: ZFS | Add openzfs repo (CentOS)
+  ansible.builtin.dnf:
     name: "https://zfsonlinux.org/epel/zfs-release-2-2.el{{ ansible_distribution_version }}.noarch.rpm"
     state: present
-    disable_gpg_check: yes
+    disable_gpg_check: true
   when: ansible_distribution == "CentOS"
 
-- name: zfs | add openzfs repo (fedora)
-  dnf:
+- name: ZFS | add openzfs repo (Fedora)
+  ansible.builtin.dnf:
     name: "https://zfsonlinux.org/fedora/zfs-release-2-2.fc{{ ansible_distribution_version }}.noarch.rpm"
     state: present
-    disable_gpg_check: yes
+    disable_gpg_check: true
   when: ansible_distribution == "Fedora"
 
-- name: trigger package cache refresh if needed
-  meta: flush_handlers
+- name: Trigger package cache refresh if needed
+  ansible.builtin.meta: flush_handlers
 
-- name: zfs | install zfs, dkms
-  package:
+- name: ZFS | Install zfs, dkms
+  ansible.builtin.package:
     state: present
     name:
       - dkms
       - "{{ zfs_package }}"
   notify:
+    - build_kmods
     - load_zfs_kmod
   when: zfs_package is defined
 
-- name: zfs | install zfs kmp
-  package:
+- name: ZFS | Install zfs kernel module package
+  ansible.builtin.package:
     state: present
     name: "{{ zfs_kmp_package }}"
   notify:
     - load_zfs_kmod
   when: zfs_kmp_package is defined
 
-- name: load zfs kernel module if needed
-  meta: flush_handlers
+- name: ZFS | Load zfs kernel module if needed
+  ansible.builtin.meta: flush_handlers
 
-# - name: zfs | load kernel module
+# - name: ZFS | Load kernel module
 #   community.general.modprobe:
 #     name: zfs
 #     state: present
 
-- name: zfs | gather space usage about all imported zfs pools
+- name: ZFS | Gather space usage about all imported zfs pools
   community.general.zpool_facts: properties='free,size'
 
-- name: zfs | print gathered information
+- name: ZFS | Print gathered information (debug)
   ansible.builtin.debug:
     msg: 'ZFS pool {{ item.name }} has {{ item.free }} free space out of {{ item.size }}.'
   with_items: '{{ ansible_zfs_pools }}'
 
-- ansible.builtin.debug: msg='ZFS pool {{ item.name }} exists? -> [{{ item.name == zfs.poolName }}] It has {{ item.free }} free space out of {{ item.size }}.'
+- name: ZFS | Print information about zfs pools (debug)
+  ansible.builtin.debug:
+    msg: 'ZFS pool {{ item.name }} exists? -> [{{ item.name == zfs_pool.pool_name }}] It has {{ item.free }} free space out of {{ item.size }}.'
   with_items: '{{ ansible_zfs_pools }}'
 
-- name: zfs | create zfs pool '{{zfs.poolName}}' as two disk mirror
-  ansible.builtin.command: 'zpool create -o ashift=12 {{zfs.poolName}} mirror {{zfs.DISK1}} {{zfs.DISK2}}'
-  when: 'not (ansible_zfs_pools|length > 0 and ansible_zfs_pools[0].name == zfs.poolName)'
+- name: ZFS | Create zfs pool "{{ zfs_pool.pool_name }}" as two disk mirror
+  ansible.builtin.command: 'zpool create -o ashift=12 "{{ zfs_pool.pool_name }}" mirror "{{ zfs_pool.disk1 }}" "{{ zfs_pool.disk2 }}"'
+  when: 'not (ansible_zfs_pools | length > 0 and ansible_zfs_pools[0].name == zfs_pool.pool_name)'
+
+- name: ZFS | Create filesystems
+  community.general.zfs:
+    name: '{{ zfs_pool.pool_name }}/{{ item.fs_name }}'
+    state: present
+  with_items:
+    "{{ zfs_filesystems }}"
+
+- name: ZFS | Enable weekly scub
+  ansible.builtin.systemd:
+    name: "zfs-scrub-weekly@{{ zfs_pool.pool_name }}.timer"
+    enabled: true
