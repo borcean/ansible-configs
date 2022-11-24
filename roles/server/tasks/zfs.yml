@@ -37,26 +37,38 @@
     name:
       - dkms
       - "{{ zfs_package }}"
-  notify:
-    - build_kmods
-    - load_zfs_kmod
+  # notify:
+  #   - build_kmods
+  #   - load_zfs_kmod
   when: zfs_package is defined
 
 - name: ZFS | Install zfs kernel module package
   ansible.builtin.package:
     state: present
     name: "{{ zfs_kmp_package }}"
-  notify:
-    - load_zfs_kmod
+  # notify:
+  #   - load_zfs_kmod
   when: zfs_kmp_package is defined
 
-- name: ZFS | Load zfs kernel module if needed
-  ansible.builtin.meta: flush_handlers
+- name: ZFS | Check if dkms zfs kmod is install
+  ansible.builtin.command: dkms status
+  register: dkms_status
+  when: zfs_kmp_package is not defined
 
-# - name: ZFS | Load kernel module
-#   community.general.modprobe:
-#     name: zfs
-#     state: present
+- name: ZFS | Build zfs kernel module with dkms
+  ansible.builtin.command: dkms autoinstall
+  when:
+    - zfs_kmp_package is not defined
+    - dkms_status is not regex("zfs+\/.*:\s+installed")
+
+
+# - name: ZFS | Load zfs kernel module if needed
+#   ansible.builtin.meta: flush_handlers
+
+- name: ZFS | Load kernel module
+  community.general.modprobe:
+    name: zfs
+    state: present
 
 - name: ZFS | Gather space usage about all imported zfs pools
   community.general.zpool_facts: properties='free,size'
