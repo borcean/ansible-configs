@@ -20,7 +20,7 @@
     dest: /etc/systemd/system/dreamhost_ddns.timer
     owner: root
     group: root
-    mode: 'c0640'
+    mode: '0640'
 
 - name: Dreamhost DDNS | Enable systemd timer
   ansible.builtin.systemd:
