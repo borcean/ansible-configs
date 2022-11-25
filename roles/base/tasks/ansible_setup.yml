@@ -75,7 +75,7 @@
     cmd: ansible-galaxy "{{ item }}" install -r requirements.yml --force
   loop:
     - collection
-    # - role
+    - role
   when: ansible_version.full is version('2.11.0', '<')
   changed_when: false
 
@@ -85,6 +85,6 @@
     cmd: ansible-galaxy "{{ item.type }}" install -r requirements.yml --"{{ item.flag }}"
   loop:
     - { type: 'collection', flag: 'upgrade' }
-    # - { type: 'role', flag: 'force' }
+    - { type: 'role', flag: 'force' }
   when: ansible_version.full is version('2.11.0', '>=')
   changed_when: false
