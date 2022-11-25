@@ -1,4 +1,7 @@
-- name: docker | add official docker repo (centos)
+- name: Load vpn credentials variables
+  include_vars: vpn_credentials.yml
+
+- name: Docker | Add official docker repo (CentOS)
   ansible.builtin.yum_repository:
     name: docker-ce-stable
     description: Docker CE Stable
@@ -7,7 +10,7 @@
     gpgcheck: yes
   when: ansible_distribution == "CentOS"
 
-- name: docker | install required package (centos)
+- name: Docker | Install required packages (CentOS)
   ansible.builtin.package:
     state: present
     name:
@@ -17,7 +20,7 @@
       - docker-compose-plugin
   when: ansible_distribution == "CentOS"
 
-- name: docker | install required packages
+- name: Docker | Install required packages
   ansible.builtin.package:
     state: present
     name:
@@ -26,28 +29,63 @@
   when: ansible_distribution != "CentOS"
 
 
-- name: docker | install docker-compose-switch (opensuse tumbleweed)
+- name: Docker | Install docker-compose-switch (openSUSE Tumbleweed)
   ansible.builtin.package:
     state: present
     name: docker-compose-switch
   when: ansible_distribution == "openSUSE Tumbleweed"
 
-- name: docker | ensure group exists
+- name: Docker | Ensure group exists
   ansible.builtin.group:
     name: docker
     state: present
 
-- name: docker | add jeffrey to docker group
+- name: Docker | Add jeffrey to docker group
   ansible.builtin.user:
     name: jeffrey
     groups: docker
     append: yes
 
-- name: docker | enable docker service
+- name: Docker | Enable docker service
   ansible.builtin.systemd:
     name: docker
     enabled: yes
 
-# - name: docker | create external network {{docker.external_network}}
-#   docker_network:
-#     name: "{{docker.external_network}}"
+- name: Docker | Create folder for docker data
+  ansible.builtin.file:
+    path: "{{ docker.data_dir }}"
+    state: directory
+
+- name: Docker | Create directories
+  ansible.builtin.file:
+    path: '/{{zfs_pool.pool_name}}/docker/{{ item.dir }}'
+    state: directory
+  with_items:
+    - { dir: 'data/config' }
+    - { dir: 'data/config/vpn' }
+    - { dir: 'compose' }
+
+- name: Docker | Copy VPN config
+  ansible.builtin.copy:
+    src: docker/vpn.conf
+    dest: "{{ docker.data_dir }}/config/vpn/vpn.conf"
+
+- name: Docker | VPN authentication credentials
+  ansible.builtin.template:
+    src: docker/vpn_auth.j2
+    dest: "{{ docker.data_dir }}/config/vpn/vpn.auth"
+
+- name: Docker | Setup docker .env file
+  ansible.builtin.template:
+    src: docker/env.j2
+    dest: '/{{zfs_pool.pool_name}}/docker/compose/.env'
+
+- name: Docker | Copy docker-compose.yml
+  ansible.builtin.copy:
+    src: docker/compose.yml
+    dest: '/{{zfs_pool.pool_name}}/docker/compose/docker-compose.yml'
+
+- name: Docker | Start services
+  ansible.builtin.command: docker compose up -d
+  args:
+    chdir: '/{{zfs_pool.pool_name}}/docker/compose'
