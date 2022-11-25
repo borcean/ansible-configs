@@ -5,6 +5,10 @@
 - block:
   - import_tasks: zfs.yml
   - import_tasks: docker/docker.yml
+  - import_tasks: dreamhost_ddns.yml
+    when:
+      - dreamhost_ddns.enabled is defined
+      - dreamhost_ddns.enabled | bool
 
   rescue:
   - name: Set fact if task failed

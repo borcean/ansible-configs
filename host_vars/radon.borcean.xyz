@@ -1,4 +1,11 @@
 ---
+# Server | Dreamhost DDNS
+dreamhost_ddns: {
+   enabled: 'true',
+   timer_boot: '180',
+   timer_active: '3600'
+}
+
 # Server | Docker
 docker: {
   data_dir: '/{{zfs.poolName}}/docker/data',
