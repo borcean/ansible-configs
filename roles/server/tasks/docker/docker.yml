@@ -56,11 +56,17 @@
   ansible.builtin.file:
     path: "{{ docker.data_dir }}"
     state: directory
+    owner: '1000'
+    group: '1000'
+    mode: '0755'
 
 - name: Docker | Create directories
   ansible.builtin.file:
     path: '/{{zfs_pool.pool_name}}/docker/{{ item.dir }}'
     state: directory
+    owner: '1000'
+    group: '1000'
+    mode: '0755'
   with_items:
     - { dir: 'data/config' }
     - { dir: 'data/config/vpn' }
@@ -70,21 +76,33 @@
   ansible.builtin.copy:
     src: docker/vpn.conf
     dest: "{{ docker.data_dir }}/config/vpn/vpn.conf"
+    owner: '1000'
+    group: '1000'
+    mode: '0755'
 
 - name: Docker | VPN authentication credentials
   ansible.builtin.template:
     src: docker/vpn_auth.j2
     dest: "{{ docker.data_dir }}/config/vpn/vpn.auth"
+    owner: '1000'
+    group: '1000'
+    mode: '0644'
 
 - name: Docker | Setup docker .env file
   ansible.builtin.template:
     src: docker/env.j2
     dest: '/{{zfs_pool.pool_name}}/docker/compose/.env'
+    owner: '1000'
+    group: '1000'
+    mode: '0644'
 
 - name: Docker | Copy docker-compose.yml
   ansible.builtin.copy:
     src: docker/compose.yml
     dest: '/{{zfs_pool.pool_name}}/docker/compose/docker-compose.yml'
+    owner: '1000'
+    group: '1000'
+    mode: '0644'
 
 - name: Docker | Start services
   ansible.builtin.command: docker compose up -d
