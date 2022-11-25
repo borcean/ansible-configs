@@ -49,6 +49,7 @@
 - name: Docker | Enable docker service
   ansible.builtin.systemd:
     name: docker
+    state: started
     enabled: yes
 
 - name: Docker | Create folder for docker data
