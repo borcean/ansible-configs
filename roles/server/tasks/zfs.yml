@@ -54,6 +54,7 @@
   ansible.builtin.command: dkms status
   register: dkms_status
   when: zfs_kmp_package is not defined
+  changed_when: false
 
 - name: ZFS | Build zfs kernel module with dkms
   ansible.builtin.command: dkms autoinstall
