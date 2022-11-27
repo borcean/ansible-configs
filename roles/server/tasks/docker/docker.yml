@@ -117,10 +117,14 @@
   ansible.builtin.command: docker compose up -d
   args:
     chdir: '/{{ zfs_pool.pool_name }}/docker/compose'
+  register: cmd_dcu
+  changed_when: '"Start" in cmd_dcu.stderr'
   when: compose_version is version('2', '>=')
 
 - name: Docker | Start services - compose legacy
   ansible.builtin.command: docker-compose up -d
   args:
     chdir: '/{{ zfs_pool.pool_name }}/docker/compose'
+  register: cmd_dcu
+  changed_when: '"Start" in cmd_dcu.stderr'
   when: compose_version is version('1', '=')
