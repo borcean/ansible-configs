@@ -36,3 +36,17 @@
     - radarr
     - samba
     - sonnar
+
+# Too much effort to find individual ports for Home Assistant
+# We're behind router firewall anyways...
+- name: Firewall | Match Fedora's open ports (SUSE)
+  ansible.posix.firewalld:
+    zone: public
+    port: '1025-65535/{{ item }}'
+    permanent: true
+    immediate: true
+    state: enabled
+  with_items:
+    - tcp
+    - udp
+  when: ansible_os_family == "Suse"
