@@ -7,7 +7,7 @@ dreamhost_ddns: {
 }
 
 # Server | Docker
-docker: {
+docker_setting: {
   data_dir: '/{{zfs.poolName}}/docker/data',
   # data for docker env
   PUID: '1000',

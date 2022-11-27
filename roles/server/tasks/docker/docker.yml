@@ -1,5 +1,5 @@
 - name: Load vpn credentials variables
-  include_vars: vpn_credentials.yml
+  ansible.builtin.include_vars: vpn_credentials.yml
 
 - name: Docker | Add official docker repo (CentOS)
   ansible.builtin.yum_repository:
@@ -7,7 +7,7 @@
     description: Docker CE Stable
     baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable
     gpgkey: https://download.docker.com/linux/centos/gpg
-    gpgcheck: yes
+    gpgcheck: true
   when: ansible_distribution == "CentOS"
 
 - name: Docker | Install required packages (CentOS)
@@ -44,23 +44,29 @@
   ansible.builtin.user:
     name: jeffrey
     groups: docker
-    append: yes
+    append: true
 
 - name: Docker | Enable docker service
   ansible.builtin.systemd:
     name: docker
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Docker | Create folder for docker data
   ansible.builtin.file:
-    path: "{{ docker.data_dir }}"
+    path: "{{ docker_setting.data_dir }}"
     state: directory
+    owner: '1000'
+    group: '1000'
+    mode: '0755'
 
 - name: Docker | Create directories
   ansible.builtin.file:
-    path: '/{{zfs_pool.pool_name}}/docker/{{ item.dir }}'
+    path: '/{{ zfs_pool.pool_name }}/docker/{{ item.dir }}'
     state: directory
+    owner: '1000'
+    group: '1000'
+    mode: '0755'
   with_items:
     - { dir: 'data/config' }
     - { dir: 'data/config/vpn' }
@@ -69,24 +75,56 @@
 - name: Docker | Copy VPN config
   ansible.builtin.copy:
     src: docker/vpn.conf
-    dest: "{{ docker.data_dir }}/config/vpn/vpn.conf"
+    dest: "{{ docker_setting.data_dir }}/config/vpn/vpn.conf"
+    owner: '1000'
+    group: '1000'
+    mode: '0755'
 
 - name: Docker | VPN authentication credentials
   ansible.builtin.template:
     src: docker/vpn_auth.j2
-    dest: "{{ docker.data_dir }}/config/vpn/vpn.auth"
+    dest: "{{ docker_setting.data_dir }}/config/vpn/vpn.auth"
+    owner: '1000'
+    group: '1000'
+    mode: '0644'
 
 - name: Docker | Setup docker .env file
   ansible.builtin.template:
     src: docker/env.j2
-    dest: '/{{zfs_pool.pool_name}}/docker/compose/.env'
+    dest: '/{{ zfs_pool.pool_name }}/docker/compose/.env'
+    owner: '1000'
+    group: '1000'
+    mode: '0644'
 
 - name: Docker | Copy docker-compose.yml
   ansible.builtin.copy:
     src: docker/compose.yml
-    dest: '/{{zfs_pool.pool_name}}/docker/compose/docker-compose.yml'
+    dest: '/{{ zfs_pool.pool_name }}/docker/compose/docker-compose.yml'
+    owner: '1000'
+    group: '1000'
+    mode: '0644'
 
-- name: Docker | Start services
+- name: Docker | Check docker compose version
+  ansible.builtin.command: docker-compose --version
+  register: cmd_dcv
+  changed_when: false
+
+- name: Docker | Set docker compose version fact
+  ansible.builtin.set_fact:
+    compose_version: "{{ cmd_dcv.stdout | regex_search('([0-9])') | first }}"
+
+- name: Docker | Start services - compose plugin
   ansible.builtin.command: docker compose up -d
   args:
-    chdir: '/{{zfs_pool.pool_name}}/docker/compose'
+    chdir: '/{{ zfs_pool.pool_name }}/docker/compose'
+  register: cmd_dcu
+  changed_when: '"Start" in cmd_dcu.stderr'
+  when: compose_version is version('2', '>=')
+
+- name: Docker | Start services - compose legacy
+  ansible.builtin.command: docker-compose up -d
+  args:
+    chdir: '/{{ zfs_pool.pool_name }}/docker/compose'
+  register: cmd_dcu
+  changed_when: '"Start" in cmd_dcu.stderr'
+  when: compose_version is version('1', '=')
