@@ -113,9 +113,13 @@ else
 fi
 
 # Update and fix existing flatpak installs
+# Remove Fedora's filtered Flathub
 if command -v flatpak &> /dev/null; then
     flatpak update -y
     flatpak repair
+    if [[ "$OS" == fedora ]]; then
+        flatpak remote-delete flathub
+    fi
 fi
 
 # Test VM set up
