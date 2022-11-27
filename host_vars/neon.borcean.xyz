@@ -3,7 +3,6 @@
 # Optional Packages
 toolbox_install: true
 virt_manager_install: true
-steam_install: native
 
 # Optional Flatpaks
 minecraft_install: true
@@ -11,8 +10,3 @@ minecraft_install: true
 # Users
 # Jeffrey
 profile_sync_daemon: true
-# Josh
-user_josh: true
-
-# ThinkPad
-bluetooth_edr_only: true
