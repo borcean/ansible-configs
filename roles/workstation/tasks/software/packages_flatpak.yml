@@ -24,7 +24,6 @@
   loop:
     - com.discordapp.Discord
     - com.spotify.Client
-    - org.gimp.GIMP
     - org.signal.Signal
 
 - name: software | flatpak | install Minecraft flatpack
