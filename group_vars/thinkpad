@@ -1,4 +1,4 @@
 ---
-tlp: true
+tlp: false
 tlp_kmod: false
 bluetooth_edr_only: false
