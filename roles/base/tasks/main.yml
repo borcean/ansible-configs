@@ -38,7 +38,9 @@
       - microcode | bool
       - ansible_architecture == "x86_64"
   - import_tasks: system_setup/tailscale.yml
-    when: tailscale | bool
+    when: 
+      - tailscale | bool
+      - not ansible_os_family == "Suse"
 
   rescue:
   - name: Set fact if task failed
