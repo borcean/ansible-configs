@@ -51,6 +51,8 @@ fail2ban: false
 
 microcode: true
 
+tailscale: true
+
 user_ana: false
 user_josh: false
 user_nelu: false
