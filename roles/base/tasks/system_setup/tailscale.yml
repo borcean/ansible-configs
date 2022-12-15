@@ -1,0 +1,14 @@
+- name: System setup | Tailscale | Install only
+  ansible.builtin.include_role:
+    name: artis3n.tailscale
+  vars:
+    tailscale_up_skip: true
+  when: tailscale_key is not defined
+
+
+- name: System setup | Tailscale | Install and configure 
+  ansible.builtin.include_role:
+    name: artis3n.tailscale
+  vars:
+    tailscale_authkey: "{{ tailscale_key }}"
+  when: tailscale_key is defined
