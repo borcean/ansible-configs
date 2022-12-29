@@ -1,9 +1,9 @@
 ---
-roles:
-  # Install a role from Ansible Galaxy / GitHub.
-  - src: https://github.com/artis3n/ansible-role-tailscale.git
-    version: main
-    name: artis3n.tailscale
+# roles:
+#   # Install a role from Ansible Galaxy / GitHub.
+#   - src: https://github.com/artis3n/ansible-role-tailscale.git
+#     version: main
+#     name: artis3n.tailscale
 
 collections:
   # Install collections from Ansible Galaxy.
