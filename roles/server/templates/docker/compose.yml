@@ -11,26 +11,27 @@ services:
       # - WATCHTOWER_NOTIFICATIONS=shoutrrr
       # - WATCHTOWER_NOTIFICATION_URL=pushover://shoutrrr:${PO_TOKEN}@${PO_USERKEY}
 
-  vpn:
-    container_name: vpn
-    image: dperson/openvpn-client:latest
+  gluetun:
+    image: qmcgaw/gluetun
     cap_add:
-      - net_admin # required to modify network interfaces
+      - NET_ADMIN
     restart: unless-stopped
     volumes:
-      - /dev/net:/dev/net:z # tun device
-      - ${DATADIR}/config/vpn:/vpn # OpenVPN configuration
-    security_opt:
-      - label:disable
+      - ${DATADIR}/config/gluetun:/gluetun
     ports:
-      - 8112:8112 # port for deluge web UI to be reachable from local network
-    command: '-f "" -r 192.168.1.0/24' # enable firewall and route local network traffic
+      - 8112:8112
+    environment:
+      - VPN_SERVICE_PROVIDER=private internet access
+      - OPENVPN_USER={{ vpn_client_username }}
+      - OPENVPN_PASSWORD={{ vpn_client_password }}
+      - SERVER_REGIONS=US Seattle
+      - TZ=${TZ} # timezone, defined in .env
 
   deluge:
     container_name: deluge
     image: linuxserver/deluge:latest
     restart: unless-stopped
-    network_mode: service:vpn # run on the vpn network
+    network_mode: service:gluetun # run on the vpn network
     environment:
       - PUID=${PUID} # default user id, defined in .env
       - PGID=${PGID} # default group id, defined in .env
