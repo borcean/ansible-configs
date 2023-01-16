@@ -12,6 +12,7 @@ services:
       # - WATCHTOWER_NOTIFICATION_URL=pushover://shoutrrr:${PO_TOKEN}@${PO_USERKEY}
 
   gluetun:
+    container_name: gluetun
     image: qmcgaw/gluetun
     cap_add:
       - NET_ADMIN
@@ -110,6 +111,18 @@ services:
       - ${DATADIR}/config/bazarr:/config # config files
       - ${DATADIR}/complete/movies:/movies # movies folder
       - ${DATADIR}/complete/tv:/tv # tv shows folder
+
+  ombi:
+    image: lscr.io/linuxserver/ombi:latest
+    container_name: ombi
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID} # default user id, defined in .env
+      - PGID=${PGID} # default group id, defined in .env
+      - TZ=${TZ} # timezone, defined in .env
+    volumes:
+      - ${DATADIR}/config/ombi:/config # config files
+    network_mode: host
 
   homeassistant:
     container_name: homeassistant
