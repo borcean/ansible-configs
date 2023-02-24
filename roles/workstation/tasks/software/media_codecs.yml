@@ -1,4 +1,4 @@
-- name: software | media codecs | install codecs from rpmfusion (red hat)
+- name: Software | Media Codecs | Install codecs from rpmfusion (Red Hat)
   ansible.builtin.dnf:
     name: '@multimedia'
     install_weak_deps: no
@@ -6,9 +6,17 @@
     state: present
   when: ansible_os_family == "RedHat"
 
-- name: software | workstation packages | install vlc-codecs (suse)
+- name: Software | Media Codecs | Install Intel HW accleration codec (Fedora)
+  ansible.builtin.package:
+    state: present
+    name: intel-media-driver
+  when:
+    - ansible_distribution == "Fedora" 
+    - ansible_processor is search('Intel')
+
+- name: Software | Media Codecs | install VLC codecs (SUSE)
   tags: packages,workstation,suse
-  package:
+  ansible.builtin.package:
     state: present
     name: vlc-codecs
   notify: packman_vendor_change
