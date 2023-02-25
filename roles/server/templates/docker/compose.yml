@@ -112,18 +112,6 @@ services:
       - ${DATADIR}/complete/movies:/movies # movies folder
       - ${DATADIR}/complete/tv:/tv # tv shows folder
 
-  ombi:
-    image: lscr.io/linuxserver/ombi:latest
-    container_name: ombi
-    restart: unless-stopped
-    environment:
-      - PUID=${PUID} # default user id, defined in .env
-      - PGID=${PGID} # default group id, defined in .env
-      - TZ=${TZ} # timezone, defined in .env
-    volumes:
-      - ${DATADIR}/config/ombi:/config # config files
-    network_mode: host
-
   homeassistant:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:stable"

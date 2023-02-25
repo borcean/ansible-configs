@@ -71,6 +71,12 @@
     name: zfs
     state: present
 
+- name: ZFS | Import zpool 
+  ansible.builtin.command: zpool import -d '{{ zfs_pool.disk1 }}'1 '{{ zfs_pool.pool_name }}'
+  register: result
+  failed_when: false
+  changed_when: result.rc == 0
+
 - name: ZFS | Gather space usage about all imported zfs pools
   community.general.zpool_facts: properties='free,size'
 

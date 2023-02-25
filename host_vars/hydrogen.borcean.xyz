@@ -43,7 +43,7 @@ zfs_filesystems:
    - {fs_name: 'personal'}
 
 docker_setting: {
-  data_dir: '/{{zfs.poolName}}/docker/data',
+  data_dir: '/{{zfs_pool.pool_name}}/docker/data',
   # data for docker env
   PUID: '1000',
   PGID: '1000'
