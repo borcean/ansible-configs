@@ -32,8 +32,8 @@ profile_sync_daemon: true
 
 zfs_pool: {
    pool_name: 'data',
-   disk1: '/dev/vdb',
-   disk2: '/dev/vdc',
+   disk1: '/dev/disk/by-id/virtio-virtio-disk1',
+   disk2: '/dev/disk/by-id/virtio-virtio-disk2',
 }
 
 zfs_filesystems:
