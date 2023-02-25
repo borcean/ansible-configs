@@ -111,3 +111,31 @@
   register: cmd_dcu
   changed_when: '"Start" in cmd_dcu.stderr'
   when: compose_version is version('1', '=')
+
+- name: Docker | Set compose binary fact
+  ansible.builtin.set_fact:
+    docker_compose_binary: docker-compose
+  when: compose_version is version('1', '=')
+
+- name: Docker | Install container maintenance systemd service
+  ansible.builtin.template:
+    src: docker/container_maintenance.j2
+    dest: /etc/systemd/system/docker-container-maintenance.service
+    owner: root
+    group: root
+    mode: 0640
+
+- name: Docker | Install container maintenance timer
+  ansible.builtin.copy:
+    src: docker/container_maintenance.timer
+    dest: /etc/systemd/system/docker-container-maintenance.timer
+    owner: root
+    group: root
+    mode: 0640
+
+- name: Docker | Enable container maintenance
+  ansible.builtin.systemd:
+    name: docker-container-maintenance.timer
+    enabled: true
+    masked: false
+    daemon_reload: true
