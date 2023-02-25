@@ -1,8 +1,2 @@
 ---
-docker: {
-  external_network: traefik_proxy,
-  data_dir: '/{{zfs_poll.pool_name}}/docker/data',
-  # data for docker env
-  PUID: '1000',
-  PGID: '115'
-}
+borgbackup_package: borgbackup

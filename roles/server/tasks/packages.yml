@@ -1,0 +1,4 @@
+- name: Server | Packages | install Borg borg
+  ansible.builtin.package:
+    state: present
+    name: "{{ borgbackup_package }}"

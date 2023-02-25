@@ -10,6 +10,7 @@
     when:
       - dreamhost_ddns.enabled is defined
       - dreamhost_ddns.enabled | bool
+  - import_tasks: packages.yml
 
   rescue:
   - name: Set fact if task failed
