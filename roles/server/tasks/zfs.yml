@@ -72,7 +72,7 @@
     state: present
 
 - name: ZFS | Import zpool 
-  ansible.builtin.command: zpool import -d '{{ zfs_pool.disk1 }}'1 '{{ zfs_pool.pool_name }}'
+  ansible.builtin.command: zpool import -d '{{ zfs_pool.disk1 }}'-part1 '{{ zfs_pool.pool_name }}'
   register: result
   failed_when: false
   changed_when: result.rc == 0
