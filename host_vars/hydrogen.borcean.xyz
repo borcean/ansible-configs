@@ -19,6 +19,8 @@ user_nelu: true
 # system setup
 fail2ban: true
 
+reboot_schedule: Sat 22:00
+
 # workstation
 # optional packages
 toolbox_install: true
