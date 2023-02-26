@@ -97,6 +97,15 @@ elif [[ "$OS" == arch ]]; then
 elif [[ "$OS" == opensuse-tumbleweed ]] || [[ "$OS" == opensuse-leap ]]; then
     zypper --non-interactive dup
     zypper --non-interactive install ansible git-core
+elif [[ "$OS" == opensuse-microos ]]; then
+    transactional-update --continue --non-interactive dup
+    transactional-update --continue --non-interactive pkg install ansible git-core
+    if ! command -v ansible &> /dev/null; then
+        echo "Transactional package install requires reboot. Restart provision after boot."
+        if confirm "Reboot system now?  y/n: "; then
+            systemctl reboot
+        fi
+    fi
 elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then
     # Check if Debian Buster, if so use Ansible PPA
     if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 10 ]]; then
@@ -123,13 +132,16 @@ if command -v flatpak &> /dev/null; then
 fi
 
 # Test VM set up
-if [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
-    if [[ "$OS" == debian ]]; then
-        apt install spice-vdagent -y
-    elif [[ "$OS" == arch ]]; then
-        pacman -S --noconfirm --needed spice-vdagent xf86-video-qxl
-    fi
+HOSTNAME="$(hostnamectl --static)"
+if [[ "$HOSTNAME" == deuterium.borcean.xyz ]] || [[ "$HOSTNAME" == hydrogen.borcean.xyz  ]]; then
     systemctl enable serial-getty@ttyS0.service
+    if [[ "$HOSTNAME" == hydrogen.borcean.xyz ]]; then
+        if [[ "$OS" == debian ]]; then
+            apt install spice-vdagent -y
+        elif [[ "$OS" == arch ]]; then
+            pacman -S --noconfirm --needed spice-vdagent xf86-video-qxl
+        fi
+    fi
 fi
 
 # Clean Ansible cache

@@ -4,12 +4,19 @@
     name: fail2ban
     state: present
 
+- name: Users | Jeffrey | Check fail2ban install state
+  ansible.builtin.shell: command -v fail2ban-client
+  register: check_binary
+  changed_when: false
+  failed_when: false
+
 - name: system setup | fail2ban | enable daemon
   tags: fail2ban,system,settings
   service:
     name: fail2ban
     enabled: yes
     state: started
+  when: check_binary.rc == 0
 
 - name: system setup | fail2ban | generate jail.local file from template
   tags: fail2ban,system,settings
@@ -20,6 +27,7 @@
     group: root
     mode: 0644
   notify: restart_fail2ban
+  when: check_binary.rc == 0
 
 - name: system setup | fail2ban | generate sshd.local file from template
   tags: fail2ban,sshd,system,settings
@@ -30,4 +38,6 @@
     group: root
     mode: 0644
   notify: restart_fail2ban
-  when: sshd
+  when: 
+    - sshd
+    - check_binary.rc == 0

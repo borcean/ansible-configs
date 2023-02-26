@@ -90,6 +90,12 @@
     path: '/home/jeffrey/.local/share/omf/themes/bobthefish'
   register: bobthefish
 
+- name: Users | Jeffrey | Check fish install state
+  ansible.builtin.shell: command -v fish
+  register: check_binary
+  changed_when: false
+  failed_when: false
+
 - name: users | jeffrey | clone oh-my-fish repo
   git:
     repo: 'https://github.com/oh-my-fish/oh-my-fish'
@@ -102,20 +108,26 @@
   become: true
   become_user: jeffrey
   command: /tmp/omf/bin/install -y --offline --noninteractive
-  when: not omf.stat.exists
+  when: 
+    - not omf.stat.exists
+    - check_binary.rc == 0
 
 - name: users | jeffrey | install bobthefish
   become: true
   become_user: jeffrey
   command: fish -c 'omf install bobthefish'
-  when: not bobthefish.stat.exists
+  when: 
+    - not bobthefish.stat.exists
+    - check_binary.rc == 0
 
 - name: users | jeffrey | update oh-my-fish
   become: true
   become_user: jeffrey
   command: fish -c 'omf update'
   changed_when: false
-  when: omf.stat.exists
+  when: 
+    - not omf.stat.exists
+    - check_binary.rc == 0
 
 - import_tasks: gpg.yml
 

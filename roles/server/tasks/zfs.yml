@@ -1,10 +1,10 @@
-- name: ZFS | Add filesystems repo (openSUSE Tumbleweed)
+- name: ZFS | Add filesystems repo (openSUSE Tumbleweed / MicroOS)
   community.general.zypper_repository:
     repo: 'https://download.opensuse.org/repositories/filesystems/openSUSE_Tumbleweed/filesystems.repo'
     auto_import_keys: true
   notify:
     - zypper_refresh
-  when: ansible_distribution == "openSUSE Tumbleweed"
+  when: ansible_distribution in ["openSUSE Tumbleweed", "openSUSE MicroOS"]
 
 - name: ZFS | Add filesystems repo (openSUSE Leap)
   community.general.zypper_repository:

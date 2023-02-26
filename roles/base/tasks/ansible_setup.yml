@@ -69,6 +69,12 @@
     mode: 0640
   changed_when: False
 
+- name: Users | Jeffrey | Check ansible install state
+  ansible.builtin.shell: command -v ansible
+  register: check_binary
+  changed_when: false
+  failed_when: false
+
 - name: ansible setup | install content from ansible galaxy
   tags: ansible,ansible-setup
   command:
@@ -76,7 +82,9 @@
   loop:
     - collection
     - role
-  when: ansible_version.full is version('2.11.0', '<')
+  when: 
+    - ansible_version.full is version('2.11.0', '<')
+    - check_binary.rc == 0
   changed_when: false
 
 - name: ansible setup | install content from ansible galaxy
@@ -86,5 +94,7 @@
   loop:
     - { type: 'collection', flag: 'upgrade' }
     - { type: 'role', flag: 'force' }
-  when: ansible_version.full is version('2.11.0', '>=')
+  when: 
+    - ansible_version.full is version('2.11.0', '>=')
+    - check_binary.rc == 0
   changed_when: false
