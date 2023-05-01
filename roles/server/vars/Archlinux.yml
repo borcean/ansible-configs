@@ -1,4 +1,0 @@
-borgbackup_package: borg
-docker_package: docker
-docker_compose_package: docker-compose
-zfs_package: zfs

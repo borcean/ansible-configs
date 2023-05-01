@@ -1,9 +1,0 @@
-## Only support Fedora/CentOS (maybe Arch?)
-## Depends on RPM Fusion, and CentOS Power Tools repo
-
-- name: macintosh | packages | install broadcom wlan driver
-  tags: macintosh,packages,broadcom_wlan,wifi
-  package:
-    state: present
-    name:
-      - "{{ broadcom_wlan_package }}"

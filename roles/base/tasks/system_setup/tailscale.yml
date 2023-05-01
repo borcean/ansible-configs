@@ -1,39 +1,25 @@
 - name: System setup | Tailscale | Add repo (Fedora Linux)
-  ansible.builtin.command: dnf config-manager --add-repo https://pkgs.tailscale.com/stable/fedora/tailscale.repo
-  args:
-    creates: /etc/yum.repos.d/tailscale.repo
-  when: ansible_distribution == "Fedora"
-
-- name: System setup | Tailscale | Add repo (CentOS)
-  ansible.builtin.command: dnf config-manager --add-repo https://pkgs.tailscale.com/stable/centtos/{{ ansible_distribution_major_version }}/tailscale.repo
-  args:
-    creates: /etc/yum.repos.d/tailscale.repo
-  when: ansible_distribution == "CentOS"
-
-- name: System setup | Tailscale | Add repo (openSUSE Tumbleweed)
-  community.general.zypper_repository:
-    repo: https://pkgs.tailscale.com/stable/opensuse/tumbleweed/tailscale.repo
-    state: present
-  notify: zypper_refresh
-  when: ansible_distribution == "openSUSE Tumbleweed"
-
-- name: System setup | Tailscale | Add repo (openSUSE Leap)
-  community.general.zypper_repository:
-    repo: https://pkgs.tailscale.com/stable/opensuse/leap/{{ ansible_distribution_version }}/tailscale.repo
-    state: present
-  notify: zypper_refresh
-  when: ansible_distribution == "openSUSE Leap"
-
-- name: Trigger package cache refresh if needed
-  ansible.builtin.meta: flush_handlers
+  ansible.builtin.copy:
+    src: system_setup/tailscale_repo
+    dest: /etc/yum.repos.d/tailscale.repo
+    owner: root
+    group: root
+    mode: '0644'
 
 - name: System setup | Tailscale | Install
-  ansible.builtin.package:
+  community.general.rpm_ostree_pkg:
     name: tailscale
     state: present
+
+- name: System setup | Tailscale | Check install state
+  ansible.builtin.command: command -v tailscale
+  register: check_binary
+  changed_when: false
+  failed_when: false
 
 - name: System setup | Tailscale | Enable tailscaled
   ansible.builtin.systemd:
     name: tailscaled
     enabled: true
     state: started
+  when: check_binary.rc == 0

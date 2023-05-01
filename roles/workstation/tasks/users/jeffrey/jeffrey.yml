@@ -1,49 +1,54 @@
-- name: users | jeffrey | check if AccountsService entry exists
+- name: Users | Jeffrey | check if AccountsService entry exists
   tags: users,jeffrey
-  stat:
+  ansible.builtin.stat:
     path: /var/lib/AccountsService/users/jeffrey
   register: p
 
-- name: users | jeffrey | create AccountsService entry
+- name: Users | Jeffrey | create AccountsService entry
   tags: users,jeffrey
-  copy:
+  ansible.builtin.copy:
     src: users/AccountsService_user
     dest: /var/lib/AccountsService/users/jeffrey
     owner: root
     group: root
-    mode: 0600
+    mode: '0600'
   when: p.stat.isreg is not defined
 
-- name: users | jeffrey | copy profile image
+- name: Users | Jeffrey | Copy profile image
   tags: dotfiles,dotfiles-jeffrey
-  copy:
-    src: users/jeffrey/profile_image.png
+  ansible.builtin.copy:
+    src: users/profile_images/jeffrey.png
     dest: /var/lib/AccountsService/icons/jeffrey
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
-- name: users | jeffrey | set profile image
+- name: Users | Jeffrey | Set profile image
   tags: dotfiles,dotfiles-jeffrey
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /var/lib/AccountsService/users/jeffrey
     regexp: '^Icon='
     line: Icon=/var/lib/AccountsService/icons/jeffrey
 
-- name: users | jeffrey | transmission | check if settings.json exists
-  stat:
-    path: /home/jeffrey/.config/transmission/settings.json
-  register: p
+- name: Users | Jeffrey | Enable podman socket
+  become_user: jeffrey
+  ansible.builtin.systemd:
+    name: podman.socket
+    enabled: true
+    scope: user
 
-- name: users | jeffrey | tranmission | disable ipv6
-  lineinfile:
-    path: /home/jeffrey/.config/transmission/settings.json
-    regex: '^    "bind-address-ipv6": "::",$'
-    line: '    "bind-address-ipv6": "fe80::",'
-    validate: 'python -m json.tool %s'
-  when: p.stat.isreg is defined and p.stat.isreg
+- name: Include tasks | Flatpaks
+  ansible.builtin.include_tasks: users/jeffrey/software/{{ item }}.yml
+  with_items:
+    - flathub
+    - google_chrome
+    - vscode
 
-- include_tasks: profile_sync_daemon.yml
-  when:
-    - profile_sync_daemon
-    - ansible_distribution in ["Archlinux", "Debian", "Fedora", "openSUSE Tumbleweed", "Ubuntu"]
+- name: Include tasks | GNOME settings
+  ansible.builtin.include_tasks: users/jeffrey/gnome/{{ item }}.yml
+  with_items:
+    - keyboard_shortcuts
+    - peripherals
+
+- name: Import tasks | VPN Client - PIA Seattle
+  ansible.builtin.import_tasks: users/jeffrey/vpn_client.yml

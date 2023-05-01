@@ -1,0 +1,17 @@
+- name: Software | Flatpak | Install Google Chrome (x86_64)
+  become_user: jeffrey
+  community.general.flatpak:
+    name:
+      - com.google.Chrome
+    remote: flathub
+    method: user
+  when: ansible_architecture == "x86_64"
+
+- name: Software | Flatpak | Install Chromium (aarch64)
+  become_user: jeffrey
+  community.general.flatpak:
+    name:
+      - org.chromium.Chromium
+    remote: flathub
+    method: user
+  when: ansible_architecture == "aarch64"

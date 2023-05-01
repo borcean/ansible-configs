@@ -1,12 +1,12 @@
 # Change Bluetooth controller mode to allow pair of Apple headphones
-- name: thinkpad | bluetooth | set controller mode bredr
+- name: ThinkPad | Bluetooth | Set controller mode bredr
   tags: thinkpad,configuration,bluetooth
-  ini_file:
+  community.general.ini_file:
     dest: /etc/bluetooth/main.conf
     section: General
     option: ControllerMode
     value: bredr
-    backup: no
+    backup: false
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'

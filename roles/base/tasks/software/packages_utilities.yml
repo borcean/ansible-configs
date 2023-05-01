@@ -1,24 +1,12 @@
-- name: system setup | utilities | install utility packages
+- name: System setup | Utilities | Install utility packages
   tags: packages,system,settings
-  package:
+  community.general.rpm_ostree_pkg:
     state: present
     name:
       - colordiff
-      - curl
       - fish
-      - git
       - htop
-      - "{{ lm_sensors_package }}"
       - neofetch
       - "{{ powerline_fonts_package }}"
       - pwgen
-      - tree
       - "{{ vim_package }}"
-
-- name: system setup | utilities | install utility packages (debian)
-  tags: packages,system,settings
-  package:
-    state: present
-    name:
-      - debconf-utils
-  when: ansible_os_family == "Debian"

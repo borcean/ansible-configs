@@ -1,6 +1,0 @@
-ansible_lint_package: ansible-lint
-deja_dup_package: deja-dup
-font_noto_emoji_package: noto-fonts-emoji
-libvirt_client_package: libvirt
-networkmanager_openvpn_gnome_package: networkmanager-openvpn
-steam_package: steam

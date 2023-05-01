@@ -1,0 +1,8 @@
+- name: Users | Create user {{ item.key }}
+  tags: ana,users
+  ansible.builtin.user:
+    name: "{{ item.key }}"
+    state: "{{ item.value.state }}"
+    comment: "{{ item.value.comment }}"
+    password: "{{ item.value.password }}"
+    shell: /bin/bash

@@ -1,8 +1,0 @@
-- name: system setup | firewall | open incoming ssh (suse)
-  tags: firewall,system,settings,ssh,openssh
-  firewalld:
-    zone: public
-    service: ssh
-    permanent: yes
-    immediate: yes
-    state: enabled

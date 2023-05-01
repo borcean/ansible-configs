@@ -1,44 +1,22 @@
-- name: Load distro-specific variables
-  tags: always
-  include_vars: "{{ ansible_distribution }}.yml"
+- name: Workstation configuration
+  block:
 
-- block:
-  ## enable repositories
-  - import_tasks: software/repositories.yml
-  - import_tasks: software/flathub.yml
+    # Needed for some flatpak operations
+    - name: Workstation | Install dbus-x11
+      community.general.rpm_ostree_pkg:
+        name: dbus-x11
+        state: present
 
-  ## install software
-  - import_tasks: software/google_chrome.yml
-  - import_tasks: software/packages.yml
-  - import_tasks: software/packages_flatpak.yml
-  - import_tasks: software/media_codecs.yml
-  - import_tasks: software/steam.yml
-    when: steam_install != "false"
-  - import_tasks: software/vscode.yml
+  # User configs
+    - name: Import tasks | Users | Jeffrey
+      ansible.builtin.import_tasks: users/jeffrey/jeffrey.yml
 
-  ## vpn client setup
-  - include_tasks: vpn_client.yml
-    when: vpn_client | bool
-
-  ## User configs
-  - import_tasks: users/ana.yml
-    when: user_ana | bool
-  - import_tasks: users/jeffrey/jeffrey.yml
-  - import_tasks: users/josh.yml
-    when: user_josh | bool
-  - import_tasks: users/nelu.yml
-    when: user_nelu | bool
-
-  ## desktop environment
-  - include_tasks: desktop_environments/gnome/packages.yml
-    when: gnome | bool
-  - include_tasks: desktop_environments/gnome/peripherals.yml
-    when: gnome | bool
-  - include_tasks: desktop_environments/gnome/software_settings.yml
-    when: gnome | bool
-  - include_tasks: desktop_environments/gnome/keyboard_shortcuts.yml
-    when: gnome | bool
+    - name: Include tasks | Additional users
+      ansible.builtin.include_tasks: users/additional_users.yml
+      with_dict: "{{ additional_users }}"
+      when: additional_users is defined
 
   rescue:
-  - name: Set fact if task failed
-    set_fact: task_failed=true
+    - name: Set fact if task failed
+      ansible.builtin.set_fact:
+        task_failed: true

@@ -1,19 +1,12 @@
 ---
-- name: apt_refresh
-  ansible.builtin.apt: update_cache=yes
-  changed_when: False
-
-- name: zypper_refresh
-  community.general.zypper_repository:
-    repo: '*'
-    runrefresh: yes
-
-- name: restart_sshd
-  service:
+- name: restart_sshd # noqa name
+  ansible.builtin.service:
     name: "{{ openssh_service }}"
     state: restarted
 
-- name: restart_fail2ban
-  service:
-    name: fail2ban
-    state: restarted
+- name: rpm-ostree_reload # noqa name
+  ansible.builtin.command: rpm-ostree reload
+
+- name: systemd_daemon_reload # noqa name
+  ansible.builtin.systemd:
+    daemon_reload: true

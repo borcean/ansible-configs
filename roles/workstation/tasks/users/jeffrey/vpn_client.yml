@@ -1,0 +1,36 @@
+- name: Load VPN credentials variables
+  tags: always
+  ansible.builtin.include_vars: vpn_credentials.yml
+
+- name: VPN client | Check if connection is already defined
+  ansible.builtin.stat:
+    path: /etc/NetworkManager/system-connections/Seattle.nmconnection
+  register: vpn_defined
+
+- name: VPN client | Copy openvpn config to tmp
+  ansible.builtin.copy:
+    src: vpn_client/Seattle.ovpn
+    dest: /tmp/Seattle.ovpn
+    mode: '0644'
+  when: not vpn_defined.stat.exists
+
+# Because selinux is hard...
+# Note this will fail if not run from graphical console
+- name: VPN client | Import vpn configuration
+  become_user: jeffrey
+  ansible.builtin.command:
+    cmd: "nmcli connection import type openvpn file /tmp/Seattle.ovpn"
+    creates: /etc/NetworkManager/system-connections/Seattle.nmconnection
+  register: vpn_imported
+
+- name: VPN client | Configure authentication
+  ansible.builtin.command: "nmcli connection modify Seattle {{ item }}"
+  no_log: true
+  loop:
+    - -vpn.data password-flags
+    - +vpn.data password-flags=0
+    - +vpn.data username={{ vpn_client_username }}
+    - +vpn.secrets password={{ vpn_client_password }}
+  when:
+    - vpn_imported is defined
+    - not vpn_defined.stat.exists

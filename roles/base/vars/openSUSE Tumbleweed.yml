@@ -1,7 +1,0 @@
-lm_sensors_package: sensors
-openssh_package: openssh
-openssh_service: sshd
-powerline_fonts_package: powerline-fonts
-python_psutil_package: python3-psutil
-user_group_name: users
-vim_package: vim

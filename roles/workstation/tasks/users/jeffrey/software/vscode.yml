@@ -1,0 +1,51 @@
+- name: Software | VS Code | Install
+  become_user: jeffrey
+  community.general.flatpak:
+    name: com.visualstudio.code
+    remote: flathub
+    method: user
+
+- name: Software | VS Code | Install Podman Remote (x86_64)
+  become_user: jeffrey
+  community.general.flatpak:
+    name: "com.visualstudio.code.tool.podman/{{ ansible_architecture }}/22.08"
+    remote: flathub
+    method: user
+  register: vscode_podman_remote
+  changed_when: not '"is already installed" in vscode_podman_remote.stderr'
+  when: ansible_architecture == "x86_64"
+
+- name: Software | VS Code | Ajust flatpak sandbox
+  become_user: jeffrey
+  ansible.builtin.command: flatpak override --user --filesystem=xdg-run/podman:ro com.visualstudio.code
+  changed_when: false
+
+- name: Software | VS Code | Check install state of dbus-launch
+  ansible.builtin.command: command -v dbus-launch
+  register: check_binary
+  changed_when: false
+  failed_when: false
+
+- name: Software | VS Code | Install extensions
+  become_user: jeffrey
+  ansible.builtin.command: dbus-launch flatpak run com.visualstudio.code --install-extension {{ item }}
+  register: vscode_extension_install
+  changed_when: '"successfully installed" in vscode_extension_install.stdout'
+  loop:
+    - ms-vscode-remote.remote-containers
+  when: check_binary.rc == 0
+
+
+- name: Software | VS Code | Check if conf dir exists
+  ansible.builtin.stat:
+    path: /home/jeffrey/.var/app/com.visualstudio.code/config/Code/User
+  register: vscode_conf_dir
+
+- name: Software | VS Code | Settings
+  ansible.builtin.copy:
+    src: users/jeffrey/vscode_settings.json
+    dest: /home/jeffrey/.var/app/com.visualstudio.code/config/Code/User/settings.json
+    owner: jeffrey
+    group: jeffrey
+    mode: '0644'
+  when: vscode_conf_dir.stat.exists

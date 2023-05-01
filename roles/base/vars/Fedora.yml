@@ -1,9 +1,5 @@
 ansible_package: ansible-core
-amd_microcode_package: microcode_ctl
-automatic_updates_package: dnf-automatic
-automatic_updates_timer: dnf-automatic-install.timer
-intel_microcode_package: microcode_ctl
-lm_sensors_package: lm_sensors
+automatic_updates_timer: rpm-ostreed-automatic.timer
 openssh_package: openssh
 openssh_service: sshd
 powerline_fonts_package: powerline-fonts

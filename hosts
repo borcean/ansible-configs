@@ -1,27 +1,10 @@
 [base]
-cyan
 
 [workstation]
 hydrogen.borcean.xyz
-krypton.borcean.xyz
-mbp.borcean.xyz
-mini.borcean.xyz
 neon.borcean.xyz
 xenon.borcean.xyz
 
 [thinkpad]
 hydrogen.borcean.xyz
-krypton.borcean.xyz
 neon.borcean.xyz
-
-[macintosh]
-mbp.borcean.xyz
-mini.borcean.xyz
-
-[chromebook]
-penguin
-
-
-[server]
-deuterium.borcean.xyz
-radon.borcean.xyz

@@ -1,43 +1,16 @@
-- import_tasks: firewall.yml
-  when: ansible_os_family == "Suse"
-
-- name: system setup | openssh | install daemon package
+- name: System setup | OpenSSH | Enable daemon
   tags: openssh,ssh,system,settings
-  package:
-    name: "{{ openssh_package }}"
-    state: present
-  notify: restart_sshd
-
-- name: system setup | openssh | enable daemon
-  tags: openssh,ssh,system,settings
-  service:
+  ansible.builtin.service:
     name: "{{ openssh_service }}"
-    enabled: yes
+    enabled: true
     state: started
 
-- name: system setup | openssh | check if sshd_config.d exists
+- name: System setup | OpenSSH | Copy borcean.conf to config.d
   tags: openssh,ssh,system,settings
-  stat:
-    path: /etc/ssh/sshd_config.d
-  register: p
-
-- name: system setup | openssh | modify sshd_config disable password auth
-  tags: openssh,ssh,system,settings
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^(# *)?PasswordAuthentication.*yes'
-    line: PasswordAuthentication no
-    validate: sshd -t -f %s
-  notify: restart_sshd
-  when: p.stat.isdir is not defined
-
-- name: system setup | openssh | copy borcean.conf to config.d
-  tags: openssh,ssh,system,settings
-  copy:
+  ansible.builtin.copy:
     src: system_setup/sshd_config_borcean
     dest: /etc/ssh/sshd_config.d/100-borcean.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: restart_sshd
-  when: p.stat.isdir is defined and p.stat.isdir

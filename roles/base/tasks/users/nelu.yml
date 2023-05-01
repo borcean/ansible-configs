@@ -1,8 +1,0 @@
-- name: users | nelu | create user
-  tags: nelu,users
-  user:
-    name: nelu
-    state: present
-    comment: "Nelu Borcean"
-    password: "{{ nelu_passwd }}"
-    shell: /bin/bash

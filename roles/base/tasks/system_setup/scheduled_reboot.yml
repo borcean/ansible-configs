@@ -4,7 +4,7 @@
     dest: /etc/systemd/system/scheduled-reboot.timer
     owner: root
     group: root
-    mode: 0640
+    mode: '0640'
 
 - name: System setup | Enable scheduled reboot timer
   ansible.builtin.systemd:

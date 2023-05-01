@@ -2,7 +2,7 @@
 
 # Options
 REPO="https://github.com/borcean/ansible-configs.git"
-BRANCH=main
+BRANCH=atomic
 VAULT_FILE=/root/.ansible_vault_key
 INVENTORY="https://raw.githubusercontent.com/borcean/ansible-configs/"$BRANCH"/hosts"
 REQUIREMENTS="https://raw.githubusercontent.com/borcean/ansible-configs/"$BRANCH"/requirements.yml"
@@ -73,39 +73,24 @@ else
    set_vault_password
 fi
 
+# Wait for rpm-ostree to be idle before installing updates
+echo "Waiting for rpm-ostree idle state"
+until rpm-ostree status | grep "State: idle"; do sleep 1; echo -n "." ; done;
+
 # Update OS and install Ansible on supported distros
 OS=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }' | sed 's/"//g')
 
 if [[ "$OS" == fedora ]]; then
-    dnf upgrade  --refresh -y
-    if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" -gt 34 ]]; then
-        dnf install ansible-core git -y --allowerasing
-    else
-        dnf install ansible git -y
+    rpm-ostree upgrade
+    if ! command -v ansible &> /dev/null; then
+        rpm-ostree install ansible python3-psutil
     fi
-elif [[ "$OS" == centos ]]; then
-    dnf upgrade --refresh -y
-    if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 8 ]]; then
-        dnf install centos-release-ansible-29 -y
-        dnf install ansible git -y
-    elif [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 9 ]]; then
-        dnf install ansible-core git -y
+    if ! command -v ansible &> /dev/null; then
+        echo "Transactional package install requires reboot. Restart provision after boot."
+        if confirm "Reboot system now?  y/n: "; then
+            systemctl reboot
+        fi
     fi
-elif [[ "$OS" == arch ]]; then
-    pacman -Syu
-    pacman -S --noconfirm --needed ansible git
-elif [[ "$OS" == opensuse-tumbleweed ]] || [[ "$OS" == opensuse-leap ]]; then
-    zypper --non-interactive dup
-    zypper --non-interactive install ansible git-core
-elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then
-    # Check if Debian Buster, if so use Ansible PPA
-    if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 10 ]]; then
-        echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu bionic main" >  /etc/apt/sources.list.d/ansible.list
-        apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
-    fi
-    apt update
-    apt full-upgrade -y
-    apt install ansible git -y
 else
     if ! confirm "Unsupported distro detected, continue anyways?  y/n: "; then
         exit
@@ -113,22 +98,13 @@ else
 fi
 
 # Update and fix existing flatpak installs
-# Remove Fedora's filtered Flathub
-if command -v flatpak &> /dev/null; then
-    flatpak update -y
-    flatpak repair
-    if [[ "$OS" == fedora ]]; then
-        flatpak remote-delete flathub
-    fi
-fi
+# if command -v flatpak &> /dev/null; then
+#     flatpak update -y
+#     flatpak repair
+# fi
 
 # Test VM set up
 if [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
-    if [[ "$OS" == debian ]]; then
-        apt install spice-vdagent -y
-    elif [[ "$OS" == arch ]]; then
-        pacman -S --noconfirm --needed spice-vdagent xf86-video-qxl
-    fi
     systemctl enable serial-getty@ttyS0.service
 fi
 

@@ -1,7 +1,7 @@
-- name: thinkpad | peripherals | keyboard | enable compose key
+- name: ThinkPad | Peripherals | Keyboard | Enable compose key
   tags: thinkpad,gnome,keyboard,peripherals
   become_user: jeffrey
-  dconf:
+  community.general.dconf:
     key: "/org/gnome/desktop/input-sources/xkb-options"
     value: "['lv3:rwin_switch', 'compose:prsc']"
   changed_when: false

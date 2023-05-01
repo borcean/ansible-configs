@@ -1,10 +1,12 @@
 ### Aliases ###
 alias checkip="curl checkip.amazonaws.com"
+alias code="flatpak run com.visualstudio.code"
 alias diff colordiff
 alias g git
 alias irc="ssh ash.osuosl.org -t screen -dr irc"
 alias sleep-off="gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout '0'"
 alias sleep-on="gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout '7200'"
+alias virsh="flatpak --command=virsh run org.gnome.Boxes"
 alias wol-neon="wol 3C:E1:A1:B8:EA:75"
 
 ### Enviornment Variables ###
