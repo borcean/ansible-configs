@@ -33,11 +33,3 @@
     key: "/org/gnome/desktop/peripherals/mouse/speed"
     value: "0.00000000000000000"
   changed_when: false
-
-- name: GNOME | Peripherals | Increase cursor speed (touchpad)
-  tags: gnome,mouse,peripherals
-  become_user: jeffrey
-  community.general.dconf:
-    key: "/org/gnome/desktop/peripherals/touchpad/speed"
-    value: "0.43333333333333333"
-  changed_when: false
