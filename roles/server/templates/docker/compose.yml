@@ -1,4 +1,4 @@
-version: "3.4"
+version: "3.5"
 services:
   watchtower:
     container_name: watchtower
@@ -121,3 +121,11 @@ services:
     restart: unless-stopped
     privileged: true
     network_mode: host
+
+  scrypted:
+    container_name: scrypted
+    restart: unless-stopped
+    network_mode: host
+    image: koush/scrypted
+    volumes:
+      - ${DATADIR}/config/scrypted:/server/volume
