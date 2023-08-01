@@ -1,33 +1,12 @@
 - name: Load vpn credentials variables
   ansible.builtin.include_vars: vpn_credentials.yml
 
-- name: Docker | Add official docker repo (CentOS)
-  ansible.builtin.yum_repository:
-    name: docker-ce-stable
-    description: Docker CE Stable
-    baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable
-    gpgkey: https://download.docker.com/linux/centos/gpg
-    gpgcheck: true
-  when: ansible_distribution == "CentOS"
-
-- name: Docker | Install required packages (CentOS)
-  ansible.builtin.package:
-    state: present
-    name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-      - docker-compose-plugin
-  when: ansible_distribution == "CentOS"
-
 - name: Docker | Install required packages
   ansible.builtin.package:
     state: present
     name:
       - "{{ docker_package }}"
       - "{{ docker_compose_package }}"
-  when: ansible_distribution != "CentOS"
-
 
 - name: Docker | Install docker-compose-switch (openSUSE Tumbleweed)
   ansible.builtin.package:

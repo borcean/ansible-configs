@@ -2,7 +2,7 @@
 
 # Options
 REPO="https://github.com/borcean/ansible-configs.git"
-BRANCH=main
+BRANCH=microos
 VAULT_FILE=/root/.ansible_vault_key
 INVENTORY="https://raw.githubusercontent.com/borcean/ansible-configs/"$BRANCH"/hosts"
 REQUIREMENTS="https://raw.githubusercontent.com/borcean/ansible-configs/"$BRANCH"/requirements.yml"
@@ -23,7 +23,7 @@ check_hostname () {
 
     HOSTNAME="$(hostnamectl --static)"
 
-    if [ "$(wget -qO- "$INVENTORY" | grep -m 1 "$HOSTNAME")" == "$HOSTNAME" ]; then
+    if [ "$(curl -s "$INVENTORY" | grep -m 1 "$HOSTNAME")" == "$HOSTNAME" ]; then
         echo -e "Host "$HOSTNAME" found in inventory."
     else
         echo -e "Host "$HOSTNAME" not found in inventory."
@@ -76,77 +76,30 @@ fi
 # Update OS and install Ansible on supported distros
 OS=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }' | sed 's/"//g')
 
-if [[ "$OS" == fedora ]]; then
-    dnf upgrade  --refresh -y
-    if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" -gt 34 ]]; then
-        dnf install ansible-core git -y --allowerasing
-    else
-        dnf install ansible git -y
+if [[ "$OS" == opensuse-microos ]]; then
+    echo "EXPERIMENTAL_STATUS=1" > /etc/transactional-update.conf
+    transactional-update -c
+    if ! command -v ansible &> /dev/null; then
+        transactional-update -c --non-interactive pkg install ansible python3-psutil git-core
     fi
-elif [[ "$OS" == centos ]]; then
-    dnf upgrade --refresh -y
-    if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 8 ]]; then
-        dnf install centos-release-ansible-29 -y
-        dnf install ansible git -y
-    elif [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 9 ]]; then
-        dnf install ansible-core git -y
+    if ! command -v ansible &> /dev/null; then
+        echo "Transactional package install requires reboot. Restart provision after boot."
+        if confirm "Reboot system now?  y/n: "; then
+            systemctl reboot
+        fi
     fi
-elif [[ "$OS" == arch ]]; then
-    pacman -Syu
-    pacman -S --noconfirm --needed ansible git
-elif [[ "$OS" == opensuse-tumbleweed ]] || [[ "$OS" == opensuse-leap ]]; then
-    zypper --non-interactive dup
-    zypper --non-interactive install ansible git-core
-elif [[ "$OS" == debian ]] || [[ "$OS" == ubuntu ]]; then
-    # Check if Debian Buster, if so use Ansible PPA
-    if [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 10 ]]; then
-        echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu bionic main" >  /etc/apt/sources.list.d/ansible.list
-        apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
-    fi
-    apt update
-    apt full-upgrade -y
-    apt install ansible git -y
 else
     if ! confirm "Unsupported distro detected, continue anyways?  y/n: "; then
         exit
     fi
 fi
 
-# Update and fix existing flatpak installs
-# Remove Fedora's filtered Flathub
-if command -v flatpak &> /dev/null; then
-    flatpak update -y
-    flatpak repair
-    if [[ "$OS" == fedora ]]; then
-        flatpak remote-delete flathub
-    fi
-fi
-
-# Test VM set up
-if [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
-    if [[ "$OS" == debian ]]; then
-        apt install spice-vdagent -y
-    elif [[ "$OS" == arch ]]; then
-        pacman -S --noconfirm --needed spice-vdagent xf86-video-qxl
-    fi
-    systemctl enable serial-getty@ttyS0.service
-fi
-
 # Clean Ansible cache
 rm -rf /root/.ansible/
 
-# Install collections/roles from Ansible Galaxy
-wget -O /tmp/requirements.yml "$REQUIREMENTS"
-ansible-galaxy collection install -r /tmp/requirements.yml --force
-ansible-galaxy role install -r /tmp/requirements.yml --force
-
 # Ansible pull command
 echo -e "\n"
-if [[ "$OS" == debian ]] && [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 10 ]]; then
-    ansible-pull --vault-password-file="$VAULT_FILE" -e 'ansible_python_interpreter=/usr/bin/python' -U "$REPO" -C "$BRANCH"
-else
-    ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
-fi
+ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
 
 # Offer restart after ansible pull finished
 if confirm "Reboot system now?  y/n: "; then

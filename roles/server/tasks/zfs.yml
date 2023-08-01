@@ -1,32 +1,10 @@
-- name: ZFS | Add filesystems repo (openSUSE Tumbleweed)
+- name: ZFS | Add filesystems repo (openSUSE MicroOS)
   community.general.zypper_repository:
     repo: 'https://download.opensuse.org/repositories/filesystems/openSUSE_Tumbleweed/filesystems.repo'
     auto_import_keys: true
   notify:
     - zypper_refresh
-  when: ansible_distribution == "openSUSE Tumbleweed"
-
-- name: ZFS | Add filesystems repo (openSUSE Leap)
-  community.general.zypper_repository:
-    repo: "https://download.opensuse.org/repositories/filesystems/{{ ansible_distribution_version }}/filesystems.repo"
-    auto_import_keys: true
-  notify:
-    - zypper_refresh
-  when: ansible_distribution == "openSUSE Leap"
-
-- name: ZFS | Add openzfs repo (CentOS)
-  ansible.builtin.dnf:
-    name: "https://zfsonlinux.org/epel/zfs-release-2-2.el{{ ansible_distribution_version }}.noarch.rpm"
-    state: present
-    disable_gpg_check: true
-  when: ansible_distribution == "CentOS"
-
-- name: ZFS | add openzfs repo (Fedora)
-  ansible.builtin.dnf:
-    name: "https://zfsonlinux.org/fedora/zfs-release-2-2.fc{{ ansible_distribution_version }}.noarch.rpm"
-    state: present
-    disable_gpg_check: true
-  when: ansible_distribution == "Fedora"
+  when: ansible_distribution == "openSUSE MicroOS"
 
 - name: Trigger package cache refresh if needed
   ansible.builtin.meta: flush_handlers
@@ -50,7 +28,7 @@
   #   - load_zfs_kmod
   when: zfs_kmp_package is defined
 
-- name: ZFS | Check if dkms zfs kmod is install
+- name: ZFS | Check if dkms zfs kmod is installed
   ansible.builtin.command: dkms status
   register: dkms_status
   when: zfs_kmp_package is not defined
@@ -71,7 +49,7 @@
     name: zfs
     state: present
 
-- name: ZFS | Import zpool 
+- name: ZFS | Import zpool
   ansible.builtin.command: zpool import -d '{{ zfs_pool.disk1 }}'-part1 '{{ zfs_pool.pool_name }}'
   register: result
   failed_when: false

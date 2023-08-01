@@ -1,19 +1,11 @@
 ---
-- name: apt_refresh
-  ansible.builtin.apt: update_cache=yes
-  changed_when: False
-
 - name: zypper_refresh
   community.general.zypper_repository:
     repo: '*'
+    auto_import_keys: true
     runrefresh: yes
 
 - name: restart_sshd
   service:
     name: "{{ openssh_service }}"
-    state: restarted
-
-- name: restart_fail2ban
-  service:
-    name: fail2ban
     state: restarted

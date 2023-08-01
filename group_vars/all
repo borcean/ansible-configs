@@ -24,7 +24,6 @@ dreamhost_api_key: !vault |
           3237343265333735380a363461313437333264326336303333643964386137646633666635336361
           38653933373065373861386332666130613363623562396530633631636165313330
 
-ansible_python_interpreter: "/usr/bin/python3"
 
 repo: https://github.com/borcean/ansible-configs.git
 
@@ -40,19 +39,7 @@ timers:
       timer_boot: 10m
       timer_active: 1h
 
-debian_enable_contrib_non_free: true
-debian_mirror: "debian.osuosl.org"
-
-automatic_updates: true
-
 sshd: true
 
-fail2ban: false
-
-microcode: true
-
 tailscale: true
-
-user_ana: false
-user_josh: false
-user_nelu: false
+tailscale_exit_node: false

@@ -1,7 +1,9 @@
 ---
 # base
 # ansible setup
-branch: dev
+branch: microos
+
+tailscale_exit_node: true
 
 timers:
    refresh:
@@ -17,25 +19,12 @@ user_josh: true
 user_nelu: true
 
 # system setup
-fail2ban: true
-
 reboot_schedule: Sat 22:00
-
-# workstation
-# optional packages
-toolbox_install: true
-virt_manager_install: true
-steam_install: native
-
-# users
-# jeffrey
-profile_sync_daemon: true
-
 
 zfs_pool: {
    pool_name: 'data',
-   disk1: '/dev/disk/by-id/virtio-virtio-disk1',
-   disk2: '/dev/disk/by-id/virtio-virtio-disk2',
+   disk1: '/dev/vdb',
+   disk2: '/dev/vdc',
 }
 
 zfs_filesystems:

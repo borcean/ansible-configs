@@ -1,90 +1,68 @@
-- name: ansible setup | ensure ansible is installed
-  tags: ansible,ansible-setup
+- name: Ansible setup | Install packages
   package:
-    name: "{{ ansible_package | default('ansible') }}"
+    name:
+      - "{{ ansible_package | default('ansible') }}"
+      - "{{ python_psutil_package }}"
     state: present
 
-- name: ansible setup | install required packages
-  tags: ansible,ansible-setup,packages
-  package:
-    name: "{{ python_psutil_package }}"
-    state: present
-
-- name: ansible setup | copy ansible_vault_key
-  tags: ansible,ansible-setup,ansible-vault
-  copy:
-    src: ansible/ansible_vault_key
-    dest: "{{ vault_file }}"
-    owner: root
-    group: root
-    mode: 0600
-
-- name: ansible setup | ansible-refresh systemd service
-  tags: ansible,ansible-setup,ansible-pull,systemd
-  copy:
+- name: Ansible setup | Ansible-refresh systemd service
+  ansible.builtin.copy:
     src: ansible/{{ item.src }}
     dest: /etc/systemd/system/{{ item.dest }}
     owner: root
     group: root
-    mode: 0640
+    mode: '0640'
   with_items:
     - { src: 'ansible_refresh_service', dest: 'ansible-refresh.service' }
 
-- name: ansible setup | ansible-pull systemd service
-  tags: ansible,ansible-setup,ansible-pull,systemd
-  template:
+- name: Ansible setup | Ansible-pull systemd service
+  ansible.builtin.template:
     src: ansible/pull_service.j2
     dest: /etc/systemd/system/ansible-pull.service
     owner: root
     group: root
-    mode: 0640
+    mode: '0640'
 
 
-- name: ansible setup | ansible systemd timers
-  tags: ansible,ansible-setup,ansible-pull,systemd
-  template:
+- name: Ansible setup | Ansible systemd timers
+  ansible.builtin.template:
     src: ansible/timer.j2
     dest: "/etc/systemd/system/ansible-{{ item.key }}.timer"
     owner: root
     group: root
-    mode: 0640
+    mode: '0640'
   with_dict: "{{ timers }}"
 
-- name: ansible setup |  enable ansible systemd timers
-  tags: ansible,ansible-setup,ansible-pull,systemd
-  systemd:
+- name: Ansible setup | Enable ansible systemd timers
+  ansible.builtin.systemd:
     name: "ansible-{{ item.key }}.timer"
     enabled: true
     masked: false
     daemon_reload: true
   with_dict: "{{ timers }}"
 
-- name: ansible setup | copy ansible requirements.yml file
-  tags: ansible,ansible-setup
-  copy:
+- name: Ansible setup | Copy ansible requirements.yml file
+  ansible.builtin.copy:
     src: ansible/requirements
     dest: /root/.ansible/requirements.yml
     owner: root
     group: root
-    mode: 0640
-  changed_when: False
-
-- name: ansible setup | install content from ansible galaxy
-  tags: ansible,ansible-setup
-  command:
-    cmd: ansible-galaxy "{{ item }}" install -r requirements.yml --force
-  loop:
-    - collection
-    - role
-  when: ansible_version.full is version('2.11.0', '<')
+    mode: '0640'
   changed_when: false
 
-- name: ansible setup | install content from ansible galaxy
+- name: Ansible setup | Check ansible install state
+  ansible.builtin.shell: command -v ansible
+  register: check_binary
+  changed_when: false
+  failed_when: false
+
+- name: Ansible setup | Install content from ansible galaxy
   tags: ansible,ansible-setup
-  command:
+  ansible.builtin.command:
     cmd: ansible-galaxy "{{ item.type }}" install -r requirements.yml --"{{ item.flag }}"
   loop:
     - { type: 'collection', flag: 'upgrade' }
     - { type: 'role', flag: 'force' }
-  when: ansible_version.full is version('2.11.0', '>=')
+  when:
+    - check_binary.rc == 0
   changed_when: false

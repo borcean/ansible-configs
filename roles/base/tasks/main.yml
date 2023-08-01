@@ -1,47 +1,36 @@
 - name: Load distro-specific variables
   tags: always
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
     - "{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml"
     - "{{ ansible_distribution }}.yml"
 
-- block:
+- name: Base configuration
+  block:
   # set up the ansible environment
-  - import_tasks: ansible_setup.yml
+    - name: Import tasks | Ansible setup
+      ansible.builtin.import_tasks: ansible_setup.yml
 
-  # enable repositories
-  - import_tasks: software/repositories.yml
+    # install software
+    - name: Import tasks | Packages utilities
+      ansible.builtin.import_tasks: software/packages_utilities.yml
 
-  # install software
-  - import_tasks: software/packages_utilities.yml
-  - import_tasks: software/arch_aur.yml
-    when: ansible_distribution == "Archlinux"
+    # basic user configuration
+    - name: Import tasks | Users | Jeffrey
+      ansible.builtin.import_tasks: users/jeffrey/jeffrey.yml
 
-  # basic user configuration
-  - import_tasks: users/ana.yml
-    when: user_ana | bool
-  - import_tasks: users/jeffrey/jeffrey.yml
-  - import_tasks: users/josh.yml
-    when: user_josh | bool
-  - import_tasks: users/nelu.yml
-    when: user_nelu | bool
-
-  # perform remaining tasks:
-  - import_tasks: system_setup/automatic_updates.yml
-    when:  automatic_updates | bool
-  - import_tasks: system_setup/openssh.yml
-    when: sshd | bool
-  - import_tasks: system_setup/fail2ban.yml
-    when: fail2ban | bool
-  - import_tasks: system_setup/microcode.yml
-    when:
-      - microcode | bool
-      - ansible_architecture == "x86_64"
-  - import_tasks: system_setup/tailscale.yml
-    when: tailscale | bool
-  - import_tasks: system_setup/scheduled_reboot.yml
-    when: reboot_schedule is defined
+    # perform remaining tasks:
+    - name: Import tasks | OpenSSH configuration
+      ansible.builtin.import_tasks: system_setup/openssh.yml
+      when: sshd | bool
+    - name: Import tasks | Tailscale
+      ansible.builtin.import_tasks: system_setup/tailscale.yml
+      when: tailscale | bool
+    - name: Import tasks | Scheduled reboot
+      ansible.builtin.import_tasks: system_setup/scheduled_reboot.yml
+      when: reboot_schedule is defined
 
   rescue:
-  - name: Set fact if task failed
-    set_fact: task_failed=true
+    - name: Set fact if task failed
+      ansible.builtin.set_fact:
+        task_failed: true

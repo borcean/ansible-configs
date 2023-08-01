@@ -1,7 +1,0 @@
-- name: gnome | software settings | gnome software diable autoupdate (opensuse tumbleweed)
-  tags: gnome,settings,autoupdate
-  become_user: jeffrey
-  dconf:
-    key: "/org/gnome/software/download-updates"
-    value: "false"
-  when: ansible_distribution == "openSUSE Tumbleweed"

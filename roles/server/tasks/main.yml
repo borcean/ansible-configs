@@ -4,7 +4,6 @@
 
 - block:
   - import_tasks: zfs.yml
-  - import_tasks: firewall.yml
   - import_tasks: docker/docker.yml
   - import_tasks: dreamhost_ddns.yml
     when:

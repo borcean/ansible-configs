@@ -1,23 +1,24 @@
-- name: users | jeffrey | set full name
+- name: Users | Jeffrey | Create user
   tags: users,jeffrey
-  user:
+  ansible.builtin.user:
     name: jeffrey
+    password: "{{ jeffrey_password }}"
     comment: Jeffrey Borcean
 
-- name: users | jeffrey | create .ssh directory
+- name: Users | Jeffrey | Create .ssh directory
   tags: dotfiles,jeffrey,ssh,users
-  file:
+  ansible.builtin.file:
     path: "{{ item.dir }}"
     state: directory
     owner: jeffrey
     group: "{{ user_group_name | default('jeffrey') }}"
-    mode: 0700
+    mode: '0700'
   with_items:
     - { dir: '/home/jeffrey/.ssh' }
 
-- name: users | jeffrey | add public key to authorized_keys
+- name: Users | Jeffrey | Add public key to authorized_keys
   tags: dotfiles,jeffrey,ssh,ssh-keys,users
-  authorized_key:
+  ansible.posix.authorized_key:
     user: jeffrey
     key: "{{ item }}"
   with_file:
@@ -25,99 +26,119 @@
     - users/jeffrey/ssh/id_ed25519.pub
     - users/jeffrey/ssh/id_beaverton.pub
 
-- name: users | jeffrey | add public key
+- name: Users | Jeffrey | Add public key
   tags: dotfiles,jeffrey,ssh,ssh-keys,users
-  copy:
+  ansible.builtin.copy:
     src: users/jeffrey/ssh/{{ item.key }}.pub
     dest: /home/jeffrey/.ssh/{{ item.key }}.pub
     owner: jeffrey
     group: "{{ user_group_name | default('jeffrey') }}"
-    mode: 0644
+    mode: '0644'
   with_items:
     - { key: 'id_rsa' }
     - { key: 'id_ed25519' }
 
-- name: users | jeffrey | add private key
+- name: Users | Jeffrey | Add private key
   tags: dotfiles,jeffrey,ssh,ssh-keys,users,ansible-vault
-  copy:
+  ansible.builtin.copy:
     src: users/jeffrey/ssh/{{ item.key }}
     dest: /home/jeffrey/.ssh/{{ item.key }}
     owner: jeffrey
     group: "{{ user_group_name | default('jeffrey') }}"
-    mode: 0600
+    mode: '0600'
   with_items:
-  - { key: 'id_ed25519' }
+    - { key: 'id_ed25519' }
 
-- name: users | jeffrey | create config directories
+- name: Users | Jeffrey | Create config directories
   tags: dotfiles,fish,jeffrey,users
-  file:
+  ansible.builtin.file:
     path: /home/jeffrey/{{ item.dir }}
     state: directory
     owner: jeffrey
     group: "{{ user_group_name | default('jeffrey') }}"
-    mode: 0700
+    mode: '0700'
   with_items:
     - { dir: '.config' }
     - { dir: '.config/fish' }
 
-- name: users | jeffrey | copy dotfiles
+- name: Users | Jeffrey | Copy dotfiles
   tags: dotfiles,users,jeffrey,fish,vim
-  copy:
+  ansible.builtin.copy:
     src: users/jeffrey/{{ item.src }}
     dest: /home/jeffrey/{{ item.dest }}
     owner: jeffrey
     group: "{{ user_group_name | default('jeffrey') }}"
-    mode: 0600
+    mode: '0600'
   with_items:
     - { src: 'fish/configfish', dest: '.config/fish/config.fish' }
     - { src: 'git/gitconfig', dest: '.gitconfig' }
     - { src: 'vim/vimrc', dest: '.vimrc' }
 
 # Fish shell configuration
-- name: users | jeffrey | set fish shell
+- name: Users | Jeffrey | Check fish shell install state
+  ansible.builtin.shell: command -v fish
+  register: check_binary
+  changed_when: false
+  failed_when: false
+
+- name: Print return information from the previous task
+  ansible.builtin.debug:
+    var: check_binary
+    verbosity: 2
+
+- name: Users | Jeffrey | Set fish shell
   tags: users,jeffrey,fish
-  user:
+  ansible.builtin.user:
     name: jeffrey
     shell: /usr/bin/fish
+  when: check_binary.rc == 0
 
-- name: users | jeffrey | check if oh-my-fish is installed
-  stat:
+- name: Users | Jeffrey | Check if oh-my-fish is installed
+  ansible.builtin.stat:
     path: '/home/jeffrey/.config/fish/conf.d/omf.fish'
   register: omf
 
-- name: users | jeffrey | check if bobthefish is installed
-  stat:
+- name: Users | Jeffrey | Check if bobthefish is installed
+  ansible.builtin.stat:
     path: '/home/jeffrey/.local/share/omf/themes/bobthefish'
   register: bobthefish
+  when: check_binary.rc == 0
 
-- name: users | jeffrey | clone oh-my-fish repo
-  git:
+- name: Users | Jeffrey | Clone oh-my-fish repo
+  ansible.builtin.git:
     repo: 'https://github.com/oh-my-fish/oh-my-fish'
     dest: '/tmp/omf'
     version: master
-    clone: yes
-  when: not omf.stat.exists
+    clone: true
+  when:
+    - check_binary.rc == 0
+    - not omf.stat.exists
 
-- name: users | jeffrey | install oh-my-fish
+
+- name: Users | Jeffrey | Install oh-my-fish
   become: true
   become_user: jeffrey
-  command: /tmp/omf/bin/install -y --offline --noninteractive
-  when: not omf.stat.exists
+  ansible.builtin.shell: /tmp/omf/bin/install -y --offline --noninteractive
+  when:
+    - check_binary.rc == 0
+    - not omf.stat.exists
 
-- name: users | jeffrey | install bobthefish
+- name: Users | Jeffrey | Install bobthefish
   become: true
   become_user: jeffrey
-  command: fish -c 'omf install bobthefish'
-  when: not bobthefish.stat.exists
+  ansible.builtin.shell: fish -c 'omf install bobthefish'
+  when:
+    - check_binary.rc == 0
+    - not bobthefish.stat.exists
 
-- name: users | jeffrey | update oh-my-fish
+- name: Users | Jeffrey | Update oh-my-fish
   become: true
   become_user: jeffrey
-  command: fish -c 'omf update'
+  ansible.builtin.shell: fish -c 'omf update'
   changed_when: false
-  when: omf.stat.exists
+  when:
+    - check_binary.rc == 0
+    - omf.stat.exists
 
-- import_tasks: gpg.yml
-
-- include_tasks: weechat.yml
-  when: weechat | bool
+- name: Users | Jeffrey | Import GPG tasks
+  ansible.builtin.import_tasks: gpg.yml

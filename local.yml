@@ -1,103 +1,29 @@
-# tasks to complete before running roles
-- hosts: all
-  tags: always
-  become: true
-  pre_tasks:
-    - name: pre-run | update package cache (red hat)
-      tags: always
-      ansible.builtin.dnf: update_cache=yes
-      changed_when: False
-      when: ansible_os_family == "RedHat"
-
-    - name: pre-run | update package cache (arch)
-      tags: always
-      community.general.pacman: update_cache=yes
-      changed_when: False
-      when: ansible_distribution == "Archlinux"
-
-    - name: pre-run | update package cache (debian)
-      tags: always
-      ansible.builtin.apt: update_cache=yes
-      changed_when: False
-      when: ansible_os_family == "Debian"
-
-    - name: pre-run | update package cache (suse)
-      tags: always
-      community.general.zypper_repository:
-        repo: '*'
-        runrefresh: yes
-      changed_when: False
-      when: ansible_os_family == "Suse"
-
-# run roles
-- hosts: all
+- name: Run base play
+  hosts: all
   tags: base
   become: true
   roles:
     - base
 
-- hosts: workstation
-  tags: workstation
-  become: true
-  roles:
-    - workstation
-
-- hosts: thinkpad
-  tags: thinkpad
-  become: true
-  roles:
-    - thinkpad
-
-- hosts: macintosh
-  tags: macintosh
-  become: true
-  roles:
-    - macintosh
-
-- hosts: chromebook
-  tags: chromebook
-  become: true
-  roles:
-    - chromebook
-
-- hosts: server
+- name: Run server play
+  hosts: server
   tags: server
   become: true
   roles:
     - server
 
-# end of run cleanup and reporting
-- hosts: all
+- name: End of run cleanup and reporting
+  hosts: all
   become: true
   tasks:
-    - name: autoremove orphan packages (red hat)
-      tags: always
-      ansible.builtin.dnf:
-        autoremove: yes
-      when: ansible_os_family == "RedHat"
-
-    - name: cleanup package cache (debian)
-      tags: always
-      ansible.builtin.apt:
-        autoclean: yes
-      changed_when: false
-      when: ansible_os_family == "Debian"
-
-    - name: autoremove orphan packages (debian)
-      tags: always
-      ansible.builtin.apt:
-        autoremove: yes
-        purge: yes
-      when: ansible_os_family == "Debian"
-
-    - name: send completion alert
-      include_tasks: playbooks/send_completion_alert.yml
+    - name: Send completion alert
+      ansible.builtin.include_tasks: playbooks/send_completion_alert.yml
       tags: always
       when:
         - task_failed is not defined
 
-    - name: send failure alert
-      include_tasks: playbooks/send_failure_alert.yml
+    - name: Send failure alert
+      ansible.builtin.include_tasks: playbooks/send_failure_alert.yml
       tags: always
       when:
         - task_failed is defined
