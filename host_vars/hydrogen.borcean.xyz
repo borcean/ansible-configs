@@ -21,10 +21,13 @@ user_nelu: true
 # system setup
 reboot_schedule: Sat 22:00
 
+# server
+test_system: true
+
 zfs_pool: {
    pool_name: 'data',
-   disk1: '/dev/vdb',
-   disk2: '/dev/vdc',
+   disk1: '/var/disk0.raw',
+   disk2: '/var/disk1.raw',
 }
 
 zfs_filesystems:

@@ -9,68 +9,79 @@
 - name: Trigger package cache refresh if needed
   ansible.builtin.meta: flush_handlers
 
-- name: ZFS | Install zfs, dkms
+- name: ZFS | Install zfs
   ansible.builtin.package:
     state: present
     name:
-      - dkms
       - "{{ zfs_package }}"
-  # notify:
-  #   - build_kmods
-  #   - load_zfs_kmod
   when: zfs_package is defined
 
-- name: ZFS | Install zfs kernel module package
+- name: ZFS | Install zfs-kmp
   ansible.builtin.package:
     state: present
-    name: "{{ zfs_kmp_package }}"
-  # notify:
-  #   - load_zfs_kmod
+    name:
+      - "{{ zfs_kmp_package }}"
   when: zfs_kmp_package is defined
 
-- name: ZFS | Check if dkms zfs kmod is installed
-  ansible.builtin.command: dkms status
-  register: dkms_status
-  when: zfs_kmp_package is not defined
+- name: ZFS | Check install state
+  ansible.builtin.shell: command -v zfs
+  register: check_binary
   changed_when: false
+  failed_when: false
 
-- name: ZFS | Build zfs kernel module with dkms
-  ansible.builtin.command: dkms autoinstall
+- name: Print when binary not found
+  ansible.builtin.debug:
+    msg:
+      - 'Binary  "{{ check_binary.cmd.split()[2] }}" not found'
+      - 'A reboot may be needed for pending transactional installs'
+  when: check_binary.rc != 0
+
+- name: Create file backed disks for testing
+  community.general.filesize:
+    path: "/var/{{ item }}.raw"
+    size: 10G
+    sparse: true
+  loop:
+    - disk0
+    - disk1
   when:
-    - zfs_kmp_package is not defined
-    - dkms_status is not regex("zfs+\/.*:\s+installed")
-
-
-# - name: ZFS | Load zfs kernel module if needed
-#   ansible.builtin.meta: flush_handlers
+    - test_system is defined
+    - test_system | bool
 
 - name: ZFS | Load kernel module
   community.general.modprobe:
     name: zfs
     state: present
+  when: check_binary.rc == 0
 
 - name: ZFS | Import zpool
   ansible.builtin.command: zpool import -d '{{ zfs_pool.disk1 }}'-part1 '{{ zfs_pool.pool_name }}'
   register: result
   failed_when: false
   changed_when: result.rc == 0
+  when: check_binary.rc == 0
 
 - name: ZFS | Gather space usage about all imported zfs pools
   community.general.zpool_facts: properties='free,size'
+  when: check_binary.rc == 0
 
 - name: ZFS | Print gathered information (debug)
   ansible.builtin.debug:
     msg: 'ZFS pool {{ item.name }} has {{ item.free }} free space out of {{ item.size }}.'
   with_items: '{{ ansible_zfs_pools }}'
+  when: check_binary.rc == 0
 
 - name: ZFS | Print information about zfs pools (debug)
   ansible.builtin.debug:
     msg: 'ZFS pool {{ item.name }} exists? -> [{{ item.name == zfs_pool.pool_name }}] It has {{ item.free }} free space out of {{ item.size }}.'
   with_items: '{{ ansible_zfs_pools }}'
+  when: check_binary.rc == 0
 
 - name: ZFS | Create zfs pool "{{ zfs_pool.pool_name }}" as two disk mirror
-  ansible.builtin.command: 'zpool create -o ashift=12 "{{ zfs_pool.pool_name }}" mirror "{{ zfs_pool.disk1 }}" "{{ zfs_pool.disk2 }}"'
-  when: 'not (ansible_zfs_pools | length > 0 and ansible_zfs_pools[0].name == zfs_pool.pool_name)'
+  ansible.builtin.command: 'zpool create -o ashift=12 -m /var/"{{  zfs_pool.pool_name }}" "{{ zfs_pool.pool_name }}" mirror "{{ zfs_pool.disk1 }}" "{{ zfs_pool.disk2 }}"'
+  when:
+    - check_binary.rc == 0
+    - 'not (ansible_zfs_pools | length > 0 and ansible_zfs_pools[0].name == zfs_pool.pool_name)'
 
 - name: ZFS | Create filesystems
   community.general.zfs:
@@ -78,8 +89,10 @@
     state: present
   with_items:
     "{{ zfs_filesystems }}"
+  when: check_binary.rc == 0
 
 - name: ZFS | Enable weekly scub
   ansible.builtin.systemd:
     name: "zfs-scrub-weekly@{{ zfs_pool.pool_name }}.timer"
     enabled: true
+  when: check_binary.rc == 0
