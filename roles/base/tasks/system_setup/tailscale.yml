@@ -20,6 +20,13 @@
   changed_when: false
   failed_when: false
 
+- name: Print when binary not found
+  ansible.builtin.debug:
+    msg:
+      - 'Binary  "{{ check_binary.cmd.split()[2] }}" not found'
+      - 'A reboot may be needed for pending transactional installs'
+  when: check_binary.rc != 0
+
 - name: System setup | Tailscale | Enable tailscaled
   ansible.builtin.systemd:
     name: tailscaled

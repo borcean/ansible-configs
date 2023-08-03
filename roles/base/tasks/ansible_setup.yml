@@ -56,6 +56,13 @@
   changed_when: false
   failed_when: false
 
+- name: Print when binary not found
+  ansible.builtin.debug:
+    msg:
+      - 'Binary  "{{ check_binary.cmd.split()[2] }}" not found'
+      - 'A reboot may be needed for pending transactional installs'
+  when: check_binary.rc != 0
+
 - name: Ansible setup | Install content from ansible galaxy
   tags: ansible,ansible-setup
   ansible.builtin.command:

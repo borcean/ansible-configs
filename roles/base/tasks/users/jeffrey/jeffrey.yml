@@ -81,10 +81,12 @@
   changed_when: false
   failed_when: false
 
-- name: Print return information from the previous task
+- name: Print when binary not found
   ansible.builtin.debug:
-    var: check_binary
-    verbosity: 2
+    msg:
+      - 'Binary  "{{ check_binary.cmd.split()[2] }}" not found'
+      - 'A reboot may be needed for pending transactional installs'
+  when: check_binary.rc != 0
 
 - name: Users | Jeffrey | Set fish shell
   tags: users,jeffrey,fish
