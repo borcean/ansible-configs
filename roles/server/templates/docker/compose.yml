@@ -1,16 +1,5 @@
 version: "3.5"
 services:
-  watchtower:
-    container_name: watchtower
-    image: containrrr/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - TZ=${TZ}
-      - WATCHTOWER_CLEANUP=true
-      # - WATCHTOWER_NOTIFICATIONS=shoutrrr
-      # - WATCHTOWER_NOTIFICATION_URL=pushover://shoutrrr:${PO_TOKEN}@${PO_USERKEY}
-
   gluetun:
     container_name: gluetun
     image: qmcgaw/gluetun
@@ -84,6 +73,16 @@ services:
       - ${DATADIR}/config/radarr:/config # config files
       - ${DATADIR}/complete/movies:/movies # movies folder
       - ${DATADIR}/downloads:/downloads # download folder
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=${PUID} # default user id, defined in .env
+      - PGID=${PGID} # default group id, defined in .env
+      - TZ=${TZ} # timezone, defined in .env
+    volumes:
+      - ${DATADIR}/config/prowlarr:/config # config files
 
   plex-server:
     container_name: plex-server
