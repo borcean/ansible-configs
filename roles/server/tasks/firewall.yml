@@ -10,6 +10,7 @@
     - deluge
     - homeassistant
     - jackett
+    - prowlarr
     - radarr
     - sonnar
   register: firewall_service_installed
@@ -33,6 +34,7 @@
     - homeassistant
     - jackett
     - plex
+    - prowlarr
     - radarr
     - samba
     - sonnar
