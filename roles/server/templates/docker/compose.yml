@@ -77,12 +77,16 @@ services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
+    restart: unless-stopped
+    network_mode: host
     environment:
       - PUID=${PUID} # default user id, defined in .env
       - PGID=${PGID} # default group id, defined in .env
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - ${DATADIR}/config/prowlarr:/config # config files
+    ports:
+      - 9696:9696
 
   plex-server:
     container_name: plex-server
