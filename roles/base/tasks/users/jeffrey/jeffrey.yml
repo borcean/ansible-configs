@@ -24,6 +24,7 @@
     - users/jeffrey/ssh/id_rsa.pub
     - users/jeffrey/ssh/id_ed25519.pub
     - users/jeffrey/ssh/id_beaverton.pub
+    - users/jeffrey/ssh/iphone.pub
 
 - name: users | jeffrey | add public key
   tags: dotfiles,jeffrey,ssh,ssh-keys,users
