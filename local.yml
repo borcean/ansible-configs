@@ -5,20 +5,12 @@
   roles:
     - base
 
-- name: Run workstation play
-  hosts: workstation
-  tags: workstation
-  become: true
-  roles:
-    - workstation
-
-- name: Run ThinkPad play
-  hosts: thinkpad
-  tags: thinkpad
-  become: true
-  roles:
-    - thinkpad
-
+# - name: Run workstation play
+#   hosts: workstation
+#   tags: workstation
+#   become: true
+#   roles:
+#     - workstation
 
 - name: End of run cleanup and reporting
   hosts: all

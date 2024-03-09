@@ -16,9 +16,14 @@ telegram_token: !vault |
           64623535326437386238303338616233363836393365626633633334663633393065623731316433
           6562336539373362313336613864326635633634353837333632
 
+reboot_failed_pending_deployment: true
+reboot_failed_pending_deployment_delay: 5m
+
+# Base
+# Ansible Setup
 repo: https://github.com/borcean/ansible-configs.git
 
-branch: atomic
+branch: coreos
 
 vault_file: /root/.ansible_vault_key
 
@@ -30,8 +35,5 @@ timers:
       timer_boot: 10m
       timer_active: 30m
 
-automatic_updates: true
-
-sshd: true
-
+# Tailscale
 tailscale: true

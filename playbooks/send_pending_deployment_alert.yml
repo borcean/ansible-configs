@@ -13,3 +13,27 @@
       text: "Deployment pending reboot on *{{ ansible_hostname }}*"
   changed_when: false
   when: not deployment_booted.stdout | bool
+
+- name: Reboot into pending deployment
+  ansible.builtin.command: "systemctl reboot --when=+{{ reboot_failed_pending_deployment_delay }}"
+  when:
+    - task_failed is defined
+    - task_failed | bool
+    - not deployment_booted.stdout | bool
+    - reboot_failed_pending_deployment | bool
+    - reboot_failed_pending_deployment_delay is defined
+
+- name: Send pending reboot notification via telegram
+  community.general.telegram:
+    token: "{{ telegram_token }}"
+    api_args:
+      chat_id: "{{ telegram_chat_id }}"
+      parse_mode: "markdown"
+      text: "System scheduled to reboot in *{{ reboot_failed_pending_deployment_delay }}*"
+  changed_when: false
+  when:
+    - task_failed is defined
+    - task_failed | bool
+    - not deployment_booted.stdout | bool
+    - reboot_failed_pending_deployment | bool
+    - reboot_failed_pending_deployment_delay is defined

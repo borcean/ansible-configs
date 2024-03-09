@@ -3,10 +3,7 @@
   community.general.rpm_ostree_pkg:
     state: present
     name:
-      - colordiff
       - fish
       - htop
-      - neofetch
       - "{{ powerline_fonts_package }}"
-      - pwgen
       - "{{ vim_package }}"

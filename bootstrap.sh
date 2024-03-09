@@ -83,7 +83,7 @@ OS=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }' | sed 's/"/
 if [[ "$OS" == fedora ]]; then
     rpm-ostree upgrade
     if ! command -v ansible &> /dev/null; then
-        rpm-ostree install ansible python3-psutil
+        rpm-ostree install ansible
     fi
     if ! command -v ansible &> /dev/null; then
         echo "Transactional package install requires reboot. Restart provision after boot."
@@ -118,11 +118,7 @@ ansible-galaxy role install -r /tmp/requirements.yml --force
 
 # Ansible pull command
 echo -e "\n"
-if [[ "$OS" == debian ]] && [[ "$(awk '/^VERSION_ID=/' /etc/*-release | awk -F'=' '{ print ($2) }' | sed 's/"//g')" == 10 ]]; then
-    ansible-pull --vault-password-file="$VAULT_FILE" -e 'ansible_python_interpreter=/usr/bin/python' -U "$REPO" -C "$BRANCH"
-else
-    ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
-fi
+ansible-pull --vault-password-file="$VAULT_FILE" -U "$REPO" -C "$BRANCH"
 
 # Offer restart after ansible pull finished
 if confirm "Reboot system now?  y/n: "; then

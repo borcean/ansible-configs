@@ -1,12 +1,5 @@
 [base]
-cobalt.borcean.xyz
 
-[workstation]
-helium.borcean.xyz
+[server]
+argon.borcean.xyz
 hydrogen.borcean.xyz
-neon.borcean.xyz
-xenon.borcean.xyz
-
-[thinkpad]
-hydrogen.borcean.xyz
-neon.borcean.xyz
