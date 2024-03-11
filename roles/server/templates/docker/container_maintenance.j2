@@ -5,9 +5,9 @@ Requires=docker.service
 
 [Service]
 Type=oneshot
-ExecStartPre=/usr/bin/{{ docker_compose_binary | default('docker compose') }} --file /data/docker/compose/docker-compose.yml --env-file /data/docker/compose/.env pull
-ExecStartPre=/usr/bin/{{ docker_compose_binary | default('docker compose') }} --file /data/docker/compose/docker-compose.yml --env-file /data/docker/compose/.env stop
-ExecStart=/usr/bin/{{ docker_compose_binary | default('docker compose') }} --file /data/docker/compose/docker-compose.yml --env-file /data/docker/compose/.env up --detach --remove-orphans
+ExecStartPre=/usr/bin/{{ docker_compose_binary | default('docker compose') }} --file /var/data/docker/compose/docker-compose.yml --env-file /var/data/docker/compose/.env pull
+ExecStartPre=/usr/bin/{{ docker_compose_binary | default('docker compose') }} --file /var/data/docker/compose/docker-compose.yml --env-file /var/data/docker/compose/.env stop
+ExecStart=/usr/bin/{{ docker_compose_binary | default('docker compose') }} --file /var/data/docker/compose/docker-compose.yml --env-file /var/data/docker/compose/.env up --detach --remove-orphans
 ExecStartPost=/usr/bin/docker image prune --force --all
 
 [Install]

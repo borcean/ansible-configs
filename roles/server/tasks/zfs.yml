@@ -90,16 +90,16 @@
     msg: 'ZFS pool {{ item.name }} exists? -> [{{ item.name == zfs_pool.pool_name }}] It has {{ item.free }} free space out of {{ item.size }}.'
   with_items: '{{ ansible_zfs_pools }}'
 
-- name: ZFS | Create zfs pool "{{ zfs_pool.pool_name }}" as two disk mirror
-  ansible.builtin.command: 'zpool create -o ashift=12 "{{ zfs_pool.pool_name }}" mirror "{{ zfs_pool.disk1 }}" "{{ zfs_pool.disk2 }}"'
-  when: 'not (ansible_zfs_pools | length > 0 and ansible_zfs_pools[0].name == zfs_pool.pool_name)'
+# - name: ZFS | Create zfs pool "{{ zfs_pool.pool_name }}" as two disk mirror
+#   ansible.builtin.command: 'zpool create -o ashift=12  -o mountpoint="{{ zfs_pool.mountpoint }}/{{ zfs_pool.pool_name }}" "{{ zfs_pool.pool_name }}" mirror "{{ zfs_pool.disk1 }}" "{{ zfs_pool.disk2 }}"'
+#   when: 'not (ansible_zfs_pools | length > 0 and ansible_zfs_pools[0].name == zfs_pool.pool_name)'
 
-- name: ZFS | Create filesystems
-  community.general.zfs:
-    name: '{{ zfs_pool.pool_name }}/{{ item.fs_name }}'
-    state: present
-  with_items:
-    "{{ zfs_filesystems }}"
+# - name: ZFS | Create filesystems
+#   community.general.zfs:
+#     name: '{{ zfs_pool.pool_name }}/{{ item.fs_name }}'
+#     state: present
+#   with_items:
+#     "{{ zfs_filesystems }}"
 
 - name: ZFS | Enable weekly scub
   ansible.builtin.systemd:
