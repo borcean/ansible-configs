@@ -6,4 +6,5 @@
       - fish
       - htop
       - "{{ powerline_fonts_package }}"
+      - tmux
       - "{{ vim_package }}"
