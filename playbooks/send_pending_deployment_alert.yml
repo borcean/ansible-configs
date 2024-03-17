@@ -14,7 +14,7 @@
   changed_when: false
   when: not deployment_booted.stdout | bool
 
-- name: Reboot into pending deployment
+- name: Reboot into pending deployment # noqa command-instead-of-module
   ansible.builtin.command: "systemctl reboot --when=+{{ reboot_failed_pending_deployment_delay }}"
   when:
     - task_failed is defined
@@ -29,7 +29,7 @@
     api_args:
       chat_id: "{{ telegram_chat_id }}"
       parse_mode: "markdown"
-      text: "System scheduled to reboot in *{{ reboot_failed_pending_deployment_delay }}*"
+      text: "*{{ ansible_hostname }}* scheduled to reboot in *{{ reboot_failed_pending_deployment_delay }}*"
   changed_when: false
   when:
     - task_failed is defined

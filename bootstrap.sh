@@ -2,7 +2,7 @@
 
 # Options
 REPO="https://github.com/borcean/ansible-configs.git"
-BRANCH=atomic
+BRANCH=coreos
 VAULT_FILE=/root/.ansible_vault_key
 INVENTORY="https://raw.githubusercontent.com/borcean/ansible-configs/"$BRANCH"/hosts"
 REQUIREMENTS="https://raw.githubusercontent.com/borcean/ansible-configs/"$BRANCH"/requirements.yml"
@@ -23,7 +23,7 @@ check_hostname () {
 
     HOSTNAME="$(hostnamectl --static)"
 
-    if [ "$(wget -qO- "$INVENTORY" | grep -m 1 "$HOSTNAME")" == "$HOSTNAME" ]; then
+    if [ "$(curl -s "$INVENTORY" | grep -m 1 "$HOSTNAME")" == "$HOSTNAME" ]; then
         echo -e "Host "$HOSTNAME" found in inventory."
     else
         echo -e "Host "$HOSTNAME" not found in inventory."
@@ -81,7 +81,6 @@ until rpm-ostree status | grep "State: idle"; do sleep 1; echo -n "." ; done;
 OS=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }' | sed 's/"//g')
 
 if [[ "$OS" == fedora ]]; then
-    rpm-ostree upgrade
     if ! command -v ansible &> /dev/null; then
         rpm-ostree install ansible
     fi
@@ -97,12 +96,6 @@ else
     fi
 fi
 
-# Update and fix existing flatpak installs
-# if command -v flatpak &> /dev/null; then
-#     flatpak update -y
-#     flatpak repair
-# fi
-
 # Test VM set up
 if [[ "$(hostnamectl --static)" == hydrogen.borcean.xyz ]]; then
     systemctl enable serial-getty@ttyS0.service
@@ -112,9 +105,10 @@ fi
 rm -rf /root/.ansible/
 
 # Install collections/roles from Ansible Galaxy
-wget -O /tmp/requirements.yml "$REQUIREMENTS"
+curl -sS "$REQUIREMENTS" -o /tmp/requirements.yml
 ansible-galaxy collection install -r /tmp/requirements.yml --force
 ansible-galaxy role install -r /tmp/requirements.yml --force
+rm /tmp/requirements.yml
 
 # Ansible pull command
 echo -e "\n"

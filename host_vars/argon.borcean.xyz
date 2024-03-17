@@ -1,0 +1,5 @@
+# Base
+# System Setup
+automatic_updates: false #use coreos default policy
+sshd: false #use coreos default policy
+reboot_schedule: Sat 4:00

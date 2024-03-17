@@ -15,13 +15,13 @@
     - name: Import tasks | Packages utilities
       ansible.builtin.import_tasks: software/packages_utilities.yml
 
-    # basic user configuration
-    - name: Import tasks | Users | Jeffrey
-      ansible.builtin.import_tasks: users/jeffrey/jeffrey.yml
-    - name: Include tasks | Additional users
-      ansible.builtin.include_tasks: users/additional_users.yml
-      with_dict: "{{ additional_users }}"
-      when: additional_users is defined
+    # # basic user configuration
+    # - name: Import tasks | Users | Jeffrey
+    #   ansible.builtin.import_tasks: users/jeffrey/jeffrey.yml
+    # - name: Include tasks | Additional users
+    #   ansible.builtin.include_tasks: users/additional_users.yml
+    #   with_dict: "{{ additional_users }}"
+    #   when: additional_users is defined
 
     # perform remaining tasks:
     - name: Import tasks | Automatic updates

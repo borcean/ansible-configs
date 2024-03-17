@@ -1,4 +1,4 @@
-- name: System setup | Tailscale | Add repo 
+- name: System setup | Tailscale | Add repo
   ansible.builtin.copy:
     src: system_setup/tailscale_repo
     dest: /etc/yum.repos.d/tailscale.repo
