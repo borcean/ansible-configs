@@ -12,6 +12,7 @@
     - jackett
     - prowlarr
     - radarr
+    - readarr
     - sonnar
   register: firewall_service_installed
 
@@ -36,12 +37,12 @@
     - plex
     - prowlarr
     - radarr
-    - samba
+    - readarr
     - sonnar
 
 # Too much effort to find individual ports for Home Assistant
 # We're behind router firewall anyways...
-- name: Firewall | Match Fedora's open ports (SUSE)
+- name: Firewall | Match Fedora Workstation open ports (SUSE)
   ansible.posix.firewalld:
     zone: public
     port: '1025-65535/{{ item }}'

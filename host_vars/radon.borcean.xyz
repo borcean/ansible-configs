@@ -12,6 +12,7 @@ dreamhost_ddns: {
 # Server | Docker
 docker_setting: {
   data_dir: '{{zfs_pool.mountpoint}}/{{zfs_pool.pool_name}}/docker/data',
+  media_dir: '{{zfs_pool.mountpoint}}/{{zfs_pool.pool_name}}/media',
   # data for docker env
   PUID: '1000',
   PGID: '1000'
