@@ -10,6 +10,7 @@ services:
       - ${DATADIR}/config/gluetun:/gluetun
     ports:
       - 8112:8112
+      - 5000:5000
     environment:
       - VPN_SERVICE_PROVIDER=private internet access
       - OPENVPN_USER={{ vpn_client_username }}
@@ -89,6 +90,16 @@ services:
       - ${DATADIR}/downloads:/downloads # download folder
     ports:
       - 8787:8787
+
+  bookbounty:
+    image: docker.io/thewicklowwolf/bookbounty:latest
+    container_name: bookbounty
+    network_mode: service:gluetun
+    volumes:
+      - ${DATADIR}/config/bookbounty:/bookbounty/config
+      - ${MEDIADIR}/books:/bookbounty/downloads
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
