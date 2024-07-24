@@ -10,6 +10,7 @@ services:
       - ${DATADIR}/config/gluetun:/gluetun
     ports:
       - 8112:8112
+      - 9696:9696
     environment:
       - VPN_SERVICE_PROVIDER=private internet access
       - OPENVPN_USER={{ vpn_client_username }}
@@ -109,15 +110,13 @@ services:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     restart: unless-stopped
-    network_mode: host
+    network_mode: service:gluetun
     environment:
       - PUID=${PUID} # default user id, defined in .env
       - PGID=${PGID} # default group id, defined in .env
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - ${DATADIR}/config/prowlarr:/config # config files
-    ports:
-      - 9696:9696
 
   plex-server:
     container_name: plex-server
