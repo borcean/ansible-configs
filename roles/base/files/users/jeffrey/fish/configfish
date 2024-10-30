@@ -10,3 +10,5 @@ alias wol-neon="wol 3C:E1:A1:B8:EA:75"
 ### Enviornment Variables ###
 setenv EDITOR vim
 
+### System Info ###
+fastfetch
