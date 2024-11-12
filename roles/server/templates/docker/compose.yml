@@ -91,21 +91,6 @@ services:
     ports:
       - 8787:8787
 
-  bookbounty:
-    image: docker.io/thewicklowwolf/bookbounty:latest
-    container_name: bookbounty
-    network_mode: host
-    ports:
-      - 5000:5000
-    environment:
-      - selected_path_type=folder
-      - readarr_address=http://127.0.0.1:8787
-    volumes:
-      - ${DATADIR}/config/bookbounty:/bookbounty/config
-      - ${MEDIADIR}/books:/bookbounty/downloads
-      - /etc/localtime:/etc/localtime:ro
-    restart: unless-stopped
-
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
