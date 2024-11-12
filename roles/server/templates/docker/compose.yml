@@ -28,7 +28,7 @@ services:
       - PGID=${PGID} # default group id, defined in .env
       - TZ=${TZ} # timezone, defined in .env
     volumes:
-      - ${DATADIR}/downloads:/downloads # downloads folder
+      - ${MEDIADIR}/downloads:/downloads # downloads folder
       - ${DATADIR}/config/deluge:/config # config files
 
   jackett:
@@ -42,7 +42,7 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${DATADIR}/downloads/torrent-blackhole:/downloads # place where to put .torrent files for manual download
+      - ${MEDIADIR}/downloads/torrent-blackhole:/downloads # place where to put .torrent files for manual download
       - ${DATADIR}/config/jackett:/config # config files
 
   sonarr:
@@ -57,8 +57,8 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${DATADIR}/config/sonarr:/config # config files
-      - ${DATADIR}/complete/tv:/tv # tv shows folder
-      - ${DATADIR}/downloads:/downloads # download folder
+      - ${MEDIADIR}/tv:/tv # tv shows folder
+      - ${MEDIADIR}/downloads:/downloads # download folder
 
   radarr:
     container_name: radarr
@@ -72,8 +72,8 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${DATADIR}/config/radarr:/config # config files
-      - ${DATADIR}/complete/movies:/movies # movies folder
-      - ${DATADIR}/downloads:/downloads # download folder
+      - ${MEDIADIR}/movies:/movies # movies folder
+      - ${MEDIADIR}/downloads:/downloads # download folder
 
   readarr:
     image: lscr.io/linuxserver/readarr:develop
@@ -87,7 +87,7 @@ services:
     volumes:
       - ${DATADIR}/config/readarr:/config # config files
       - ${MEDIADIR}/books:/books # books folder
-      - ${DATADIR}/downloads:/downloads # download folder
+      - ${MEDIADIR}/downloads:/downloads # download folder
     ports:
       - 8787:8787
 
@@ -128,7 +128,8 @@ services:
     volumes:
       - ${DATADIR}/config/plex/db:/config # plex database
       - ${DATADIR}/config/plex/transcode:/transcode # temp transcoded files
-      - ${DATADIR}/complete:/data # media library
+      - ${MEDIADIR}/tv:/tv # media library
+      - ${MEDIADIR}/movies:/movies # media library
 
   bazarr:
     container_name: bazarr
@@ -142,8 +143,8 @@ services:
       - UMASK_SET=022 #optional
     volumes:
       - ${DATADIR}/config/bazarr:/config # config files
-      - ${DATADIR}/complete/movies:/movies # movies folder
-      - ${DATADIR}/complete/tv:/tv # tv shows folder
+      - ${MEDIADIR}/movies:/movies # movies folder
+      - ${MEDIADIR}/tv:/tv # tv shows folder
 
   homeassistant:
     container_name: homeassistant

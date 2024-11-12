@@ -52,7 +52,7 @@
     state: started
     enabled: true
 
-- name: Docker | Create folder for docker data
+- name: Docker | Set permissions for docker data filesystem
   ansible.builtin.file:
     path: "{{ docker_setting.data_dir }}"
     state: directory
@@ -68,7 +68,7 @@
     group: '1000'
     mode: '0755'
   with_items:
-    - { dir: 'data/config' }
+    - { dir: 'config' }
     - { dir: 'compose' }
 
 - name: Docker | Setup docker .env file
